@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REHAP 店舗ダッシュボード</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #f0f2f5; color: #333; }
+
+    .header { background: #1a1a2e; color: white; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header h1 { font-size: 18px; }
+    .store-badge { font-size: 12px; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 12px; }
+    .logout-btn { font-size: 13px; color: rgba(255,255,255,0.7); cursor: pointer; background: none; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 6px; }
+
+    .layout { display: flex; min-height: calc(100vh - 52px); }
+    .sidebar { width: 200px; background: white; border-right: 1px solid #e0e0e0; padding: 16px 0; flex-shrink: 0; }
+    .sidebar-section { padding: 8px 16px; font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+    .sidebar a { display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: #555; text-decoration: none; font-size: 14px; cursor: pointer; }
+    .sidebar a:hover, .sidebar a.active { background: #f0f4ff; color: #1a1a2e; font-weight: bold; }
+
+    .main { flex: 1; padding: 24px; }
+    .page { display: none; }
+    .page.active { display: block; }
+    h2 { font-size: 20px; margin-bottom: 20px; color: #1a1a2e; }
+
+    .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+    /* 統計 */
+    .stats { display: flex; gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: white; border-radius: 10px; padding: 20px; flex: 1; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .stat-num { font-size: 32px; font-weight: bold; color: #1a1a2e; }
+    .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+
+    /* QRコードエリア */
+    .qr-area { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .qr-url-block { flex: 1; }
+    .qr-url { font-family: monospace; font-size: 15px; background: #f5f5f5; padding: 10px 16px; border-radius: 8px; display: block; margin-bottom: 10px; color: #1a1a2e; word-break: break-all; }
+    .copy-btn { padding: 8px 20px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    .qr-image-box { width: 140px; height: 140px; border: 2px solid #e0e0e0; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; background: #fafafa; }
+    .qr-image-box img { width: 100%; height: 100%; object-fit: contain; }
+    .qr-image-box .qr-placeholder { text-align: center; color: #ccc; font-size: 11px; line-height: 1.6; }
+    .qr-image-box .qr-placeholder span { font-size: 28px; display: block; margin-bottom: 4px; }
+
+    /* フォーム */
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
+    input, textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    textarea { height: 80px; resize: vertical; }
+    .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    .btn-primary { background: #1a1a2e; color: white; }
+    .btn-danger { background: #ff4444; color: white; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn + .btn { margin-left: 6px; }
+
+    /* テーブル */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-size: 12px; color: #888; border-bottom: 1px solid #eee; }
+    td { padding: 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; background: #e3f2fd; color: #1565c0; }
+    .empty { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
+
+    /* モーダル */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: white; border-radius: 12px; padding: 24px; width: 460px; max-width: 90vw; }
+    .modal h3 { font-size: 16px; margin-bottom: 16px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #333; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 200; }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>REHAP</h1>
+    <span class="store-badge" id="store-badge">読み込み中...</span>
+  </div>
+  <button class="logout-btn" onclick="logout()">ログアウト</button>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-section">メニュー</div>
+    <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">📊 ダッシュボード</a>
+    <a onclick="showPage('store-info')" id="nav-store-info">🏪 店舗情報</a>
+    <a onclick="showPage('products')" id="nav-products">🛍️ 商品管理</a>
+    <a onclick="showPage('coupons')" id="nav-coupons">🎟️ クーポン管理</a>
+    <a onclick="showPage('password')" id="nav-password">🔑 パスワード変更</a>
+  </div>
+
+  <div class="main">
+
+    <!-- ダッシュボード -->
+    <div class="page active" id="page-dashboard">
+      <h2>ダッシュボード</h2>
+      <div class="stats" id="stats"></div>
+      <div class="card">
+        <h2 style="font-size:15px; margin-bottom:16px;">🔗 店舗QRリンク</h2>
+        <div class="qr-area">
+          <div class="qr-url-block">
+            <div class="qr-url" id="store-url"></div>
+            <button class="copy-btn" onclick="copyUrl()">URLをコピー</button>
+          </div>
+          <div class="qr-image-box" id="qr-image-box">
+            <div class="qr-placeholder" id="qr-placeholder"><span>◻️</span>QRコード<br>未設定</div>
+            <img id="qr-preview" style="display:none;">
+          </div>
+        </div>
+        <p style="font-size:11px; color:#aaa; margin-top:8px;">QRコードはREHAP運営（リリビット）より設定されます</p>
+      </div>
+      <div class="card">
+        <h2 style="font-size:15px; margin-bottom:12px;">📋 来店ユーザー</h2>
+        <table>
+          <thead><tr><th>ユーザーID</th><th>来店回数</th><th>最終来店日</th></tr></thead>
+          <tbody id="visits-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 店舗情報 -->
+    <div class="page" id="page-store-info">
+      <h2>店舗情報の編集</h2>
+      <div class="card">
+        <div class="form-group"><label>店舗名</label><input type="text" id="info-name"></div>
+        <div class="form-group"><label>説明文</label><textarea id="info-desc"></textarea></div>
+        <div class="form-group"><label>予約URL</label><input type="text" id="info-booking" placeholder="https://..."></div>
+        <button class="btn btn-primary" onclick="saveInfo()">保存する</button>
+      </div>
+    </div>
+
+    <!-- 商品管理 -->
+    <div class="page" id="page-products">
+      <h2>商品管理</h2>
+      <p style="font-size:13px; color:#888; margin-bottom:16px;">※ 商品の登録・編集はREHAP運営（リリビット）が行います。掲載を希望しない商品は削除できます。</p>
+      <div class="card">
+        <table>
+          <thead><tr><th>画像</th><th>商品名</th><th>説明</th><th>リンク</th><th>操作</th></tr></thead>
+          <tbody id="products-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- クーポン管理 -->
+    <div class="page" id="page-coupons">
+      <h2>クーポン管理</h2>
+      <div class="card">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+          <button class="btn btn-primary" onclick="openModal('coupon')">＋ クーポンを追加</button>
+        </div>
+        <table>
+          <thead><tr><th>タイトル</th><th>説明</th><th>解放条件</th><th>操作</th></tr></thead>
+          <tbody id="coupons-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- パスワード変更 -->
+    <div class="page" id="page-password">
+      <h2>パスワード変更</h2>
+      <div class="card" style="max-width:400px;">
+        <div class="form-group"><label>現在のパスワード</label><input type="password" id="pw-current"></div>
+        <div class="form-group"><label>新しいパスワード</label><input type="password" id="pw-new"></div>
+        <div class="form-group"><label>新しいパスワード（確認）</label><input type="password" id="pw-confirm"></div>
+        <button class="btn btn-primary" onclick="changePassword()">変更する</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- クーポンモーダル -->
+<div class="modal-overlay" id="modal-coupon">
+  <div class="modal">
+    <h3 id="modal-coupon-title">クーポンを追加</h3>
+    <input type="hidden" id="coupon-edit-id">
+    <div class="form-group"><label>タイトル</label><input type="text" id="coupon-title"></div>
+    <div class="form-group"><label>説明</label><textarea id="coupon-desc"></textarea></div>
+    <div class="form-group"><label>解放条件（来店回数）</label><input type="number" id="coupon-visits" value="5" min="1"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('coupon')">キャンセル</button>
+      <button class="btn btn-primary" onclick="saveCoupon()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let storeId = '';
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.getElementById('nav-' + name).classList.add('active');
+    if (name === 'products') loadProducts();
+    if (name === 'coupons') loadCoupons();
+    if (name === 'store-info') loadStoreInfo();
+  }
+
+  function openModal(type, data = null) {
+    if (type === 'product') {
+      document.getElementById('modal-product-title').textContent = data ? '商品を編集' : '商品を追加';
+      document.getElementById('product-edit-id').value = data?.id || '';
+      document.getElementById('product-name').value = data?.name || '';
+      document.getElementById('product-desc').value = data?.description || '';
+      document.getElementById('product-url').value = data?.affiliate_url || '';
+    }
+    if (type === 'coupon') {
+      document.getElementById('modal-coupon-title').textContent = data ? 'クーポンを編集' : 'クーポンを追加';
+      document.getElementById('coupon-edit-id').value = data?.id || '';
+      document.getElementById('coupon-title').value = data?.title || '';
+      document.getElementById('coupon-desc').value = data?.description || '';
+      document.getElementById('coupon-visits').value = data?.required_visits || 5;
+    }
+    document.getElementById('modal-' + type).classList.add('open');
+  }
+  function closeModal(type) { document.getElementById('modal-' + type).classList.remove('open'); }
+
+  function copyUrl() {
+    navigator.clipboard.writeText(document.getElementById('store-url').textContent);
+    showToast('URLをコピーしました');
+  }
+
+  async function logout() {
+    await fetch('/api/store-auth/logout', { method: 'POST' });
+    location.href = '/store-login.html';
+  }
+
+  // 初期化
+  async function init() {
+    const res = await fetch('/api/store-auth/me');
+    if (!res.ok) { location.href = '/store-login.html'; return; }
+    const data = await res.json();
+    storeId = data.store_id;
+    document.getElementById('store-badge').textContent = data.store_name;
+    document.getElementById('store-url').textContent = `${location.origin}/store/${storeId}`;
+    loadDashboard();
+    loadQrImage();
+  }
+
+  async function loadQrImage() {
+    const res = await fetch('/api/store-auth/info');
+    const store = await res.json();
+    if (store.qr_image) {
+      document.getElementById('qr-preview').src = store.qr_image;
+      document.getElementById('qr-preview').style.display = 'block';
+      document.getElementById('qr-placeholder').style.display = 'none';
+    }
+  }
+
+  async function loadDashboard() {
+    const res = await fetch('/api/store-auth/stats');
+    const data = await res.json();
+    document.getElementById('stats').innerHTML = `
+      <div class="stat-card"><div class="stat-num">${data.totalVisits}</div><div class="stat-label">累計来店数</div></div>
+      <div class="stat-card"><div class="stat-num">${data.uniqueUsers}</div><div class="stat-label">ユニークユーザー</div></div>
+      <div class="stat-card"><div class="stat-num">${data.todayVisits}</div><div class="stat-label">本日の来店</div></div>
+    `;
+    const tbody = document.getElementById('visits-table');
+    if (!data.users.length) {
+      tbody.innerHTML = '<tr><td colspan="3" class="empty">来店データがありません</td></tr>';
+    } else {
+      tbody.innerHTML = data.users.map(u => `
+        <tr>
+          <td style="font-family:monospace; font-size:12px; color:#888;">${u.user_id}</td>
+          <td><strong>${u.visit_count}</strong> 回</td>
+          <td>${u.last_visit}</td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  async function loadStoreInfo() {
+    const res = await fetch('/api/store-auth/info');
+    const store = await res.json();
+    document.getElementById('info-name').value = store.name;
+    document.getElementById('info-desc').value = store.description || '';
+    document.getElementById('info-booking').value = store.booking_url || '';
+  }
+
+  async function saveInfo() {
+    await fetch('/api/store-auth/info', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: document.getElementById('info-name').value,
+        description: document.getElementById('info-desc').value,
+        booking_url: document.getElementById('info-booking').value,
+      })
+    });
+    document.getElementById('store-badge').textContent = document.getElementById('info-name').value;
+    showToast('店舗情報を更新しました');
+  }
+
+  async function loadProducts() {
+    const res = await fetch('/api/store-auth/products');
+    const products = await res.json();
+    const tbody = document.getElementById('products-table');
+    if (!products.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">商品がありません</td></tr>';
+    } else {
+      tbody.innerHTML = products.map(p => `
+        <tr>
+          <td style="width:64px;">
+            ${p.image_url
+              ? `<img src="${p.image_url}" style="width:52px; height:52px; border-radius:6px; object-fit:cover;">`
+              : `<div style="width:52px; height:52px; border-radius:6px; background:#e0e0e0; display:flex; align-items:center; justify-content:center; font-size:22px;">🛍️</div>`}
+          </td>
+          <td>${p.name}</td>
+          <td style="font-size:13px; color:#666;">${p.description || ''}</td>
+          <td style="font-size:12px;"><a href="${p.affiliate_url}" target="_blank" style="color:#1a1a2e;">リンク</a></td>
+          <td>
+            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})">削除</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  async function deleteProduct(id) {
+    if (!confirm('この商品を削除しますか？')) return;
+    await fetch('/api/store-auth/products/' + id, { method: 'DELETE' });
+    showToast('商品を削除しました');
+    loadProducts();
+  }
+
+  async function loadCoupons() {
+    const res = await fetch('/api/store-auth/coupons');
+    const coupons = await res.json();
+    const tbody = document.getElementById('coupons-table');
+    if (!coupons.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="empty">クーポンがありません</td></tr>';
+    } else {
+      tbody.innerHTML = coupons.map(c => `
+        <tr>
+          <td>${c.title}</td>
+          <td style="font-size:13px; color:#666;">${c.description || ''}</td>
+          <td><span class="badge">${c.required_visits}回来店</span></td>
+          <td>
+            <button class="btn btn-sm btn-primary" onclick='openModal("coupon", ${JSON.stringify(c)})'>編集</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteCoupon(${c.id})">削除</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  async function saveCoupon() {
+    const id = document.getElementById('coupon-edit-id').value;
+    await fetch(`/api/store-auth/coupons${id ? '/' + id : ''}`, {
+      method: id ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: document.getElementById('coupon-title').value,
+        description: document.getElementById('coupon-desc').value,
+        required_visits: parseInt(document.getElementById('coupon-visits').value),
+      })
+    });
+    closeModal('coupon');
+    showToast(id ? 'クーポンを更新しました' : 'クーポンを追加しました');
+    loadCoupons();
+  }
+
+  async function deleteCoupon(id) {
+    if (!confirm('このクーポンを削除しますか？')) return;
+    await fetch('/api/store-auth/coupons/' + id, { method: 'DELETE' });
+    showToast('クーポンを削除しました');
+    loadCoupons();
+  }
+
+  async function changePassword() {
+    const current = document.getElementById('pw-current').value;
+    const newPw = document.getElementById('pw-new').value;
+    const confirm = document.getElementById('pw-confirm').value;
+    if (newPw !== confirm) { showToast('新しいパスワードが一致しません'); return; }
+    const res = await fetch('/api/store-auth/password', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ current, new_password: newPw })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('パスワードを変更しました');
+      document.getElementById('pw-current').value = '';
+      document.getElementById('pw-new').value = '';
+      document.getElementById('pw-confirm').value = '';
+    } else {
+      showToast('現在のパスワードが違います');
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>

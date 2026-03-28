@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REHAP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #f5f5f5; color: #333; }
+
+    .header { background: #1a1a2e; color: white; padding: 16px 20px; text-align: center; }
+    .header h1 { font-size: 20px; letter-spacing: 2px; }
+    .header p { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+
+    .container { max-width: 480px; margin: 0 auto; padding: 16px; }
+
+    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card h2 { font-size: 14px; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* 来店エリア */
+    .visit-area { text-align: center; }
+    .visit-badge { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 8px 20px; border-radius: 20px; font-size: 14px; margin-bottom: 8px; }
+    .visit-badge.new { background: #e3f2fd; color: #1565c0; animation: pulse 1s ease-in-out; }
+    .visit-count { font-size: 32px; font-weight: bold; color: #1a1a2e; }
+    .visit-count span { font-size: 14px; font-weight: normal; color: #888; }
+    .visit-btn { width: 100%; padding: 14px; background: #1a1a2e; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 12px; }
+    .visit-btn:disabled { background: #ccc; cursor: default; }
+
+    /* スタンプ */
+    .stamps { display: grid; grid-template-columns: repeat(5, 48px); gap: 8px; justify-content: center; }
+    .stamp { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .stamp.filled { background: #ffd700; border-color: #ffa000; }
+
+    /* クーポン */
+    .coupon { border: 2px dashed #1a1a2e; border-radius: 8px; padding: 16px; text-align: center; opacity: 0.3; }
+    .coupon.unlocked { opacity: 1; background: #fff9e6; }
+    .coupon-title { font-size: 16px; font-weight: bold; color: #1a1a2e; }
+    .coupon-desc { font-size: 13px; color: #666; margin-top: 4px; }
+    .coupon-lock { font-size: 12px; color: #999; margin-top: 6px; }
+
+    /* 予約ボタン */
+    .booking-btn { display: block; width: 100%; padding: 14px; background: #00c853; color: white; text-align: center; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
+
+    /* 商品PR */
+    .product { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+    .product:last-child { border-bottom: none; }
+    .product-img { width: 60px; height: 60px; border-radius: 8px; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+    .product-info { flex: 1; }
+    .product-name { font-size: 14px; font-weight: bold; }
+    .product-desc { font-size: 12px; color: #888; margin-top: 2px; }
+    .product-btn { padding: 6px 14px; background: #1a1a2e; color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+
+    .loading { text-align: center; padding: 40px; color: #888; }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>REHAP</h1>
+  <p id="store-name">読み込み中...</p>
+</div>
+
+<div class="container" id="app">
+  <div class="loading">読み込み中...</div>
+</div>
+
+<script>
+  // store_idをURLから取得
+  const storeId = location.pathname.split('/store/')[1];
+
+  // ユーザーIDをlocalStorageで管理（本番ではLINEログインに置き換え）
+  let userId = localStorage.getItem('rehap_user_id');
+  if (!userId) {
+    userId = 'user_' + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem('rehap_user_id', userId);
+  }
+
+  let visitCount = 0;
+  let storeData = null;
+
+  async function init() {
+    // 店舗情報取得
+    const res = await fetch(`/api/store/${storeId}`);
+    if (!res.ok) {
+      document.getElementById('app').innerHTML = '<div class="card"><p>店舗が見つかりません。</p></div>';
+      return;
+    }
+    storeData = await res.json();
+    document.getElementById('store-name').textContent = storeData.store.name;
+
+    // 来店記録
+    const visitRes = await fetch('/api/visit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ store_id: storeId, user_id: userId })
+    });
+    const visitData = await visitRes.json();
+    visitCount = visitData.visitCount;
+
+    render(visitData.isNew);
+  }
+
+  function render(isNewVisit) {
+    const { store, products, coupons } = storeData;
+    const stampMax = 10;
+
+    // クーポン判定
+    const unlockedCoupons = coupons.filter(c => visitCount >= c.required_visits);
+    const lockedCoupons = coupons.filter(c => visitCount < c.required_visits);
+
+    document.getElementById('app').innerHTML = `
+      <!-- 来店エリア -->
+      <div class="card">
+        <h2>来店記録</h2>
+        <div class="visit-area">
+          <div class="visit-badge ${isNewVisit ? 'new' : ''}">
+            ${isNewVisit ? '✅ 本日の来店を記録しました！' : '📅 本日来店済み'}
+          </div>
+          <div class="visit-count">${visitCount}<span> 回来店</span></div>
+        </div>
+      </div>
+
+      <!-- スタンプカード -->
+      <div class="card">
+        <h2>スタンプカード</h2>
+        <div class="stamps">
+          ${Array.from({length: stampMax}, (_, i) => `
+            <div class="stamp ${i < visitCount ? 'filled' : ''}">
+              ${i < visitCount ? '⭐' : ''}
+            </div>
+          `).join('')}
+        </div>
+        <p style="text-align:center; font-size:12px; color:#888; margin-top:12px;">${stampMax}回来店でリセット</p>
+      </div>
+
+      <!-- クーポン -->
+      <div class="card">
+        <h2>クーポン</h2>
+        ${[...unlockedCoupons.map(c => `
+          <div class="coupon unlocked" style="margin-bottom:10px">
+            <div class="coupon-title">🎉 ${c.title}</div>
+            <div class="coupon-desc">${c.description}</div>
+          </div>
+        `), ...lockedCoupons.map(c => `
+          <div class="coupon" style="margin-bottom:10px">
+            <div class="coupon-title">${c.title}</div>
+            <div class="coupon-desc">${c.description}</div>
+            <div class="coupon-lock">🔒 あと${c.required_visits - visitCount}回来店で解放</div>
+          </div>
+        `)].join('')}
+      </div>
+
+      <!-- 予約 -->
+      ${store.booking_url ? `
+        <div class="card">
+          <h2>予約</h2>
+          <a href="${store.booking_url}" target="_blank" class="booking-btn">📅 予約はこちら</a>
+        </div>
+      ` : ''}
+
+      <!-- 商品PR -->
+      ${products.length > 0 ? `
+        <div class="card">
+          <h2>おすすめ商品</h2>
+          ${products.map(p => `
+            <div class="product">
+              <div class="product-img" style="${p.image_url ? 'background:none; padding:0; overflow:hidden;' : ''}">
+                ${p.image_url ? `<img src="${p.image_url}" style="width:60px; height:60px; object-fit:cover; border-radius:8px;">` : '🛍️'}
+              </div>
+              <div class="product-info">
+                <div class="product-name">${p.name} <span style="font-size:10px; background:#ff6b35; color:white; padding:2px 6px; border-radius:4px; font-weight:normal; vertical-align:middle;">PR</span></div>
+                <div class="product-desc">${p.description}</div>
+              </div>
+              <button class="product-btn" onclick="window.open('${p.affiliate_url}', '_blank')">詳しく見る</button>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+    `;
+  }
+
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "rehap-prototype",
+  "version": "1.0.0",
+  "description": "REHAP O2Oアフィリエイトプラットフォーム プロトタイプ",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "npx nodemon server.js"
+  },
+  "dependencies": {
+    "sql.js": "^1.10.2",
+    "express-session": "^1.17.3",
+    "express": "^4.18.2"
+  }
+}

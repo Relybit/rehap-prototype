@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REHAP 店舗ログイン</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #f0f2f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .card { background: white; border-radius: 16px; padding: 40px; width: 380px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .logo { text-align: center; margin-bottom: 32px; }
+    .logo h1 { font-size: 28px; color: #1a1a2e; letter-spacing: 3px; }
+    .logo p { font-size: 13px; color: #888; margin-top: 6px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; color: #666; margin-bottom: 6px; }
+    input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; transition: border 0.2s; }
+    input:focus { border-color: #1a1a2e; }
+    .btn { width: 100%; padding: 14px; background: #1a1a2e; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 8px; }
+    .btn:hover { background: #2d2d4e; }
+    .error { background: #fff0f0; color: #d32f2f; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <h1>REHAP</h1>
+    <p>店舗管理ポータル</p>
+  </div>
+  <div class="error" id="error">店舗IDまたはパスワードが違います</div>
+  <div class="form-group">
+    <label>店舗ID</label>
+    <input type="text" id="store-id" placeholder="例: store001">
+  </div>
+  <div class="form-group">
+    <label>パスワード</label>
+    <input type="password" id="password" placeholder="パスワードを入力" onkeydown="if(event.key==='Enter')login()">
+  </div>
+  <button class="btn" onclick="login()">ログイン</button>
+</div>
+<script>
+  async function login() {
+    const storeId = document.getElementById('store-id').value;
+    const password = document.getElementById('password').value;
+    const res = await fetch('/api/store-auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ store_id: storeId, password })
+    });
+    const data = await res.json();
+    if (data.success) {
+      location.href = '/store-dashboard.html';
+    } else {
+      document.getElementById('error').style.display = 'block';
+    }
+  }
+</script>
+</body>
+</html>
