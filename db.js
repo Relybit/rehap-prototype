@@ -23,7 +23,8 @@ async function getDb() {
       description TEXT,
       booking_url TEXT,
       password TEXT DEFAULT '1234',
-      qr_image TEXT
+      qr_image TEXT,
+      qr_sent INTEGER DEFAULT 0
     );
     CREATE TABLE IF NOT EXISTS products (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,7 +32,8 @@ async function getDb() {
       name TEXT NOT NULL,
       description TEXT,
       affiliate_url TEXT NOT NULL,
-      image_url TEXT
+      image_url TEXT,
+      display_order INTEGER
     );
     CREATE TABLE IF NOT EXISTS visits (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,7 +49,20 @@ async function getDb() {
       description TEXT,
       required_visits INTEGER DEFAULT 5
     );
+    CREATE TABLE IF NOT EXISTS coupon_usages (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      store_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      coupon_id INTEGER NOT NULL,
+      required_visits INTEGER NOT NULL,
+      used_at TEXT NOT NULL
+    );
   `);
+
+  // マイグレーション
+  try { db.run(`ALTER TABLE products ADD COLUMN display_order INTEGER`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN qr_sent INTEGER DEFAULT 0`); } catch(e) {}
+  try { db.run(`CREATE TABLE IF NOT EXISTS coupon_usages (id INTEGER PRIMARY KEY AUTOINCREMENT, store_id TEXT NOT NULL, user_id TEXT NOT NULL, coupon_id INTEGER NOT NULL, required_visits INTEGER NOT NULL, used_at TEXT NOT NULL)`); } catch(e) {}
 
   // サンプルデータ
   const exists = db.exec("SELECT id FROM stores WHERE id = 'store001'");

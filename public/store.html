@@ -23,20 +23,27 @@
     .visit-badge.new { background: #e3f2fd; color: #1565c0; animation: pulse 1s ease-in-out; }
     .visit-count { font-size: 32px; font-weight: bold; color: #1a1a2e; }
     .visit-count span { font-size: 14px; font-weight: normal; color: #888; }
-    .visit-btn { width: 100%; padding: 14px; background: #1a1a2e; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 12px; }
-    .visit-btn:disabled { background: #ccc; cursor: default; }
 
     /* スタンプ */
     .stamps { display: grid; grid-template-columns: repeat(5, 48px); gap: 8px; justify-content: center; }
     .stamp { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 20px; }
     .stamp.filled { background: #ffd700; border-color: #ffa000; }
+    .stamp.used { background: #e0e0e0; border-color: #bdbdbd; color: #999; font-size: 16px; }
+    .stamp-card-label { font-size: 11px; color: #aaa; margin-bottom: 8px; text-align: center; letter-spacing: 1px; }
 
     /* クーポン */
-    .coupon { border: 2px dashed #1a1a2e; border-radius: 8px; padding: 16px; text-align: center; opacity: 0.3; }
-    .coupon.unlocked { opacity: 1; background: #fff9e6; }
+    .coupon { border: 2px dashed #ccc; border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 10px; }
+    .coupon.locked { opacity: 0.4; }
+    .coupon.unlocked { border-color: #1a1a2e; background: #fff9e6; }
+    .coupon.confirming { border-color: #e53935; background: #fff5f5; }
+    .coupon.used-history { border-color: #ccc; background: #f5f5f5; opacity: 0.6; }
     .coupon-title { font-size: 16px; font-weight: bold; color: #1a1a2e; }
     .coupon-desc { font-size: 13px; color: #666; margin-top: 4px; }
     .coupon-lock { font-size: 12px; color: #999; margin-top: 6px; }
+    .coupon-use-btn { margin-top: 12px; padding: 10px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
+    .coupon-confirm-btn { margin-top: 10px; width: 100%; padding: 14px; background: #e53935; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    .coupon-cancel-btn { margin-top: 8px; width: 100%; padding: 10px; background: #f0f0f0; color: #333; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
+    .confirm-msg { font-size: 13px; color: #e53935; margin: 8px 0; font-weight: bold; }
 
     /* 予約ボタン */
     .booking-btn { display: block; width: 100%; padding: 14px; background: #00c853; color: white; text-align: center; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
@@ -57,6 +64,13 @@
       50% { transform: scale(1.05); }
       100% { transform: scale(1); }
     }
+
+    /* LINEログイン画面 */
+    .line-login-screen { text-align: center; padding: 60px 20px; }
+    .line-login-screen h2 { font-size: 20px; color: #1a1a2e; margin-bottom: 8px; }
+    .line-login-screen p { font-size: 14px; color: #888; margin-bottom: 32px; }
+    .line-login-btn { display: inline-flex; align-items: center; gap: 10px; background: #06C755; color: white; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: bold; text-decoration: none; }
+    .line-login-btn img { width: 24px; height: 24px; }
   </style>
 </head>
 <body>
@@ -71,21 +85,39 @@
 </div>
 
 <script>
-  // store_idをURLから取得
   const storeId = location.pathname.split('/store/')[1];
-
-  // ユーザーIDをlocalStorageで管理（本番ではLINEログインに置き換え）
-  let userId = localStorage.getItem('rehap_user_id');
-  if (!userId) {
-    userId = 'user_' + Math.random().toString(36).slice(2, 10);
-    localStorage.setItem('rehap_user_id', userId);
-  }
+  let userId = null;
 
   let visitCount = 0;
+  let usedStamps = 0;
+  let usedCoupons = [];
   let storeData = null;
+  let confirmingCouponId = null;
+
+  async function checkLineLogin() {
+    const res = await fetch('/api/line/me');
+    const data = await res.json();
+    if (!data.userId) {
+      // LINEログイン画面を表示
+      document.getElementById('app').innerHTML = `
+        <div class="card line-login-screen">
+          <h2>LINEでログイン</h2>
+          <p>来店スタンプ・クーポンを利用するには<br>LINEログインが必要です</p>
+          <a href="/auth/line/login?return_to=/store/${storeId}" class="line-login-btn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.03 2 11c0 3.16 1.73 5.95 4.36 7.67-.19.67-.68 2.44-.78 2.82-.12.47.17.46.36.34.15-.1 1.97-1.32 2.77-1.85.38.06.78.09 1.19.09 5.52 0 10-4.03 10-9S17.52 2 12 2z"/></svg>
+            LINEでログイン
+          </a>
+        </div>
+      `;
+      return false;
+    }
+    userId = data.userId;
+    return true;
+  }
 
   async function init() {
-    // 店舗情報取得
+    const loggedIn = await checkLineLogin();
+    if (!loggedIn) return;
     const res = await fetch(`/api/store/${storeId}`);
     if (!res.ok) {
       document.getElementById('app').innerHTML = '<div class="card"><p>店舗が見つかりません。</p></div>';
@@ -94,7 +126,6 @@
     storeData = await res.json();
     document.getElementById('store-name').textContent = storeData.store.name;
 
-    // 来店記録
     const visitRes = await fetch('/api/visit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -102,17 +133,43 @@
     });
     const visitData = await visitRes.json();
     visitCount = visitData.visitCount;
+    usedStamps = visitData.usedStamps || 0;
+    usedCoupons = visitData.usedCoupons || [];
 
     render(visitData.isNew);
   }
 
+  function renderStamps() {
+    const stampsPerCard = 10;
+    const totalCards = Math.max(1, Math.ceil(visitCount / stampsPerCard));
+    let html = '';
+    for (let card = 0; card < totalCards; card++) {
+      const cardStart = card * stampsPerCard + 1;
+      if (totalCards > 1) {
+        html += `<div class="stamp-card-label">${card + 1}枚目</div>`;
+      }
+      html += `<div class="stamps" style="margin-bottom:${card < totalCards - 1 ? '20px' : '0'};">`;
+      for (let i = cardStart; i < cardStart + stampsPerCard; i++) {
+        if (i <= usedStamps) {
+          html += `<div class="stamp used">✓</div>`;
+        } else if (i <= visitCount) {
+          html += `<div class="stamp filled">⭐</div>`;
+        } else {
+          html += `<div class="stamp"></div>`;
+        }
+      }
+      html += `</div>`;
+    }
+    return html;
+  }
+
   function render(isNewVisit) {
     const { store, products, coupons } = storeData;
-    const stampMax = 10;
-
-    // クーポン判定
-    const unlockedCoupons = coupons.filter(c => visitCount >= c.required_visits);
-    const lockedCoupons = coupons.filter(c => visitCount < c.required_visits);
+    const effectiveStamps = visitCount - usedStamps;
+    const usedCouponIds = usedCoupons.map(u => u.coupon_id);
+    const activeCoupons = coupons.filter(c => !usedCouponIds.includes(c.id));
+    const unlockedCoupons = activeCoupons.filter(c => effectiveStamps >= c.required_visits);
+    const lockedCoupons = activeCoupons.filter(c => effectiveStamps < c.required_visits);
 
     document.getElementById('app').innerHTML = `
       <!-- 来店エリア -->
@@ -129,31 +186,35 @@
       <!-- スタンプカード -->
       <div class="card">
         <h2>スタンプカード</h2>
-        <div class="stamps">
-          ${Array.from({length: stampMax}, (_, i) => `
-            <div class="stamp ${i < visitCount ? 'filled' : ''}">
-              ${i < visitCount ? '⭐' : ''}
-            </div>
-          `).join('')}
-        </div>
-        <p style="text-align:center; font-size:12px; color:#888; margin-top:12px;">${stampMax}回来店でリセット</p>
+        ${renderStamps()}
       </div>
 
       <!-- クーポン -->
       <div class="card">
         <h2>クーポン</h2>
-        ${[...unlockedCoupons.map(c => `
-          <div class="coupon unlocked" style="margin-bottom:10px">
+        ${unlockedCoupons.map(c => confirmingCouponId === c.id ? `
+          <div class="coupon confirming" style="margin-bottom:10px;">
             <div class="coupon-title">🎉 ${c.title}</div>
             <div class="coupon-desc">${c.description}</div>
+            <div class="confirm-msg">スタッフに画面を見せて<br>「使用済みにする」を押してもらってください</div>
+            <button class="coupon-confirm-btn" onclick="useCoupon(${c.id}, ${c.required_visits})">使用済みにする</button>
+            <button class="coupon-cancel-btn" onclick="cancelConfirm()">キャンセル</button>
           </div>
-        `), ...lockedCoupons.map(c => `
-          <div class="coupon" style="margin-bottom:10px">
+        ` : `
+          <div class="coupon unlocked" style="margin-bottom:10px;">
+            <div class="coupon-title">🎉 ${c.title}</div>
+            <div class="coupon-desc">${c.description}</div>
+            <button class="coupon-use-btn" onclick="startConfirm(${c.id})">クーポンを使う</button>
+          </div>
+        `).join('')}
+        ${lockedCoupons.map(c => `
+          <div class="coupon locked" style="margin-bottom:10px;">
             <div class="coupon-title">${c.title}</div>
             <div class="coupon-desc">${c.description}</div>
-            <div class="coupon-lock">🔒 あと${c.required_visits - visitCount}回来店で解放</div>
+            <div class="coupon-lock">🔒 あと${c.required_visits - effectiveStamps}回来店で解放</div>
           </div>
-        `)].join('')}
+        `).join('')}
+        ${activeCoupons.length === 0 ? '<p style="text-align:center; color:#aaa; font-size:13px;">現在利用可能なクーポンはありません</p>' : ''}
       </div>
 
       <!-- 予約 -->
@@ -182,7 +243,49 @@
           `).join('')}
         </div>
       ` : ''}
+
+      <!-- クーポン使用履歴 -->
+      ${usedCoupons.length > 0 ? `
+        <div class="card">
+          <h2>クーポン使用履歴</h2>
+          ${usedCoupons.map(u => `
+            <div class="coupon used-history" style="margin-bottom:10px;">
+              <div class="coupon-title" style="color:#999;">✅ ${u.title}</div>
+              <div style="font-size:12px; color:#aaa; margin-top:4px;">使用日：${u.used_at}</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
     `;
+  }
+
+  function startConfirm(couponId) {
+    confirmingCouponId = couponId;
+    render(false);
+  }
+
+  function cancelConfirm() {
+    confirmingCouponId = null;
+    render(false);
+  }
+
+  async function useCoupon(couponId, requiredVisits) {
+    await fetch('/api/coupon/use', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ store_id: storeId, user_id: userId, coupon_id: couponId, required_visits: requiredVisits })
+    });
+    confirmingCouponId = null;
+
+    const visitRes = await fetch('/api/visit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ store_id: storeId, user_id: userId })
+    });
+    const visitData = await visitRes.json();
+    usedStamps = visitData.usedStamps || 0;
+    usedCoupons = visitData.usedCoupons || [];
+    render(false);
   }
 
   init();

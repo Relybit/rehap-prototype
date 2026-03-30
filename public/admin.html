@@ -70,13 +70,35 @@
     .qr-link { font-size: 12px; color: #888; font-family: monospace; background: #f5f5f5; padding: 4px 8px; border-radius: 4px; }
 
     .empty { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
+
+    /* ログインオーバーレイ */
+    .login-overlay { display: none; position: fixed; inset: 0; background: #1a1a2e; z-index: 999; align-items: center; justify-content: center; }
+    .login-overlay.open { display: flex; }
+    .login-box { background: white; border-radius: 16px; padding: 40px; width: 360px; text-align: center; }
+    .login-box h2 { font-size: 24px; color: #1a1a2e; margin-bottom: 6px; }
+    .login-box p { font-size: 13px; color: #888; margin-bottom: 24px; }
+    .login-box input { width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; margin-bottom: 12px; text-align: center; letter-spacing: 2px; }
+    .login-box button { width: 100%; padding: 12px; background: #1a1a2e; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; }
+    .login-error { font-size: 13px; color: #e53935; margin-bottom: 10px; display: none; }
   </style>
 </head>
 <body>
 
+<!-- ログインオーバーレイ -->
+<div class="login-overlay open" id="login-overlay">
+  <div class="login-box">
+    <h2>REHAP</h2>
+    <p>管理画面へのアクセスにはパスワードが必要です</p>
+    <input type="password" id="login-password" placeholder="パスワード" onkeydown="if(event.key==='Enter') doLogin()">
+    <div class="login-error" id="login-error">パスワードが正しくありません</div>
+    <button onclick="doLogin()">ログイン</button>
+  </div>
+</div>
+
 <div class="header">
   <h1>REHAP 管理画面</h1>
   <span>Prototype</span>
+  <button onclick="doLogout()" style="margin-left:auto; padding:6px 14px; background:rgba(255,255,255,0.15); color:white; border:none; border-radius:6px; font-size:13px; cursor:pointer;">ログアウト</button>
 </div>
 
 <div class="layout">
@@ -99,7 +121,7 @@
           <button class="btn btn-primary" onclick="openModal('store')">＋ 店舗を追加</button>
         </div>
         <table>
-          <thead><tr><th>店舗ID</th><th>店舗名</th><th>予約URL</th><th>QRリンク</th><th>操作</th></tr></thead>
+          <thead><tr><th>店舗ID</th><th>店舗名</th><th>予約URL</th><th>QRリンク</th><th>QRコード</th><th>QR郵送</th><th>操作</th></tr></thead>
           <tbody id="stores-table"></tbody>
         </table>
       </div>
@@ -111,15 +133,15 @@
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
           <div style="display:flex; align-items:center; gap:8px;">
-            <span style="font-size:14px; color:#888;">対象店舗：</span>
+            <span style="font-size:14px; color:#888;">絞り込み：</span>
             <select id="product-store-filter" onchange="loadProducts()" style="width:200px;">
-              <option value="">店舗を選択</option>
+              <option value="all">📋 全商品（全店舗）</option>
             </select>
           </div>
           <button class="btn btn-primary" onclick="openModal('product')">＋ 商品を追加</button>
         </div>
         <table>
-          <thead><tr><th>画像</th><th>商品名</th><th>説明</th><th>アフィリエイトURL</th><th>操作</th></tr></thead>
+          <thead><tr><th>画像</th><th>商品名</th><th>説明</th><th>掲載店舗</th><th>操作</th></tr></thead>
           <tbody id="products-table"></tbody>
         </table>
       </div>
@@ -202,13 +224,15 @@
   <div class="modal">
     <h3 id="modal-product-title">商品を追加</h3>
     <input type="hidden" id="product-edit-id">
-    <div class="form-group"><label>対象店舗</label>
+    <div class="form-group" id="product-store-group">
+      <label>対象店舗</label>
       <select id="product-store-id"></select>
     </div>
     <div class="form-group"><label>商品名</label><input type="text" id="product-name" placeholder="例: プロテインサプリ"></div>
     <div class="form-group"><label>説明</label><textarea id="product-desc" placeholder="商品の説明"></textarea></div>
     <div class="form-group"><label>アフィリエイトURL</label><input type="text" id="product-url" placeholder="https://..."></div>
     <div class="form-group"><label>商品画像URL</label><input type="text" id="product-image-url" placeholder="https://... (省略可)"></div>
+    <div class="form-group"><label>表示順（空白でランダム）</label><input type="number" id="product-display-order" placeholder="例: 1（空白=ランダム）" min="1" style="width:200px;"></div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('product')">キャンセル</button>
       <button class="btn btn-primary" onclick="saveProduct()">保存</button>
@@ -288,6 +312,7 @@ function openModal(type, data = null) {
     document.getElementById('product-desc').value = data?.description || '';
     document.getElementById('product-url').value = data?.affiliate_url || '';
     document.getElementById('product-image-url').value = data?.image_url || '';
+    document.getElementById('product-display-order').value = data?.display_order ?? '';
     const sel = document.getElementById('product-store-id');
     sel.innerHTML = allStores.map(s => `<option value="${s.id}" ${data?.store_id === s.id ? 'selected' : ''}>${s.name}</option>`).join('');
   }
@@ -324,6 +349,17 @@ async function loadStores() {
           <span class="qr-link">${location.origin}/store/${s.id}</span>
           <button class="btn btn-sm" style="margin-left:6px; background:#f0f0f0; color:#333;" onclick="copyStoreUrl('${s.id}')">コピー</button>
         </td>
+        <td style="text-align:center;">
+          ${s.qr_image
+            ? `<img src="${s.qr_image}" style="width:48px; height:48px; object-fit:contain; border-radius:4px; border:1px solid #eee;" title="QRコード設定済み">`
+            : `<span style="font-size:11px; color:#e53935; background:#ffeaea; padding:3px 8px; border-radius:4px; white-space:nowrap;">QRコード未発行</span>`}
+        </td>
+        <td style="text-align:center;">
+          <label style="display:flex; align-items:center; justify-content:center; gap:4px; cursor:pointer; font-size:12px;">
+            <input type="checkbox" ${s.qr_sent ? 'checked' : ''} onchange="toggleQrSent('${s.id}', this.checked)">
+            郵送済み
+          </label>
+        </td>
         <td>
           <button class="btn btn-sm btn-primary" onclick='openModal("store", ${JSON.stringify(s)})'>編集</button>
           <button class="btn btn-sm btn-danger" onclick="deleteStore('${s.id}')">削除</button>
@@ -332,8 +368,13 @@ async function loadStores() {
     `).join('');
   }
 
-  // フィルター更新
-  ['product-store-filter', 'coupon-store-filter', 'visit-store-filter'].forEach(id => {
+  // フィルター更新（商品は全店舗デフォルト）
+  const productSel = document.getElementById('product-store-filter');
+  const productCurrent = productSel.value || 'all';
+  productSel.innerHTML = '<option value="all">📋 全商品（全店舗）</option>' + allStores.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+  productSel.value = productCurrent;
+
+  ['coupon-store-filter', 'visit-store-filter'].forEach(id => {
     const sel = document.getElementById(id);
     const current = sel.value;
     sel.innerHTML = '<option value="">店舗を選択</option>' + allStores.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
@@ -383,6 +424,15 @@ async function saveStore() {
   loadStores();
 }
 
+async function toggleQrSent(id, sent) {
+  await fetch(`/api/admin/stores/${id}/qr-sent`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ qr_sent: sent }),
+  });
+  showToast(sent ? 'QR郵送済みに設定しました' : '郵送済みを解除しました');
+}
+
 async function deleteStore(id) {
   if (!confirm(`店舗「${id}」を削除しますか？`)) return;
   await fetch('/api/admin/stores/' + id, { method: 'DELETE' });
@@ -392,13 +442,35 @@ async function deleteStore(id) {
 
 // ===== 商品 =====
 async function loadProducts() {
-  const storeId = document.getElementById('product-store-filter').value;
-  if (!storeId) { document.getElementById('products-table').innerHTML = '<tr><td colspan="4" class="empty">店舗を選択してください</td></tr>'; return; }
+  const storeId = document.getElementById('product-store-filter').value || 'all';
   const res = await fetch('/api/admin/products/' + storeId);
   const products = await res.json();
   const tbody = document.getElementById('products-table');
+  const isAll = storeId === 'all';
   if (!products.length) {
-    tbody.innerHTML = '<tr><td colspan="4" class="empty">商品がありません</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="5" class="empty">商品がありません</td></tr>`;
+  } else if (isAll) {
+    // 全店舗表示：商品名でグループ化
+    const grouped = {};
+    products.forEach(p => {
+      if (!grouped[p.name]) grouped[p.name] = { info: p, stores: [] };
+      grouped[p.name].stores.push(p.store_name);
+    });
+    tbody.innerHTML = Object.values(grouped).map(g => `
+      <tr>
+        <td style="width:60px;">
+          ${g.info.image_url
+            ? `<img src="${g.info.image_url}" style="width:48px; height:48px; border-radius:6px; object-fit:cover;">`
+            : `<div style="width:48px; height:48px; border-radius:6px; background:#e0e0e0; display:flex; align-items:center; justify-content:center; font-size:20px;">🛍️</div>`}
+        </td>
+        <td><strong>${g.info.name}</strong>${g.info.display_order != null ? `<br><span style="font-size:11px; color:#1a1a2e; background:#e8f0ff; padding:1px 6px; border-radius:4px;">表示順: ${g.info.display_order}</span>` : `<br><span style="font-size:11px; color:#aaa;">ランダム</span>`}</td>
+        <td style="font-size:13px; color:#666;">${g.info.description || ''}</td>
+        <td style="font-size:12px; color:#888;">${g.stores.join('、')}</td>
+        <td>
+          <button class="btn btn-sm btn-danger" onclick="deleteProductBulk('${g.info.name.replace(/'/g, "\\'")}')">全店舗から削除</button>
+        </td>
+      </tr>
+    `).join('');
   } else {
     tbody.innerHTML = products.map(p => `
       <tr>
@@ -409,7 +481,7 @@ async function loadProducts() {
         </td>
         <td>${p.name}</td>
         <td style="font-size:13px; color:#666;">${p.description || ''}</td>
-        <td style="font-size:12px;"><a href="${p.affiliate_url}" target="_blank" style="color:#1a1a2e;">リンク</a></td>
+        <td style="font-size:12px; color:#888;">この店舗</td>
         <td>
           <button class="btn btn-sm btn-primary" onclick='openModal("product", ${JSON.stringify(p)})'>編集</button>
           <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})">削除</button>
@@ -427,6 +499,7 @@ async function saveProduct() {
     description: document.getElementById('product-desc').value,
     affiliate_url: document.getElementById('product-url').value,
     image_url: document.getElementById('product-image-url').value,
+    display_order: document.getElementById('product-display-order').value,
   };
   await fetch(`/api/admin/products${id ? '/' + id : ''}`, {
     method: id ? 'PUT' : 'POST',
@@ -442,6 +515,13 @@ async function deleteProduct(id) {
   if (!confirm('この商品を削除しますか？')) return;
   await fetch('/api/admin/products/' + id, { method: 'DELETE' });
   showToast('商品を削除しました');
+  loadProducts();
+}
+
+async function deleteProductBulk(name) {
+  if (!confirm(`「${name}」を全店舗から削除しますか？`)) return;
+  await fetch('/api/admin/products-bulk/' + encodeURIComponent(name), { method: 'DELETE' });
+  showToast(`「${name}」を全店舗から削除しました`);
   loadProducts();
 }
 
@@ -535,8 +615,43 @@ function copyStoreUrl(storeId) {
   showToast('URLをコピーしました');
 }
 
+// ===== 認証 =====
+async function checkAuth() {
+  const res = await fetch('/api/admin/me');
+  const data = await res.json();
+  if (data.isAdmin) {
+    document.getElementById('login-overlay').classList.remove('open');
+    loadStores();
+  }
+}
+
+async function doLogin() {
+  const password = document.getElementById('login-password').value;
+  const res = await fetch('/api/admin/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password }),
+  });
+  const data = await res.json();
+  if (data.success) {
+    document.getElementById('login-overlay').classList.remove('open');
+    document.getElementById('login-error').style.display = 'none';
+    loadStores();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('login-password').value = '';
+    document.getElementById('login-password').focus();
+  }
+}
+
+async function doLogout() {
+  await fetch('/api/admin/logout', { method: 'POST' });
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-overlay').classList.add('open');
+}
+
 // 初期化
-loadStores();
+checkAuth();
 </script>
 </body>
 </html>
