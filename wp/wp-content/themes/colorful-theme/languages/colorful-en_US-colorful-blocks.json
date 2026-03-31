@@ -1,0 +1,33 @@
+{
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "plural_forms": "nplurals=1; plural=0;",
+                "lang": "en_US"
+            },
+            "Colorful BLOCKS": [
+                "Colorful BLOCKS"
+            ],
+            "COLORFUL BUTTON": [
+                "COLORFUL BUTTON"
+            ],
+            "カラフルギャラリー": [
+                "Colorful Gallery"
+            ],
+            "セクションを組み合わせてLPを作成！": [
+                "Combine sections to complete your LP!"
+            ],
+            "1クリックでテンプレートから簡単LP作成": [
+                "Create your LP from a template with just one click."
+            ],
+            "あなたオリジナルのデザインをつくろう！": [
+                "Let's create your original design!"
+            ],
+            "コピーしたブロックは「Ctrl + v」で挿入することができます。": [
+                "The copied block can be inserted with \"Ctrl + v\"."
+            ]
+        }
+    }
+}

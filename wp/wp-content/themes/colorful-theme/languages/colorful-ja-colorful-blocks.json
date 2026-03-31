@@ -1,0 +1,48 @@
+{
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "plural_forms": "nplurals=1; plural=0;",
+                "lang": "ja"
+            },
+            "Tilt": [
+                "傾斜"
+            ],
+            "Curve": [
+                "カーブ"
+            ],
+            "Wave": [
+                "波"
+            ],
+            "Triangle": [
+                "三角"
+            ],
+            "Triangle (Large)": [
+                "三角（大）"
+            ],
+            "Type": [
+                "タイプ"
+            ],
+            "Level": [
+                "レベル"
+            ],
+            "Color": [
+                "色"
+            ],
+            "Position (Top / Bottom)": [
+                "位置（上 / 下）"
+            ],
+            "Overlap divider on content": [
+                "コンテンツに区切りを重ねる"
+            ],
+            "Top divider": [
+                "上の仕切り"
+            ],
+            "Bottom divider": [
+                "下の仕切り"
+            ]
+        }
+    }
+}

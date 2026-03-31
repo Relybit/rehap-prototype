@@ -1,0 +1,1588 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LPtemp_Colorful\n"
+"POT-Creation-Date: 2022-11-24 11:11+0900\n"
+"PO-Revision-Date: 2022-11-24 11:10+0900\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Generator: Poedit 3.2\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: style.css\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+"X-Poedit-SearchPathExcluded-1: admin/blocks.js\n"
+"X-Poedit-SearchPathExcluded-2: inc/advanced-custom-fields/*\n"
+
+#: custom-blocks/block.json
+msgctxt "block title"
+msgid "Divider"
+msgstr ""
+
+#: admin/theme-options.php:6
+msgid "テーマオプション"
+msgstr ""
+
+#: admin/theme-options.php:7 admin/theme-options.php:633
+msgid "プログラムの追加"
+msgstr ""
+
+#: admin/theme-options.php:104
+msgid "テーマオプション サイト全体設定"
+msgstr ""
+
+#: admin/theme-options.php:110
+msgid "ブログ機能設定"
+msgstr ""
+
+#: admin/theme-options.php:114
+msgid ""
+"<p>ブログ利用も行いたい時に活用できる機能です。<br>\n"
+"  ですので、通常のLP制作においては利用の必要がない応用機能となります。</p>\n"
+"\n"
+"  <p>こちらでの設定は「全ての投稿ページ」「カテゴリページ」「アーカイブペー"
+"ジ」に反映されます。<br>\n"
+"  「固定ページ」には基本反映されません(つまり個別のLPには影響がありませ"
+"ん)<br>\n"
+"  しかし、下部の「固定ページ設定」より反映させることは可能です。</p>\n"
+"\n"
+"  <p>なお、こちらは上級機能となりますので、<br>\n"
+"  動画マニュアルを参照の上、操作をお願いいたします。</p>"
+msgstr ""
+
+#: admin/theme-options.php:125 inc/register-field.php:326
+msgid "背景設定"
+msgstr ""
+
+#: admin/theme-options.php:127 admin/theme-options.php:198
+#: admin/theme-options.php:298 inc/register-field.php:330
+#: inc/register-field.php:438
+msgid "背景色"
+msgstr ""
+
+#: admin/theme-options.php:132 admin/theme-options.php:203
+#: admin/theme-options.php:303
+msgid "背景画像URL"
+msgstr ""
+
+#: admin/theme-options.php:135
+msgid "ファイルを選択"
+msgstr ""
+
+#: admin/theme-options.php:138 admin/theme-options.php:209
+#: admin/theme-options.php:309 inc/register-field.php:346
+#: inc/register-field.php:476
+msgid "背景画像繰り返し"
+msgstr ""
+
+#: admin/theme-options.php:142 admin/theme-options.php:213
+#: admin/theme-options.php:313 inc/register-field.php:350
+#: inc/register-field.php:480
+msgid "繰り返す"
+msgstr ""
+
+#: admin/theme-options.php:143 admin/theme-options.php:214
+#: admin/theme-options.php:314 inc/register-field.php:351
+#: inc/register-field.php:481
+msgid "横方向に繰り返す"
+msgstr ""
+
+#: admin/theme-options.php:144 admin/theme-options.php:215
+#: admin/theme-options.php:315 inc/register-field.php:352
+#: inc/register-field.php:482
+msgid "縦方向に繰り返す"
+msgstr ""
+
+#: admin/theme-options.php:145 admin/theme-options.php:216
+#: admin/theme-options.php:316 inc/register-field.php:353
+#: inc/register-field.php:483
+msgid "繰り返さない"
+msgstr ""
+
+#: admin/theme-options.php:157 admin/theme-options.php:228
+#: admin/theme-options.php:328 inc/register-field.php:362
+#: inc/register-field.php:503
+msgid "背景画像固定"
+msgstr ""
+
+#: admin/theme-options.php:161 admin/theme-options.php:232
+#: admin/theme-options.php:332 inc/register-field.php:366
+#: inc/register-field.php:507
+msgid "固定する"
+msgstr ""
+
+#: admin/theme-options.php:162 admin/theme-options.php:233
+#: admin/theme-options.php:333 inc/register-field.php:367
+#: inc/register-field.php:508
+msgid "固定しない"
+msgstr ""
+
+#: admin/theme-options.php:174 admin/theme-options.php:245
+#: admin/theme-options.php:345 inc/register-field.php:376
+#: inc/register-field.php:528
+msgid "背景画像の配置"
+msgstr ""
+
+#: admin/theme-options.php:178 admin/theme-options.php:249
+#: admin/theme-options.php:349 inc/register-field.php:380
+#: inc/register-field.php:532
+msgid "右よせ"
+msgstr ""
+
+#: admin/theme-options.php:179 admin/theme-options.php:250
+#: admin/theme-options.php:350 inc/register-field.php:381
+#: inc/register-field.php:533 inc/register-field.php:1066
+msgid "中央"
+msgstr ""
+
+#: admin/theme-options.php:180 admin/theme-options.php:251
+#: admin/theme-options.php:351 inc/register-field.php:382
+#: inc/register-field.php:534
+msgid "左よせ"
+msgstr ""
+
+#: admin/theme-options.php:196 inc/register-field.php:420
+msgid "記事背景設定"
+msgstr ""
+
+#: admin/theme-options.php:263 inc/register-field.php:554
+msgid "影の設定"
+msgstr ""
+
+#: admin/theme-options.php:281 inc/register-field.php:579
+msgid "影の色"
+msgstr ""
+
+#: admin/theme-options.php:291
+msgid "サイドバー背景設定"
+msgstr ""
+
+#: admin/theme-options.php:293
+msgid "文字色"
+msgstr ""
+
+#: admin/theme-options.php:367 inc/register-field.php:631
+#: inc/register-field.php:885
+msgid "応用設定"
+msgstr ""
+
+#: admin/theme-options.php:369 inc/register-field.php:812
+msgid "スマホ最適化(レスポンシブ対応)"
+msgstr ""
+
+#: admin/theme-options.php:386
+msgid "ページ幅設定"
+msgstr ""
+
+#: admin/theme-options.php:391 inc/register-field.php:661
+msgid "Webフォント設定"
+msgstr ""
+
+#: admin/theme-options.php:408
+msgid "フォント設定"
+msgstr ""
+
+#: admin/theme-options.php:413 inc/register-field.php:679
+msgid "設定なし"
+msgstr ""
+
+#: admin/theme-options.php:443
+msgid "フォントサイズ設定"
+msgstr ""
+
+#: admin/theme-options.php:448
+msgid "行間設定"
+msgstr ""
+
+#: admin/theme-options.php:457 inc/register-field.php:962
+msgid "メニュー設定"
+msgstr ""
+
+#: admin/theme-options.php:459 inc/register-field.php:966
+msgid "メニュー表示"
+msgstr ""
+
+#: admin/theme-options.php:476 inc/register-field.php:980
+msgid "【応用】メニュー位置"
+msgstr ""
+
+#: admin/theme-options.php:480 inc/register-field.php:984
+msgid "最上部"
+msgstr ""
+
+#: admin/theme-options.php:481 inc/register-field.php:985
+msgid "全体ヘッダー直下"
+msgstr ""
+
+#: admin/theme-options.php:493 inc/register-field.php:994
+msgid "メニュー名"
+msgstr ""
+
+#: admin/theme-options.php:498 inc/register-field.php:1006
+msgid "メニューデザイン"
+msgstr ""
+
+#: admin/theme-options.php:503 inc/register-field.php:1010
+msgid "パターン1 (黒)"
+msgstr ""
+
+#: admin/theme-options.php:504 inc/register-field.php:1011
+msgid "パターン2 (白)"
+msgstr ""
+
+#: admin/theme-options.php:505 inc/register-field.php:1012
+msgid "パターン3 (赤色のグラデーション)"
+msgstr ""
+
+#: admin/theme-options.php:506 inc/register-field.php:1013
+msgid "パターン4 (ピンクのグラデーション)"
+msgstr ""
+
+#: admin/theme-options.php:507 inc/register-field.php:1014
+msgid "パターン5 (水色のグラデーション)"
+msgstr ""
+
+#: admin/theme-options.php:508 inc/register-field.php:1015
+msgid "パターン6 (シアンのグラデーション)"
+msgstr ""
+
+#: admin/theme-options.php:523
+msgid "2カラム設定"
+msgstr ""
+
+#: admin/theme-options.php:527
+msgid "左サイドバー"
+msgstr ""
+
+#: admin/theme-options.php:528
+msgid "右サイドバー"
+msgstr ""
+
+#: admin/theme-options.php:544
+msgid "ヘッダー"
+msgstr ""
+
+#: admin/theme-options.php:554 admin/theme-options.php:572
+msgid "ウィジットテンプレート"
+msgstr ""
+
+#: admin/theme-options.php:565
+msgid "フッター"
+msgstr ""
+
+#: admin/theme-options.php:583
+msgid "固定ページ設定"
+msgstr ""
+
+#: admin/theme-options.php:584
+msgid "全ての固定ページにも全体設定を反映させる"
+msgstr ""
+
+#: admin/theme-options.php:603
+msgid "ブログ一覧表示設定"
+msgstr ""
+
+#: admin/theme-options.php:608
+msgid "デフォルト"
+msgstr ""
+
+#: admin/theme-options.php:609
+msgid "カード型"
+msgstr ""
+
+#: admin/theme-options.php:634
+msgid ""
+"プログラムを追加する場合は、こちらに記入することをオススメいたします。<br>\n"
+"なお、こちらでのプログラム追加は、全ページに反映されます。"
+msgstr ""
+
+#: admin/theme-options.php:639
+msgid "CSSプログラムの追加"
+msgstr ""
+
+#: admin/theme-options.php:644
+msgid "「head内」にプログラムを追加する"
+msgstr ""
+
+#: admin/theme-options.php:649
+msgid "「body内」にプログラムを追加する"
+msgstr ""
+
+#: archive.php:37
+#, php-format
+msgid "Daily Archives: %s"
+msgstr ""
+
+#: archive.php:39
+#, php-format
+msgid "Monthly Archives: %s"
+msgstr ""
+
+#: archive.php:39
+msgctxt "monthly archives date format"
+msgid "F Y"
+msgstr ""
+
+#: archive.php:41
+#, php-format
+msgid "Yearly Archives: %s"
+msgstr ""
+
+#: archive.php:41
+msgctxt "yearly archives date format"
+msgid "Y"
+msgstr ""
+
+#: archive.php:43
+msgid "Archives"
+msgstr ""
+
+#: author.php:32
+#, php-format
+msgid "Author Archives: %s"
+msgstr ""
+
+#: author.php:53 content.php:57
+#, php-format
+msgid "About %s"
+msgstr ""
+
+#: category.php:29
+#, php-format
+msgid "Category Archives: %s"
+msgstr ""
+
+#: comments.php:31
+#, php-format
+msgid "One thought on &ldquo;%2$s&rdquo;"
+msgid_plural "%1$s thoughts on &ldquo;%2$s&rdquo;"
+msgstr[0] ""
+msgstr[1] ""
+
+#: comments.php:42
+msgid "Comment navigation"
+msgstr ""
+
+#: comments.php:43
+msgid "&larr; Older Comments"
+msgstr ""
+
+#: comments.php:44
+msgid "Newer Comments &rarr;"
+msgstr ""
+
+#: comments.php:53
+msgid "Comments are closed."
+msgstr ""
+
+#: content-card.php:12 content.php:22
+#, php-format
+msgid "Permalink to %s"
+msgstr ""
+
+#: content-card.php:32
+msgid "続きを読む"
+msgstr ""
+
+#: content-none.php:13 index.php:63 search.php:42
+msgid "Nothing Found"
+msgstr ""
+
+#: content-none.php:17 index.php:67
+msgid ""
+"Apologies, but no results were found. Perhaps searching will help find a "
+"related post."
+msgstr ""
+
+#: content-page.php:19 content.php:44 image.php:92
+msgid "Pages:"
+msgstr ""
+
+#: content-page.php:23 content.php:50 functions.php:334 image.php:37
+msgid "Edit"
+msgstr ""
+
+#: content.php:14
+msgid "Featured post"
+msgstr ""
+
+#: content.php:43
+msgid "Continue reading <span class=\"meta-nav\">&rarr;</span>"
+msgstr ""
+
+#: content.php:61
+#, php-format
+msgid "View all posts by %s <span class=\"meta-nav\">&rarr;</span>"
+msgstr ""
+
+#: functions.php:75
+msgid "Primary Menu"
+msgstr ""
+
+#: functions.php:176
+#, php-format
+msgid "Page %s"
+msgstr ""
+
+#: functions.php:201
+msgid "Main Sidebar"
+msgstr ""
+
+#: functions.php:203
+msgid ""
+"Appears on posts and pages except the optional Front Page template, which "
+"has its own widgets"
+msgstr ""
+
+#: functions.php:213 functions.php:223 functions.php:233 functions.php:243
+#: functions.php:253
+msgid ""
+"テーマオプションでウィジェットテンプレートを選択した際に表示されるウィジェッ"
+"トです。"
+msgstr ""
+
+#: functions.php:275
+msgid "Post navigation"
+msgstr ""
+
+#: functions.php:276
+msgid "<span class=\"meta-nav\">&larr;</span> Older posts"
+msgstr ""
+
+#: functions.php:277
+msgid "Newer posts <span class=\"meta-nav\">&rarr;</span>"
+msgstr ""
+
+#: functions.php:302
+msgid "Pingback:"
+msgstr ""
+
+#: functions.php:302
+msgid "(Edit)"
+msgstr ""
+
+#: functions.php:317
+msgid "Post author"
+msgstr ""
+
+#. translators: 1: date, 2: time
+#: functions.php:323
+#, php-format
+msgid "%1$s at %2$s"
+msgstr ""
+
+#: functions.php:329
+msgid "Your comment is awaiting moderation."
+msgstr ""
+
+#: functions.php:338
+msgid "Reply"
+msgstr ""
+
+#: functions.php:357 functions.php:360
+msgid ", "
+msgstr ""
+
+#: functions.php:371
+#, php-format
+msgid "View all posts by %s"
+msgstr ""
+
+#: functions.php:377
+#, php-format
+msgid ""
+"This entry was posted in %1$s and tagged %2$s on %3$s<span class=\"by-author"
+"\"> by %4$s</span>."
+msgstr ""
+
+#: functions.php:379
+#, php-format
+msgid ""
+"This entry was posted in %1$s on %3$s<span class=\"by-author\"> by %4$s</"
+"span>."
+msgstr ""
+
+#: functions.php:381
+#, php-format
+msgid "This entry was posted on %3$s<span class=\"by-author\"> by %4$s</span>."
+msgstr ""
+
+#: functions.php:475 functions.php:476
+msgid "ホバーウィンドウ"
+msgstr ""
+
+#: functions.php:475 functions.php:476 functions.php:486 functions.php:487
+msgid "上級・全体HF"
+msgstr ""
+
+#: functions.php:497 functions.php:498 functions.php:849 functions.php:932
+msgid "オリジナルデザイン"
+msgstr ""
+
+#: functions.php:814
+msgid "【COLORFUL SECTIONSとは？】"
+msgstr ""
+
+#: functions.php:816
+msgid ""
+"<p>COLORFUL SECTIONSは、<br>\n"
+"              複数のブロックであらかじめデザインされている<br>\n"
+"              「セクション」単位のデザインテンプレートをご用意しています。"
+"<br>\n"
+"              <br>\n"
+"              はじめてLPを作成される方や、素早くLPを作りたい方にオススメで"
+"す。<br>\n"
+"              <br>\n"
+"              ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿</p>\n"
+"\n"
+"              <h2>オススメの作り方</h2>\n"
+"              <p>１:<br>\n"
+"              「<a href=\"#blocks7\">LPの上部</a>」→「<a href=\"#blocks8\">LP"
+"の中部</a>」→「<a href=\"#blocks9\">LPの下部</a>」の順番で、<br>\n"
+"              お好きなセクションを設置していくと、効果的なLP構成に基づいた"
+"<br>\n"
+"              LPページが出来上がります。</p>\n"
+"\n"
+"              <p>２：<br>\n"
+"              あとは、それぞれのセクションの文字や画像を置き換えるなど<br>\n"
+"              ご自身のLPをつくっていきましょう！<br>\n"
+"              ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿<br>\n"
+"              →<a href=\"https://lpcolorful.com/member/?page_id=70\" target="
+"\"_blank\">該当するマニュアルはこちら</a>(要ログイン)</p>"
+msgstr ""
+
+#: functions.php:858
+msgid "タイトルなし"
+msgstr ""
+
+#: functions.php:881 functions.php:934
+msgid "LPの上部"
+msgstr ""
+
+#: functions.php:882 functions.php:935
+msgid "こんなお悩みありませんか？"
+msgstr ""
+
+#: functions.php:884 functions.php:936
+msgid "3つの特徴"
+msgstr ""
+
+#: functions.php:887 functions.php:938
+msgid "LPの中部"
+msgstr ""
+
+#: functions.php:888 functions.php:939
+msgid "サービス詳細"
+msgstr ""
+
+#: functions.php:890 functions.php:940
+msgid "お客様の声・実績者の声"
+msgstr ""
+
+#: functions.php:892 functions.php:941
+msgid "プロフィール"
+msgstr ""
+
+#: functions.php:894 functions.php:942
+msgid "こんな方にオススメです"
+msgstr ""
+
+#: functions.php:896 functions.php:943
+msgid "表デザイン"
+msgstr ""
+
+#: functions.php:898 functions.php:944
+msgid "申し込みのステップ"
+msgstr ""
+
+#: functions.php:901 functions.php:946
+msgid "LPの下部"
+msgstr ""
+
+#: functions.php:902 functions.php:947
+msgid "特典"
+msgstr ""
+
+#: functions.php:904 functions.php:948
+msgid "申し込みはこちら"
+msgstr ""
+
+#: functions.php:906 functions.php:949
+msgid "登録はこちら"
+msgstr ""
+
+#: functions.php:908 functions.php:950
+msgid "購入はこちら"
+msgstr ""
+
+#: functions.php:910 functions.php:951
+msgid "よくあるご質問"
+msgstr ""
+
+#: functions.php:913 functions.php:914 functions.php:953 functions.php:954
+msgid "ヘッド"
+msgstr ""
+
+#: functions.php:925 functions.php:960
+msgid "カラフルテンプレーツ"
+msgstr ""
+
+#: functions.php:930
+msgid "COLORFUL SECTIONSとは？"
+msgstr ""
+
+#: functions.php:964
+msgid "コピー"
+msgstr ""
+
+#: functions.php:965
+msgid "挿入"
+msgstr ""
+
+#: functions.php:966
+msgid "選択"
+msgstr ""
+
+#: functions.php:967
+msgid "キャンセル"
+msgstr ""
+
+#: functions.php:968
+msgid "閉じる"
+msgstr ""
+
+#: hover.php:24
+msgid "続きを読む&raquo;"
+msgstr ""
+
+#: hover.php:28
+msgid "サブウィンドウを閉じる"
+msgstr ""
+
+#: image.php:26
+#, php-format
+msgid ""
+"<span class=\"meta-prep meta-prep-entry-date\">Published </span> <span class="
+"\"entry-date\"><time class=\"entry-date\" datetime=\"%1$s\">%2$s</time></"
+"span> at <a href=\"%3$s\" title=\"Link to full-size image\">%4$s &times; "
+"%5$s</a> in <a href=\"%6$s\" title=\"Return to %7$s\" rel=\"gallery\">%8$s</"
+"a>."
+msgstr ""
+
+#: image.php:41
+msgid "&larr; Previous"
+msgstr ""
+
+#: image.php:42
+msgid "Next &rarr;"
+msgstr ""
+
+#: inc/block-patterns.php:8
+msgid "【COLORFUL BLOCKS】"
+msgstr ""
+
+#: inc/block-patterns.php:12
+msgid "セクション枠のデザイン"
+msgstr ""
+
+#: inc/block-patterns.php:16
+msgid "└背景セクション"
+msgstr ""
+
+#: inc/block-patterns.php:20
+msgid "セクション内の上部"
+msgstr ""
+
+#: inc/block-patterns.php:24
+msgid "└セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:28
+msgid "セクション内の中部(レイアウト・スタイル)"
+msgstr ""
+
+#: inc/block-patterns.php:32
+msgid "└文章＋画像"
+msgstr ""
+
+#: inc/block-patterns.php:36
+msgid "└文章のみ"
+msgstr ""
+
+#: inc/block-patterns.php:40
+msgid "└縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:44
+msgid "└プロフィールスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:48
+msgid "└お客様の声"
+msgstr ""
+
+#: inc/block-patterns.php:52
+msgid "└枠"
+msgstr ""
+
+#: inc/block-patterns.php:56
+msgid "セクション内の中部(要素)"
+msgstr ""
+
+#: inc/block-patterns.php:60
+msgid "└小見出し"
+msgstr ""
+
+#: inc/block-patterns.php:64
+msgid "└リスト"
+msgstr ""
+
+#: inc/block-patterns.php:68
+msgid "└吹き出し"
+msgstr ""
+
+#: inc/block-patterns.php:72
+msgid "セクション内の下部"
+msgstr ""
+
+#: inc/block-patterns.php:76
+msgid "└ボタン"
+msgstr ""
+
+#: inc/block-patterns.php:80
+msgid "└登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:84
+msgid "└その他"
+msgstr ""
+
+#: inc/block-patterns.php:88
+msgid "独立セクション"
+msgstr ""
+
+#: inc/block-patterns.php:92
+msgid "└ヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:96
+msgid "└セクション外サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:103
+msgid "COLORFUL BLOCKS"
+msgstr ""
+
+#: inc/block-patterns.php:113
+msgid "オススメの使い方"
+msgstr ""
+
+#: inc/block-patterns.php:146 inc/block-patterns.php:158
+#: inc/block-patterns.php:170 inc/block-patterns.php:182
+#: inc/block-patterns.php:194 inc/block-patterns.php:206
+msgid "子カテゴリよりブロックパターンをお選びください"
+msgstr ""
+
+#: inc/block-patterns.php:220
+msgid "定番｜ベーシック - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:236
+msgid "定番｜ベーシック下線 - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:256
+msgid "定番｜背景 - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:274
+msgid "アレンジ｜吹き出しデザインA - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:290
+msgid "アレンジ｜吹き出しデザインB - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:308
+msgid "アレンジ｜シャドウデザインA - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:324
+msgid "アレンジ｜シャドウデザインB - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:340
+msgid "アレンジ｜斜め型デザイン - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:356
+msgid "アレンジ｜帯型・画像背景 - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:386
+msgid "アレンジ｜斜線背景 - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:398
+msgid "アレンジ｜両端スラッシュ - セクション内サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:413
+msgid "1カラム - 文章＋画像"
+msgstr ""
+
+#: inc/block-patterns.php:443
+msgid "横並び・2カラム(5:5)｜デザインA - 文章＋画像"
+msgstr ""
+
+#: inc/block-patterns.php:477
+msgid "横並び・2カラム(5:5)｜デザインB - 文章＋画像"
+msgstr ""
+
+#: inc/block-patterns.php:518
+msgid "横並び・2カラム(7:3)｜デザインA - 文章＋画像"
+msgstr ""
+
+#: inc/block-patterns.php:552
+msgid "横並び・3カラム - 文章＋画像"
+msgstr ""
+
+#: inc/block-patterns.php:603
+msgid "1カラム(段落ブロック) - 文章のみ"
+msgstr ""
+
+#: inc/block-patterns.php:625
+msgid "横並び・2カラム - 文章のみ"
+msgstr ""
+
+#: inc/block-patterns.php:658
+msgid "縦並び｜デザインA - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:700
+msgid "縦並び｜デザインB - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:786
+msgid "縦並び｜デザインC - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:884
+msgid "縦並び｜デザインD - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:982
+msgid "横並び・2カラム｜デザインA - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1062
+msgid "横並び・2カラム｜デザインB - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1138
+msgid "横並び・2カラム｜デザインC - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1210
+msgid "横並び・2カラム｜デザインD - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1294
+msgid "横並び・3カラム｜デザインA - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1416
+msgid "横並び・3カラム｜デザインB - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1526
+msgid "横並び・3カラム｜デザインC - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1628
+msgid "横並び・3カラム｜デザインD - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1696
+msgid "横並び・3カラム｜デザインE - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1782
+msgid "横並び・3カラム｜デザインF - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1880
+msgid "横並び・3カラム｜デザインG - 縦横カラムスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:1981
+msgid "縦並び｜デザインA - プロフィールスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:2005
+msgid "横並び・2カラム｜デザインA - プロフィールスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:2045
+msgid "横並び・2カラム｜デザインB - プロフィールスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:2098
+msgid "横並び・2カラム｜デザインC - プロフィールスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:2151
+msgid "横並び・2カラム｜デザインD - プロフィールスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:2204
+msgid "横並び・2カラム｜デザインE - プロフィールスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:2257
+msgid "横並び・2カラム｜デザインF - プロフィールスタイル"
+msgstr ""
+
+#: inc/block-patterns.php:2313
+msgid "横並び・2カラム｜デザインA - お客様の声"
+msgstr ""
+
+#: inc/block-patterns.php:2345
+msgid "横並び・2カラム｜デザインB - お客様の声"
+msgstr ""
+
+#: inc/block-patterns.php:2377
+msgid "横並び・2カラム｜デザインC - お客様の声"
+msgstr ""
+
+#: inc/block-patterns.php:2409
+msgid "横並び・2カラム｜デザインD - お客様の声"
+msgstr ""
+
+#: inc/block-patterns.php:2441
+msgid "横並び・2カラム｜デザインE - お客様の声"
+msgstr ""
+
+#: inc/block-patterns.php:2476
+msgid "モダン｜角丸枠1 - 枠"
+msgstr ""
+
+#: inc/block-patterns.php:2498
+msgid "モダン｜角丸枠2 - 枠"
+msgstr ""
+
+#: inc/block-patterns.php:2520
+msgid "モダン｜点線枠1 - 枠"
+msgstr ""
+
+#: inc/block-patterns.php:2542
+msgid "モダン｜点線枠2 - 枠"
+msgstr ""
+
+#: inc/block-patterns.php:2564
+msgid "モダン｜上下枠1 - 枠"
+msgstr ""
+
+#: inc/block-patterns.php:2586
+msgid "モダン｜上下枠2 - 枠"
+msgstr ""
+
+#: inc/block-patterns.php:2608
+msgid "定番｜四角 - 枠"
+msgstr ""
+
+#: inc/block-patterns.php:2630
+msgid "定番｜角丸 - 枠"
+msgstr ""
+
+#: inc/block-patterns.php:2652
+msgid "定番｜へこみ - 枠"
+msgstr ""
+
+#: inc/block-patterns.php:2674
+msgid "定番｜浮出 - 枠"
+msgstr ""
+
+#: inc/block-patterns.php:2699
+msgid "下線｜デザインA - 小見出し"
+msgstr ""
+
+#: inc/block-patterns.php:2715
+msgid "下線｜デザインB - 小見出し"
+msgstr ""
+
+#: inc/block-patterns.php:2735
+msgid "単色背景 - 小見出し"
+msgstr ""
+
+#: inc/block-patterns.php:2749
+msgid "単色背景｜吹き出し - 小見出し"
+msgstr ""
+
+#: inc/block-patterns.php:2761
+msgid "スラッシュ背景 - 小見出し"
+msgstr ""
+
+#: inc/block-patterns.php:2773
+msgid "＼小見出し／ - 小見出し"
+msgstr ""
+
+#: inc/block-patterns.php:2785
+msgid "補足見出し｜角丸 - 小見出し"
+msgstr ""
+
+#: inc/block-patterns.php:2797
+msgid "補足見出し｜吹き出し - 小見出し"
+msgstr ""
+
+#: inc/block-patterns.php:2809
+msgid "補足見出し｜吹き出し・角丸 - 小見出し"
+msgstr ""
+
+#: inc/block-patterns.php:2824
+msgid "丸ブレット｜赤 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:2841
+msgid "丸ブレット｜青 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:2858
+msgid "丸ブレット｜緑 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:2875
+msgid "丸ブレット｜黄緑 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:2892
+msgid "丸ブレット｜灰色 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:2909
+msgid "丸ブレット｜薄い灰色 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:2926
+msgid "チェック｜赤 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:2943
+msgid "チェック｜青 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:2960
+msgid "チェック｜緑 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:2977
+msgid "チェック｜黄緑 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:2994
+msgid "チェック｜灰色 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:3011
+msgid "チェック｜薄い灰色 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:3028
+msgid "被せチェック｜赤 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:3045
+msgid "被せチェック｜青 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:3062
+msgid "被せチェック｜緑 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:3079
+msgid "被せチェック｜黄緑 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:3096
+msgid "被せチェック｜灰色 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:3113
+msgid "被せチェック｜薄い灰色 - リスト"
+msgstr ""
+
+#: inc/block-patterns.php:3133
+msgid "会話風｜デザインA - 吹き出し"
+msgstr ""
+
+#: inc/block-patterns.php:3173
+msgid "会話風｜デザインB - 吹き出し"
+msgstr ""
+
+#: inc/block-patterns.php:3237
+msgid "補足説明吹き出し - 吹き出し"
+msgstr ""
+
+#: inc/block-patterns.php:3268
+msgid "ボタン(四角) - ボタン"
+msgstr ""
+
+#: inc/block-patterns.php:3281
+msgid "ボタン(丸型) - ボタン"
+msgstr ""
+
+#: inc/block-patterns.php:3294
+msgid "ボタン(大サイズ・四角) - ボタン"
+msgstr ""
+
+#: inc/block-patterns.php:3307
+msgid "ボタン(大サイズ・丸型) - ボタン"
+msgstr ""
+
+#: inc/block-patterns.php:3320
+msgid "ボタン(小サイズ・丸型) - ボタン"
+msgstr ""
+
+#: inc/block-patterns.php:3336
+msgid "定番｜青 - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3362
+msgid "モダン｜青 - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3388
+msgid "モダン｜緑 - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3414
+msgid "モダン｜黄色 - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3440
+msgid "モダン｜ピンク - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3466
+msgid "モダン｜紫色 - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3492
+msgid "モダン｜青～紫 - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3518
+msgid "定番｜ベージュ - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3544
+msgid "定番｜茶色 - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3570
+msgid "定番｜赤色 - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3596
+msgid "定番｜黄緑 - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3622
+msgid "定番｜空色 - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3648
+msgid "定番｜グレー - 登録フォーム"
+msgstr ""
+
+#: inc/block-patterns.php:3677
+msgid "コピーライト - その他"
+msgstr ""
+
+#: inc/block-patterns.php:3687
+msgid "特商法等の記載 - その他"
+msgstr ""
+
+#: inc/block-patterns.php:3697
+msgid "ページ内カウントダウン - その他"
+msgstr ""
+
+#: inc/block-patterns.php:3710
+msgid "定番｜透過なし - 背景セクション"
+msgstr ""
+
+#: inc/block-patterns.php:3724
+msgid "定番｜黒透過 - 背景セクション"
+msgstr ""
+
+#: inc/block-patterns.php:3738
+msgid "定番｜白透過 - 背景セクション"
+msgstr ""
+
+#: inc/block-patterns.php:3752
+msgid "定番｜ベーシック(無地背景) - 背景セクション"
+msgstr ""
+
+#: inc/block-patterns.php:3769
+msgid "1カラム - ヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:3801
+msgid "2カラム(7:3) - ヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:3833
+msgid "2カラム(5:5) - ヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:3869
+msgid "単色背景(帯型) - セクション外サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:3887
+msgid "画像背景(帯型) - セクション外サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:3905
+msgid "単色背景(吹き出し) - セクション外サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:3921
+msgid "単色背景(帯型)｜旧デザイン - セクション外サブヘッド"
+msgstr ""
+
+#: inc/block-patterns.php:3937
+msgid "単色背景(吹き出し)｜旧デザイン - セクション外サブヘッド"
+msgstr ""
+
+#: inc/register-field.php:7
+msgid "カウントダウン設定"
+msgstr ""
+
+#: inc/register-field.php:11
+msgid "カウントダウン方法"
+msgstr ""
+
+#: inc/register-field.php:15
+msgid "日時指定方式"
+msgstr ""
+
+#: inc/register-field.php:16
+msgid "アクセス後カウント方式"
+msgstr ""
+
+#: inc/register-field.php:17
+msgid "ワンタイムオファー"
+msgstr ""
+
+#: inc/register-field.php:18
+msgid "カウントダウンOFF"
+msgstr ""
+
+#: inc/register-field.php:27
+msgid "カウントダウン 名前 (例　終了まであと)"
+msgstr ""
+
+#: inc/register-field.php:55
+msgid "カウントダウン 日にち"
+msgstr ""
+
+#: inc/register-field.php:75
+msgid "カウントダウン 時間 (例 00:00:00)"
+msgstr ""
+
+#: inc/register-field.php:98
+msgid ""
+"サイトアクセス後カウントダウン時間(例 : 1日＝24時間　30分＝0.5時間)　小数点第"
+"1位まで"
+msgstr ""
+
+#: inc/register-field.php:115
+msgid "時間"
+msgstr ""
+
+#: inc/register-field.php:122
+msgid "カウントダウン終了後にジャンプするURL (http://〜)"
+msgstr ""
+
+#: inc/register-field.php:145
+msgid "【オプション】カウントダウンの表示単位(テキストデザインのみ反映)"
+msgstr ""
+
+#: inc/register-field.php:160
+msgid "デフォルト(0.01秒単位まで)"
+msgstr ""
+
+#: inc/register-field.php:161
+msgid "分単位まで"
+msgstr ""
+
+#: inc/register-field.php:162
+msgid "秒単位まで"
+msgstr ""
+
+#: inc/register-field.php:171
+msgid "LP上部にカウントダウンを固定表示"
+msgstr ""
+
+#: inc/register-field.php:185
+msgid "⌊　LP上部カウントダウンデザイン"
+msgstr ""
+
+#: inc/register-field.php:189 inc/register-field.php:259
+msgid "デザイン設定なし(黒字・白背景)"
+msgstr ""
+
+#: inc/register-field.php:190 inc/register-field.php:260
+msgid "パターン1（色設定）"
+msgstr ""
+
+#: inc/register-field.php:209
+msgid "カウントダウン文字色"
+msgstr ""
+
+#: inc/register-field.php:232
+msgid "カウントダウン背景色"
+msgstr ""
+
+#: inc/register-field.php:255
+msgid "ページ内カウントダウンデザイン(カスタムボタンより選択して設置できます)"
+msgstr ""
+
+#: inc/register-field.php:261
+msgid "パターン3（円型デザイン）"
+msgstr ""
+
+#: inc/register-field.php:262
+msgid "パターン4（パネルデザインB）"
+msgstr ""
+
+#: inc/register-field.php:270
+msgid "ページ内カウントダウン文字色"
+msgstr ""
+
+#: inc/register-field.php:288
+msgid "ページ内カウントダウン背景色"
+msgstr ""
+
+#: inc/register-field.php:337 inc/register-field.php:456
+msgid "背景画像"
+msgstr ""
+
+#: inc/register-field.php:424
+msgid "記事背景有効化(デフォルトはOFF)"
+msgstr ""
+
+#: inc/register-field.php:635
+msgid ""
+"ページ幅設定(px)　※こちらは編集ページには反映されないので、実際のページをご確"
+"認下さい。"
+msgstr ""
+
+#: inc/register-field.php:648
+msgid ""
+"行間設定　※設定→更新後に、ページを再読み込みすると、編集ページに反映されま"
+"す。"
+msgstr ""
+
+#: inc/register-field.php:675
+msgid "フォントファミリー設定"
+msgstr ""
+
+#: inc/register-field.php:704
+msgid "Webフォントファミリー設定"
+msgstr ""
+
+#: inc/register-field.php:728
+msgid "フォントサイズ設定(px)"
+msgstr ""
+
+#: inc/register-field.php:741
+msgid "ホバーウィンドウ文章"
+msgstr ""
+
+#: inc/register-field.php:775
+msgid "ヘッド画像設定"
+msgstr ""
+
+#: inc/register-field.php:779 inc/register-field.php:889
+msgid ""
+"ヘッダー画像 (こちらの編集ページには表示されないので、実際のページをご確認く"
+"ださい。)"
+msgstr ""
+
+#: inc/register-field.php:808
+msgid "スマホ表示設定"
+msgstr ""
+
+#: inc/register-field.php:826
+msgid ""
+"スマホ表示時の文字サイズ %単位(スマホ最適化がONの時のみ適応)　デフォルトは85%"
+msgstr ""
+
+#: inc/register-field.php:839
+msgid "スマホでのアクセス時にページをジャンプさせる場合のURL (http://〜)"
+msgstr ""
+
+#: inc/register-field.php:918
+msgid "プログラム入力"
+msgstr ""
+
+#: inc/register-field.php:922
+msgid ""
+"プログラム入力(body内)　スクリプト系のプログラムを記入する場合などに活用でき"
+"ます。(&lt;script&gt;〜〜&lt;/script&gt;など)"
+msgstr ""
+
+#: inc/register-field.php:932
+msgid ""
+"プログラム入力(head内)　Google Analyticsのコードを記入する場合などに活用でき"
+"ます。"
+msgstr ""
+
+#: inc/register-field.php:1043 inc/register-field.php:1047
+msgid "固定フッターボタン"
+msgstr ""
+
+#: inc/register-field.php:1052
+msgid "スマホ表示時のみON"
+msgstr ""
+
+#: inc/register-field.php:1062
+msgid "ボタンの位置"
+msgstr ""
+
+#: inc/register-field.php:1067
+msgid "左"
+msgstr ""
+
+#: inc/register-field.php:1068
+msgid "右"
+msgstr ""
+
+#: inc/register-field.php:1086
+msgid "固定フッターボタン画像"
+msgstr ""
+
+#: inc/register-field.php:1106
+msgid "ボタンのクラス入力"
+msgstr ""
+
+#: inc/register-field.php:1129
+msgid "固定フッターボタンテキスト"
+msgstr ""
+
+#: inc/register-field.php:1152
+msgid "リンク先URL"
+msgstr ""
+
+#: inc/register-field.php:1175
+msgid "リンク先の開き方"
+msgstr ""
+
+#: inc/register-field.php:1179
+msgid "新しいウィンドウで開く"
+msgstr ""
+
+#: inc/register-field.php:1180
+msgid "同一のウィンドウに開く"
+msgstr ""
+
+#: inc/register-field.php:1198
+msgid "すべてをプログラム入力する"
+msgstr ""
+
+#: inc/register-field.php:1239
+msgid "テーマオプション設定からの適応(上級設定／通常は操作をお控えください)"
+msgstr ""
+
+#: inc/register-field.php:1243
+msgid "全体ヘッダー・フッター(デフォルトはOFF)"
+msgstr ""
+
+#: inc/register-field.php:1257
+msgid "全体サイト設定(デフォルトはOFF)"
+msgstr ""
+
+#: inc/register-field.php:1271
+msgid "記事レイアウト(デフォルトは1カラム)"
+msgstr ""
+
+#: inc/register-field.php:1275 inc/register-field.php:1313
+msgid "2カラム"
+msgstr ""
+
+#: inc/register-field.php:1276 inc/register-field.php:1314
+msgid "1カラム"
+msgstr ""
+
+#: inc/register-field.php:1305 inc/register-field.php:1309
+msgid "記事レイアウト"
+msgstr ""
+
+#: inc/register-field.php:1343
+msgid "このページにおける個別設定の適応"
+msgstr ""
+
+#: inc/register-field.php:1347
+msgid ""
+"背景設定・記事背景設定(デフォルトはOFF／テーマオプションの全体設定が適応され"
+"ます)"
+msgstr ""
+
+#: index.php:52
+msgid "No posts to display"
+msgstr ""
+
+#: index.php:56
+#, php-format
+msgid "Ready to publish your first post? <a href=\"%s\">Get started here</a>."
+msgstr ""
+
+#: search.php:26
+#, php-format
+msgid "Search Results for: %s"
+msgstr ""
+
+#: search.php:46
+msgid ""
+"Sorry, but nothing matched your search criteria. Please try again with some "
+"different keywords."
+msgstr ""
+
+#: tag.php:29
+#, php-format
+msgid "Tag Archives: %s"
+msgstr ""
+
+#. Theme Name of the plugin/theme
+msgid "LPtemp_Colorful"
+msgstr ""
+
+#. Theme URI of the plugin/theme
+msgid "https://lptemp.com"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"パソコンが苦手な方でも、簡単にランディングページ(LP)の作成が可能なテーマで"
+"す。作りたいときにサクッと作れ、極めたいときにトコトン極められるLPテンプレー"
+"トシステム。"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Seiya Eto"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://pocowan.com/"
+msgstr ""
