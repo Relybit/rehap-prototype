@@ -152,7 +152,7 @@
           <button class="btn btn-primary" onclick="openModal('product')">＋ 商品を追加</button>
         </div>
         <table>
-          <thead><tr><th>画像</th><th>商品名</th><th>説明</th><th>掲載店舗</th><th>操作</th></tr></thead>
+          <thead><tr><th>画像</th><th>商品名</th><th>説明</th><th>成果単価</th><th>成果地点</th><th>掲載店舗</th><th>操作</th></tr></thead>
           <tbody id="products-table"></tbody>
         </table>
       </div>
@@ -726,7 +726,7 @@ async function loadProducts() {
   const tbody = document.getElementById('products-table');
   const isAll = storeId === 'all';
   if (!products.length) {
-    tbody.innerHTML = `<tr><td colspan="5" class="empty">商品がありません</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="empty">商品がありません</td></tr>`;
   } else if (isAll) {
     // 全店舗表示：商品名でグループ化
     const grouped = {};
@@ -743,6 +743,8 @@ async function loadProducts() {
         </td>
         <td><strong>${g.info.name}</strong>${g.info.display_order != null ? `<br><span style="font-size:11px; color:#0F2A4F; background:#E8F6F4; padding:1px 6px; border-radius:4px;">表示順: ${g.info.display_order}</span>` : `<br><span style="font-size:11px; color:#aaa;">ランダム</span>`}</td>
         <td style="font-size:13px; color:#666;">${g.info.description || ''}</td>
+        <td style="font-size:13px;">${g.info.cpa ? `¥${g.info.cpa.toLocaleString()}` : '<span style="color:#aaa;">未設定</span>'}</td>
+        <td style="font-size:13px;">${g.info.conversion_point || '<span style="color:#aaa;">未設定</span>'}</td>
         <td style="font-size:12px; color:#888;">${g.stores.join('、')}</td>
         <td>
           <button class="btn btn-sm btn-danger" onclick="deleteProductBulk('${g.info.name.replace(/'/g, "\\'")}')">全店舗から削除</button>
@@ -759,6 +761,8 @@ async function loadProducts() {
         </td>
         <td>${p.name}</td>
         <td style="font-size:13px; color:#666;">${p.description || ''}</td>
+        <td style="font-size:13px;">${p.cpa ? `¥${p.cpa.toLocaleString()}` : '<span style="color:#aaa;">未設定</span>'}</td>
+        <td style="font-size:13px;">${p.conversion_point || '<span style="color:#aaa;">未設定</span>'}</td>
         <td style="font-size:12px; color:#888;">この店舗</td>
         <td>
           <button class="btn btn-sm btn-primary" onclick='openModal("product", ${JSON.stringify(p)})'>編集</button>

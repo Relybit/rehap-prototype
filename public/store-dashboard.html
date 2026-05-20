@@ -183,7 +183,7 @@
       <p style="font-size:13px; color:#888; margin-bottom:16px;">※ 商品の登録・編集はREHAP運営（リリビット）が行います。掲載を希望しない商品は削除できます。</p>
       <div class="card">
         <table>
-          <thead><tr><th>画像</th><th>商品名</th><th>説明</th><th>リンク</th><th>操作</th></tr></thead>
+          <thead><tr><th>画像</th><th>商品名</th><th>説明</th><th>成果単価</th><th>成果地点</th><th>リンク</th><th>操作</th></tr></thead>
           <tbody id="products-table"></tbody>
         </table>
       </div>
@@ -648,6 +648,8 @@
           </td>
           <td>${p.name}</td>
           <td style="font-size:13px; color:#666;">${p.description || ''}</td>
+          <td style="font-size:13px;">${p.cpa ? `¥${p.cpa.toLocaleString()}` : '<span style="color:#aaa;">未設定</span>'}</td>
+          <td style="font-size:13px;">${p.conversion_point || '<span style="color:#aaa;">未設定</span>'}</td>
           <td style="font-size:12px;"><a href="${p.affiliate_url}" target="_blank" style="color:#1a1a2e;">リンク</a></td>
           <td>
             <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})">削除</button>
