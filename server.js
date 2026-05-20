@@ -997,10 +997,10 @@ app.post('/api/admin/stores', adminAuth, async (req, res) => {
 
 app.put('/api/admin/stores/:id', adminAuth, async (req, res) => {
   const db = await getDb();
-  const { name, description, booking_url, qr_image, qr_sent, referred_by } = req.body;
+  const { name, description, booking_url, qr_image, qr_sent, referred_by, cpa, conversion_point } = req.body;
   db.run(
-    'UPDATE stores SET name = ?, description = ?, booking_url = ?, qr_image = ?, qr_sent = ?, referred_by = ? WHERE id = ?',
-    [name, description, booking_url, qr_image !== undefined ? qr_image : null, qr_sent ? 1 : 0, referred_by || null, req.params.id]
+    'UPDATE stores SET name = ?, description = ?, booking_url = ?, qr_image = ?, qr_sent = ?, referred_by = ?, cpa = ?, conversion_point = ? WHERE id = ?',
+    [name, description, booking_url, qr_image !== undefined ? qr_image : null, qr_sent ? 1 : 0, referred_by || null, cpa || null, conversion_point || null, req.params.id]
   );
   save();
   res.json({ success: true });

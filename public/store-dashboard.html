@@ -3,74 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REHAP 店舗ダッシュボード</title>
+  <link rel="icon" href="/img/favicon.png" type="image/png">
+  <title>リライテン 店舗管理画面</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #f0f2f5; color: #333; }
+    body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #F5F8FC; color: #334155; }
 
-    .header { background: #1a1a2e; color: white; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .header { background: white; color: #0F2A4F; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E8EDF4; }
     .header-left { display: flex; align-items: center; gap: 12px; }
-    .header h1 { font-size: 18px; }
-    .store-badge { font-size: 12px; background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 12px; }
-    .logout-btn { font-size: 13px; color: rgba(255,255,255,0.7); cursor: pointer; background: none; border: 1px solid rgba(255,255,255,0.3); padding: 6px 12px; border-radius: 6px; }
+    .header h1 { font-size: 18px; font-weight: bold; color: #1FA89D; }
+    .store-badge { font-size: 12px; background: #E8F6F4; color: #1FA89D; padding: 4px 10px; border-radius: 12px; font-weight: 600; }
+    .logout-btn { font-size: 13px; color: #5A6B85; cursor: pointer; background: none; border: 1px solid #D0D8E8; padding: 6px 12px; border-radius: 6px; }
+    .logout-btn:hover { border-color: #1FA89D; color: #1FA89D; }
 
-    .layout { display: flex; min-height: calc(100vh - 52px); }
-    .sidebar { width: 200px; background: white; border-right: 1px solid #e0e0e0; padding: 16px 0; flex-shrink: 0; }
-    .sidebar-section { padding: 8px 16px; font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
-    .sidebar a { display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: #555; text-decoration: none; font-size: 14px; cursor: pointer; }
-    .sidebar a:hover, .sidebar a.active { background: #f0f4ff; color: #1a1a2e; font-weight: bold; }
+    .layout { display: flex; min-height: calc(100vh - 49px); }
+    .sidebar { width: 210px; background: white; border-right: 1px solid #E8EDF4; padding: 0; flex-shrink: 0; }
+    .sidebar-logo { padding: 20px 20px 16px; font-size: 20px; font-weight: bold; color: #1FA89D; border-bottom: 1px solid #F0F4F8; margin-bottom: 8px; }
+    .sidebar-section { padding: 12px 20px 4px; font-size: 11px; color: #8896AB; letter-spacing: 0.5px; }
+    .sidebar a { display: flex; align-items: center; padding: 10px 20px; color: #5A6B85; text-decoration: none; font-size: 14px; cursor: pointer; border-left: 3px solid transparent; transition: background 0.12s, color 0.12s; }
+    .sidebar a:hover { background: #F5F8FC; color: #0F2A4F; }
+    .sidebar a.active { background: #E8F6F4; color: #1FA89D; border-left-color: #1FA89D; font-weight: 600; }
 
-    .main { flex: 1; padding: 24px; }
+    .main { flex: 1; padding: 28px; }
     .page { display: none; }
     .page.active { display: block; }
-    h2 { font-size: 20px; margin-bottom: 20px; color: #1a1a2e; }
+    h2 { font-size: 20px; margin-bottom: 20px; color: #0F2A4F; }
 
-    .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 6px rgba(15,42,79,0.07); }
 
     /* 統計 */
-    .stats { display: flex; gap: 16px; margin-bottom: 20px; }
-    .stat-card { background: white; border-radius: 10px; padding: 20px; flex: 1; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-    .stat-num { font-size: 32px; font-weight: bold; color: #1a1a2e; }
-    .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+    .stats { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+    .stat-card { background: white; border-radius: 10px; padding: 20px; flex: 1; min-width: 130px; text-align: center; box-shadow: 0 1px 6px rgba(15,42,79,0.07); }
+    .stat-num { font-size: 32px; font-weight: bold; color: #0F2A4F; }
+    .stat-label { font-size: 12px; color: #8896AB; margin-top: 4px; }
+
+    /* 月間推移グラフ */
+    .chart-wrap { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding: 0 4px; }
+    .chart-bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 4px; height: 100%; justify-content: flex-end; }
+    .chart-bar { width: 100%; background: #1FA89D; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.3s; }
+    .chart-label { font-size: 10px; color: #8896AB; white-space: nowrap; }
+    .chart-count { font-size: 11px; color: #5A6B85; font-weight: bold; }
 
     /* QRコードエリア */
     .qr-area { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
     .qr-url-block { flex: 1; }
-    .qr-url { font-family: monospace; font-size: 15px; background: #f5f5f5; padding: 10px 16px; border-radius: 8px; display: block; margin-bottom: 10px; color: #1a1a2e; word-break: break-all; }
-    .copy-btn { padding: 8px 20px; background: #1a1a2e; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
-    .qr-image-box { width: 140px; height: 140px; border: 2px solid #e0e0e0; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; background: #fafafa; }
+    .qr-url { font-family: monospace; font-size: 15px; background: #F5F8FC; padding: 10px 16px; border-radius: 8px; display: block; margin-bottom: 10px; color: #0F2A4F; word-break: break-all; border: 1px solid #E8EDF4; }
+    .copy-btn { padding: 8px 20px; background: #1FA89D; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    .copy-btn:hover { background: #189186; }
+    .qr-image-box { width: 140px; height: 140px; border: 2px solid #E8EDF4; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; background: #fafafa; }
     .qr-image-box img { width: 100%; height: 100%; object-fit: contain; }
     .qr-image-box .qr-placeholder { text-align: center; color: #ccc; font-size: 11px; line-height: 1.6; }
     .qr-image-box .qr-placeholder span { font-size: 28px; display: block; margin-bottom: 4px; }
 
     /* フォーム */
     .form-group { margin-bottom: 14px; }
-    label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
-    input, textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    label { display: block; font-size: 13px; color: #5A6B85; margin-bottom: 4px; }
+    input, textarea { width: 100%; padding: 10px 12px; border: 1px solid #D0D8E8; border-radius: 6px; font-size: 14px; color: #0F2A4F; }
+    input:focus, textarea:focus { outline: none; border-color: #1FA89D; box-shadow: 0 0 0 3px rgba(31,168,157,0.1); }
     textarea { height: 80px; resize: vertical; }
     .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
-    .btn-primary { background: #1a1a2e; color: white; }
-    .btn-danger { background: #ff4444; color: white; }
+    .btn-primary { background: #1FA89D; color: white; }
+    .btn-primary:hover { background: #189186; }
+    .btn-danger { background: #E74C3C; color: white; }
     .btn-sm { padding: 4px 10px; font-size: 12px; }
     .btn + .btn { margin-left: 6px; }
 
     /* テーブル */
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-size: 12px; color: #888; border-bottom: 1px solid #eee; }
-    td { padding: 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    th { background: #F5F8FC; padding: 10px 12px; text-align: left; font-size: 12px; color: #8896AB; border-bottom: 1px solid #E8EDF4; font-weight: 600; }
+    td { padding: 12px; border-bottom: 1px solid #F0F4F8; vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
 
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; background: #e3f2fd; color: #1565c0; }
-    .empty { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; background: #E8F6F4; color: #1FA89D; font-weight: 600; }
+    .empty { text-align: center; padding: 40px; color: #8896AB; font-size: 14px; }
 
     /* モーダル */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,42,79,0.4); z-index: 100; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
-    .modal { background: white; border-radius: 12px; padding: 24px; width: 460px; max-width: 90vw; }
-    .modal h3 { font-size: 16px; margin-bottom: 16px; }
+    .modal { background: white; border-radius: 12px; padding: 24px; width: 460px; max-width: 90vw; box-shadow: 0 8px 32px rgba(15,42,79,0.15); }
+    .modal h3 { font-size: 16px; margin-bottom: 16px; color: #0F2A4F; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
 
-    .toast { position: fixed; bottom: 24px; right: 24px; background: #333; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 200; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #0F2A4F; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 200; }
     .toast.show { opacity: 1; }
   </style>
 </head>
@@ -78,7 +92,7 @@
 
 <div class="header">
   <div class="header-left">
-    <h1>REHAP</h1>
+    <h1>リライテン</h1>
     <span class="store-badge" id="store-badge">読み込み中...</span>
   </div>
   <button class="logout-btn" onclick="logout()">ログアウト</button>
@@ -86,14 +100,18 @@
 
 <div class="layout">
   <div class="sidebar">
-    <div class="sidebar-section">メニュー</div>
-    <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">📊 ダッシュボード</a>
-    <a onclick="showPage('store-info')" id="nav-store-info">🏪 店舗情報</a>
-    <a onclick="showPage('products')" id="nav-products">🛍️ 商品管理</a>
-    <a onclick="showPage('coupons')" id="nav-coupons">🎟️ クーポン管理</a>
-    <a onclick="showPage('password')" id="nav-password">🔑 パスワード変更</a>
-    <div class="sidebar-section" style="margin-top:16px;">サポート</div>
-    <a href="mailto:rehap.info@relybit.co.jp">✉️ お問い合わせ</a>
+    <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">ダッシュボード</a>
+    <a onclick="showPage('analytics')" id="nav-analytics">詳細分析</a>
+    <a onclick="showPage('products')" id="nav-products">商品管理</a>
+    <a onclick="showPage('menus')" id="nav-menus">メニュー管理</a>
+    <a onclick="showPage('coupons')" id="nav-coupons">クーポン管理</a>
+    <a onclick="showPage('grant-coupon')" id="nav-grant-coupon">即時クーポン付与</a>
+    <a onclick="showPage('campaign-coupons')" id="nav-campaign-coupons">キャンペーンクーポン</a>
+    <a onclick="showPage('store-info')" id="nav-store-info">店舗情報</a>
+    <a onclick="showPage('referral')" id="nav-referral">店舗紹介</a>
+    <a onclick="showPage('password')" id="nav-password">パスワード変更</a>
+    <div class="sidebar-section">サポート</div>
+    <a href="mailto:rehap.info@relybit.co.jp">お問い合わせ</a>
   </div>
 
   <div class="main">
@@ -102,6 +120,10 @@
     <div class="page active" id="page-dashboard">
       <h2>ダッシュボード</h2>
       <div class="stats" id="stats"></div>
+      <div class="card" id="monthly-card" style="display:none;">
+        <h2 style="font-size:15px; margin-bottom:16px;">📈 月間来店推移</h2>
+        <div class="chart-wrap" id="monthly-chart"></div>
+      </div>
       <div class="card">
         <h2 style="font-size:15px; margin-bottom:16px;">🔗 店舗QRリンク</h2>
         <div class="qr-area">
@@ -119,7 +141,7 @@
       <div class="card">
         <h2 style="font-size:15px; margin-bottom:12px;">📋 来店ユーザー</h2>
         <table>
-          <thead><tr><th>ユーザーID</th><th>来店回数</th><th>最終来店日</th></tr></thead>
+          <thead><tr><th>名前</th><th>来店回数</th><th>最終来店日</th></tr></thead>
           <tbody id="visits-table"></tbody>
         </table>
       </div>
@@ -132,7 +154,26 @@
         <div class="form-group"><label>店舗名</label><input type="text" id="info-name"></div>
         <div class="form-group"><label>説明文</label><textarea id="info-desc"></textarea></div>
         <div class="form-group"><label>予約URL</label><input type="text" id="info-booking" placeholder="https://..."></div>
+        <div class="form-group"><label>GoogleマップレビューURL</label><input type="text" id="info-gmaps" placeholder="https://search.google.com/local/writereview?placeid=..."></div>
         <button class="btn btn-primary" onclick="saveInfo()">保存する</button>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <h2 style="font-size:15px; margin-bottom:12px;">📊 アフィリエイト設定（REHAP運営設定）</h2>
+        <div class="form-group">
+          <label>成果単価</label>
+          <div id="info-cpa" style="padding:10px 12px; background:#f5f8fc; border-radius:8px; font-size:14px; color:#334155;">未設定</div>
+        </div>
+        <div class="form-group">
+          <label>成果地点</label>
+          <div id="info-conversion-point" style="padding:10px 12px; background:#f5f8fc; border-radius:8px; font-size:14px; color:#334155;">未設定</div>
+        </div>
+        <p style="font-size:12px; color:#aaa; margin-top:8px;">※ これらの設定はREHAP運営（リリビット）が行います。</p>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <h2 style="font-size:15px; margin-bottom:4px;">📧 月次レポート送信先メール</h2>
+        <p style="font-size:13px; color:#888; margin-bottom:16px;">毎月1日に先月の来店レポートを自動送信します。</p>
+        <div class="form-group"><label>メールアドレス</label><input type="email" id="info-email" placeholder="example@gmail.com"></div>
+        <button class="btn btn-primary" onclick="saveEmail()">メールアドレスを保存</button>
       </div>
     </div>
 
@@ -162,6 +203,116 @@
       </div>
     </div>
 
+    <!-- 詳細分析 -->
+    <div class="page" id="page-analytics">
+      <h2>詳細分析</h2>
+
+      <div class="stats" id="analytics-summary"></div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+
+        <div class="card">
+          <h2 style="font-size:15px; margin-bottom:16px;">👥 来店回数の分布</h2>
+          <div id="chart-distrib"></div>
+        </div>
+
+        <div class="card">
+          <h2 style="font-size:15px; margin-bottom:16px;">📅 曜日別来店傾向</h2>
+          <div id="chart-weekday"></div>
+        </div>
+
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h2 style="font-size:15px; margin-bottom:16px;">📈 月次 新規 vs リピーター</h2>
+        <div id="chart-monthly-nr" style="display:flex; gap:12px; align-items:flex-end; height:140px;"></div>
+        <div style="margin-top:10px; display:flex; gap:16px; font-size:12px;">
+          <span><span style="display:inline-block;width:12px;height:12px;background:#0F2A4F;border-radius:2px;margin-right:4px;"></span>新規</span>
+          <span><span style="display:inline-block;width:12px;height:12px;background:#1FA89D;border-radius:2px;margin-right:4px;"></span>リピーター</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size:15px; margin-bottom:16px;">🎟️ クーポン別使用数</h2>
+        <div id="chart-coupon"></div>
+      </div>
+
+    </div>
+
+    <!-- 即時クーポン付与 -->
+    <div class="page" id="page-grant-coupon">
+      <h2>即時クーポン付与</h2>
+      <div class="card" style="margin-bottom:16px;">
+        <h2 style="font-size:15px; margin-bottom:12px;">👥 来店ユーザー一覧</h2>
+        <p style="font-size:13px; color:#888; margin-bottom:12px;">ユーザーを選択してクーポンを付与してください。</p>
+        <table>
+          <thead><tr><th>名前</th><th>来店回数</th><th>最終来店日</th><th>操作</th></tr></thead>
+          <tbody id="grant-users-table"></tbody>
+        </table>
+        <div id="grant-users-show-more" style="display:none; text-align:center; margin-top:12px;">
+          <button class="btn" style="background:#E8F6F4; color:#1FA89D; font-size:13px;" onclick="showAllGrantUsers()">すべて見る</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2 style="font-size:15px; margin-bottom:12px;">📋 付与履歴</h2>
+        <table>
+          <thead><tr><th>名前</th><th>クーポン名</th><th>付与日</th><th>有効期限</th><th>使用状況</th></tr></thead>
+          <tbody id="granted-history-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- メニュー管理 -->
+    <div class="page" id="page-menus">
+      <h2>メニュー管理</h2>
+      <p style="font-size:13px; color:#888; margin-bottom:16px;">施術メニューを登録します。ユーザー画面の「予約はこちら」の上に表示されます。</p>
+      <div class="card">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+          <button class="btn btn-primary" onclick="openMenuModal()">＋ メニューを追加</button>
+        </div>
+        <table>
+          <thead><tr><th>メニュー名</th><th>説明</th><th>料金</th><th>時間</th><th>個別予約URL</th><th>操作</th></tr></thead>
+          <tbody id="menus-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 店舗紹介 -->
+    <div class="page" id="page-referral">
+      <h2>店舗紹介</h2>
+      <div class="card" style="max-width:500px; margin-bottom:16px;">
+        <h2 style="font-size:15px; margin-bottom:4px;">🔑 あなたの招待コード</h2>
+        <p style="font-size:13px; color:#888; margin-bottom:16px;">このコードを紹介した店舗に伝えてください。3店舗紹介達成で月額無料になります。</p>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div id="referral-code-display" style="font-size:28px; font-weight:bold; letter-spacing:4px; color:#1a1a2e; background:#f5f5f5; padding:12px 24px; border-radius:8px;"></div>
+          <button class="btn btn-primary" onclick="copyReferralCode()">コピー</button>
+        </div>
+      </div>
+      <div class="card" style="max-width:500px;">
+        <h2 style="font-size:15px; margin-bottom:12px;">📊 紹介状況</h2>
+        <div id="referral-status"></div>
+        <table style="margin-top:12px;">
+          <thead><tr><th>店舗ID</th><th>店舗名</th></tr></thead>
+          <tbody id="referral-stores-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- キャンペーンクーポン -->
+    <div class="page" id="page-campaign-coupons">
+      <h2>キャンペーンクーポン管理</h2>
+      <p style="font-size:13px; color:#888; margin-bottom:16px;">来店した全ユーザーが利用できる期間限定クーポンを設定します。</p>
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+          <button class="btn btn-primary" onclick="openCampaignModal()">＋ キャンペーンを追加</button>
+        </div>
+        <table>
+          <thead><tr><th>タイトル</th><th>説明</th><th>期間</th><th>使用数</th><th>操作</th></tr></thead>
+          <tbody id="campaign-coupons-table"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- パスワード変更 -->
     <div class="page" id="page-password">
       <h2>パスワード変更</h2>
@@ -173,6 +324,69 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- メニューモーダル -->
+<div class="modal-overlay" id="modal-menu">
+  <div class="modal">
+    <h3 id="modal-menu-title">メニューを追加</h3>
+    <input type="hidden" id="menu-edit-id">
+    <div class="form-group"><label>メニュー名 <span style="color:red;">*</span></label><input type="text" id="menu-name" placeholder="例：全身整体コース"></div>
+    <div class="form-group"><label>説明</label><textarea id="menu-desc" placeholder="例：全身の骨格矯正を行います"></textarea></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div class="form-group"><label>料金</label><input type="text" id="menu-price" placeholder="例：¥5,000"></div>
+      <div class="form-group"><label>施術時間</label><input type="text" id="menu-duration" placeholder="例：60分"></div>
+    </div>
+    <div class="form-group"><label>個別予約URL（省略時は店舗共通URLを使用）</label><input type="text" id="menu-booking-url" placeholder="https://..."></div>
+    <div class="form-group"><label>表示順</label><input type="number" id="menu-display-order" placeholder="例：1（未入力=最後）" min="1" style="width:180px;"></div>
+    <div class="form-group">
+      <label>メニュー画像</label>
+      <div id="menu-current-image" style="display:none; margin-bottom:10px;">
+        <img id="menu-image-preview" src="" style="width:120px; height:80px; object-fit:cover; border-radius:6px; display:block;">
+        <button type="button" class="btn btn-danger" onclick="deleteMenuImage()" style="margin-top:6px; font-size:12px; padding:4px 10px;">画像を削除</button>
+      </div>
+      <input type="file" id="menu-image-file" accept="image/jpeg,image/png,image/webp" onchange="previewMenuImage(this)">
+      <p style="font-size:11px; color:#888; margin-top:4px;">JPG・PNG・WebP / 5MB以内</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('menu')">キャンセル</button>
+      <button class="btn btn-primary" onclick="saveMenu()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 即時クーポン付与モーダル -->
+<div class="modal-overlay" id="modal-grant-coupon">
+  <div class="modal">
+    <h3>クーポンを付与</h3>
+    <p id="grant-coupon-user-name" style="font-size:13px; color:#555; margin-bottom:12px;"></p>
+    <input type="hidden" id="grant-coupon-user-id">
+    <div class="form-group"><label>クーポン名 <span style="color:red;">*</span></label><input type="text" id="grant-coupon-title" placeholder="例：特別割引クーポン"></div>
+    <div class="form-group"><label>説明</label><textarea id="grant-coupon-desc" placeholder="例：次回施術20%オフ"></textarea></div>
+    <div class="form-group"><label>有効期限</label><input type="date" id="grant-coupon-expires"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('grant-coupon')">キャンセル</button>
+      <button class="btn btn-primary" onclick="submitGrantCoupon()">付与する</button>
+    </div>
+  </div>
+</div>
+
+<!-- キャンペーンクーポンモーダル -->
+<div class="modal-overlay" id="modal-campaign-coupon">
+  <div class="modal">
+    <h3 id="modal-campaign-coupon-title">キャンペーンを追加</h3>
+    <input type="hidden" id="campaign-edit-id">
+    <div class="form-group"><label>タイトル <span style="color:red;">*</span></label><input type="text" id="campaign-title" placeholder="例：GW特別クーポン"></div>
+    <div class="form-group"><label>説明</label><textarea id="campaign-desc" placeholder="例：施術10%オフ"></textarea></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div class="form-group"><label>開始日 <span style="color:red;">*</span></label><input type="date" id="campaign-starts-at"></div>
+      <div class="form-group"><label>終了日 <span style="color:red;">*</span></label><input type="date" id="campaign-ends-at"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('campaign-coupon')">キャンセル</button>
+      <button class="btn btn-primary" onclick="saveCampaignCoupon()">保存</button>
+    </div>
   </div>
 </div>
 
@@ -211,6 +425,82 @@
     if (name === 'products') loadProducts();
     if (name === 'coupons') loadCoupons();
     if (name === 'store-info') loadStoreInfo();
+    if (name === 'analytics') loadAnalytics();
+    if (name === 'menus') loadMenus();
+    if (name === 'grant-coupon') loadGrantCouponPage();
+    if (name === 'campaign-coupons') loadCampaignCoupons();
+    if (name === 'referral') loadReferral();
+  }
+
+  function makeBarChart(containerId, items, labelKey, countKey, color = '#1FA89D') {
+    const max = Math.max(...items.map(i => i[countKey]), 1);
+    document.getElementById(containerId).innerHTML = items.map(item => `
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+        <div style="width:60px; font-size:13px; color:#555; text-align:right; flex-shrink:0;">${item[labelKey]}</div>
+        <div style="flex:1; background:#f0f0f0; border-radius:4px; height:22px; overflow:hidden;">
+          <div style="width:${Math.round(item[countKey] / max * 100)}%; background:${color}; height:100%; border-radius:4px; transition:width 0.4s;"></div>
+        </div>
+        <div style="width:32px; font-size:13px; font-weight:bold; color:#333;">${item[countKey]}</div>
+      </div>
+    `).join('');
+  }
+
+  async function loadAnalytics() {
+    const res = await fetch('/api/store-auth/analytics');
+    const d = await res.json();
+
+    // サマリーカード
+    document.getElementById('analytics-summary').innerHTML = `
+      <div class="stat-card">
+        <div class="stat-num">${d.avgInterval !== null ? d.avgInterval + '日' : '-'}</div>
+        <div class="stat-label">平均来店間隔</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${d.lostUsers}</div>
+        <div class="stat-label">離脱ユーザー<br><span style="font-size:10px;">(30日以上未来店)</span></div>
+      </div>
+    `;
+
+    // 来店回数分布
+    const order = ['1回のみ', '2〜3回', '4〜5回', '6回以上'];
+    const sorted = order.map(g => d.visitDistribution.find(v => v.group === g) || { group: g, count: 0 });
+    makeBarChart('chart-distrib', sorted, 'group', 'count');
+
+    // 曜日別
+    const allDays = ['日','月','火','水','木','金','土'].map(day => {
+      const found = d.weekdayVisits.find(v => v.day === day);
+      return { day, count: found ? found.count : 0 };
+    });
+    makeBarChart('chart-weekday', allDays, 'day', 'count', '#1FA89D');
+
+    // 月次 新規 vs リピーター
+    if (d.monthlyNewRepeat.length > 0) {
+      const maxNR = Math.max(...d.monthlyNewRepeat.map(m => (m.newUsers || 0) + (m.repeatUsers || 0)), 1);
+      document.getElementById('chart-monthly-nr').innerHTML = d.monthlyNewRepeat.map(m => {
+        const total = (m.newUsers || 0) + (m.repeatUsers || 0);
+        const h = Math.round(total / maxNR * 110);
+        const newH = total > 0 ? Math.round((m.newUsers || 0) / total * h) : 0;
+        const repH = h - newH;
+        return `
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; justify-content:flex-end;">
+            <div style="font-size:10px; color:#555;">${total}</div>
+            <div style="width:100%; display:flex; flex-direction:column; border-radius:4px 4px 0 0; overflow:hidden;">
+              <div style="height:${newH}px; background:#0F2A4F;"></div>
+              <div style="height:${repH}px; background:#1FA89D;"></div>
+            </div>
+            <div style="font-size:10px; color:#aaa;">${m.month.slice(5)}月</div>
+          </div>`;
+      }).join('');
+    } else {
+      document.getElementById('chart-monthly-nr').innerHTML = '<div style="color:#aaa;font-size:13px;padding:20px;">データがありません</div>';
+    }
+
+    // クーポン別使用数
+    if (d.couponStats.length > 0) {
+      makeBarChart('chart-coupon', d.couponStats, 'title', 'usage_count', '#1FA89D');
+    } else {
+      document.getElementById('chart-coupon').innerHTML = '<div style="color:#aaa;font-size:13px;padding:20px;">クーポンがありません</div>';
+    }
   }
 
   function openModal(type, data = null) {
@@ -271,14 +561,30 @@
       <div class="stat-card"><div class="stat-num">${data.totalVisits}</div><div class="stat-label">累計来店数</div></div>
       <div class="stat-card"><div class="stat-num">${data.uniqueUsers}</div><div class="stat-label">ユニークユーザー</div></div>
       <div class="stat-card"><div class="stat-num">${data.todayVisits}</div><div class="stat-label">本日の来店</div></div>
+      <div class="stat-card"><div class="stat-num">${data.repeatRate}%</div><div class="stat-label">リピート率</div></div>
+      <div class="stat-card"><div class="stat-num">${data.couponUsageCount}</div><div class="stat-label">クーポン使用回数</div></div>
     `;
+
+    // 月間来店推移グラフ
+    if (data.monthlyVisits && data.monthlyVisits.length > 0) {
+      const max = Math.max(...data.monthlyVisits.map(m => m.count));
+      document.getElementById('monthly-chart').innerHTML = data.monthlyVisits.map(m => `
+        <div class="chart-bar-col">
+          <div class="chart-count">${m.count}</div>
+          <div class="chart-bar" style="height:${max > 0 ? Math.round(m.count / max * 80) : 0}px;"></div>
+          <div class="chart-label">${m.month.slice(5)}月</div>
+        </div>
+      `).join('');
+      document.getElementById('monthly-card').style.display = 'block';
+    }
+
     const tbody = document.getElementById('visits-table');
     if (!data.users.length) {
       tbody.innerHTML = '<tr><td colspan="3" class="empty">来店データがありません</td></tr>';
     } else {
       tbody.innerHTML = data.users.map(u => `
         <tr>
-          <td style="font-family:monospace; font-size:12px; color:#888;">${u.user_id}</td>
+          <td>${u.line_name || '<span style="color:#aaa; font-size:12px;">次回来店時に取得</span>'}</td>
           <td><strong>${u.visit_count}</strong> 回</td>
           <td>${u.last_visit}</td>
         </tr>
@@ -292,6 +598,23 @@
     document.getElementById('info-name').value = store.name;
     document.getElementById('info-desc').value = store.description || '';
     document.getElementById('info-booking').value = store.booking_url || '';
+    document.getElementById('info-gmaps').value = store.google_maps_url || '';
+    document.getElementById('info-email').value = store.email || '';
+    document.getElementById('info-cpa').textContent = store.cpa ? `¥${store.cpa.toLocaleString()} / 件` : '未設定';
+    document.getElementById('info-conversion-point').textContent = store.conversion_point || '未設定';
+  }
+
+  async function saveEmail() {
+    const email = document.getElementById('info-email').value.trim();
+    if (!email) { showToast('メールアドレスを入力してください'); return; }
+    const res = await fetch('/api/store-auth/email', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (data.success) showToast('メールアドレスを保存しました');
+    else showToast(data.error || 'エラーが発生しました');
   }
 
   async function saveInfo() {
@@ -302,6 +625,7 @@
         name: document.getElementById('info-name').value,
         description: document.getElementById('info-desc').value,
         booking_url: document.getElementById('info-booking').value,
+        google_maps_url: document.getElementById('info-gmaps').value,
       })
     });
     document.getElementById('store-badge').textContent = document.getElementById('info-name').value;
@@ -384,6 +708,312 @@
     loadCoupons();
   }
 
+  // ===== 即時クーポン付与 =====
+
+  async function loadGrantCouponPage() {
+    await Promise.all([loadGrantUsers(), loadGrantedHistory()]);
+  }
+
+  let _allGrantUsers = [];
+
+  function renderGrantUserRows(users) {
+    return users.map(u => `
+      <tr>
+        <td>${u.line_name || '<span style="color:#aaa;">名前未取得</span>'}</td>
+        <td>${u.visit_count}回</td>
+        <td>${u.last_visit}</td>
+        <td><button class="btn btn-sm btn-primary" onclick='openGrantModal(${JSON.stringify(u)})'>クーポンを付与</button></td>
+      </tr>
+    `).join('');
+  }
+
+  async function loadGrantUsers() {
+    const res = await fetch('/api/store-auth/users');
+    _allGrantUsers = await res.json();
+    const tbody = document.getElementById('grant-users-table');
+    const moreBtn = document.getElementById('grant-users-show-more');
+    if (!_allGrantUsers.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="empty">来店ユーザーがいません</td></tr>';
+      moreBtn.style.display = 'none';
+      return;
+    }
+    const LIMIT = 10;
+    tbody.innerHTML = renderGrantUserRows(_allGrantUsers.slice(0, LIMIT));
+    if (_allGrantUsers.length > LIMIT) {
+      moreBtn.style.display = 'block';
+      moreBtn.querySelector('button').textContent = `すべて見る（${_allGrantUsers.length}件）`;
+    } else {
+      moreBtn.style.display = 'none';
+    }
+  }
+
+  function showAllGrantUsers() {
+    document.getElementById('grant-users-table').innerHTML = renderGrantUserRows(_allGrantUsers);
+    document.getElementById('grant-users-show-more').style.display = 'none';
+  }
+
+  async function loadGrantedHistory() {
+    const res = await fetch('/api/store-auth/granted-coupons');
+    const coupons = await res.json();
+    const tbody = document.getElementById('granted-history-table');
+    if (!coupons.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">付与履歴がありません</td></tr>';
+      return;
+    }
+    tbody.innerHTML = coupons.map(c => `
+      <tr>
+        <td>${c.line_name || '<span style="color:#aaa;">-</span>'}</td>
+        <td>${c.title}</td>
+        <td>${c.granted_at}</td>
+        <td>${c.expires_at || '<span style="color:#aaa;">なし</span>'}</td>
+        <td>${c.used_at ? `<span style="color:#4caf50;">✓ 使用済（${c.used_at}）</span>` : '<span style="color:#888;">未使用</span>'}</td>
+      </tr>
+    `).join('');
+  }
+
+  function openGrantModal(user) {
+    document.getElementById('grant-coupon-user-id').value = user.user_id;
+    document.getElementById('grant-coupon-user-name').textContent = `対象: ${user.line_name || user.user_id}`;
+    document.getElementById('grant-coupon-title').value = '';
+    document.getElementById('grant-coupon-desc').value = '';
+    document.getElementById('grant-coupon-expires').value = '';
+    openModal('grant-coupon');
+  }
+
+  async function submitGrantCoupon() {
+    const userId = document.getElementById('grant-coupon-user-id').value;
+    const title = document.getElementById('grant-coupon-title').value.trim();
+    if (!title) { showToast('クーポン名を入力してください'); return; }
+    const res = await fetch('/api/store-auth/grant-coupon', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: userId,
+        title,
+        description: document.getElementById('grant-coupon-desc').value,
+        expires_at: document.getElementById('grant-coupon-expires').value || null,
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      closeModal('grant-coupon');
+      showToast('クーポンを付与しました');
+      loadGrantedHistory();
+    } else {
+      showToast('エラーが発生しました');
+    }
+  }
+
+  // ===== メニュー管理 =====
+
+  async function loadMenus() {
+    const res = await fetch('/api/store-auth/menus');
+    const menus = await res.json();
+    const tbody = document.getElementById('menus-table');
+    if (!menus.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="empty">メニューがありません</td></tr>';
+      return;
+    }
+    tbody.innerHTML = menus.map(m => `
+      <tr>
+        <td>
+          <div style="display:flex; align-items:center; gap:8px;">
+            ${m.image_url ? `<img src="${m.image_url}" style="width:48px; height:36px; object-fit:cover; border-radius:4px; flex-shrink:0;">` : '<div style="width:48px; height:36px; background:#eee; border-radius:4px; flex-shrink:0;"></div>'}
+            <strong>${m.name}</strong>
+          </div>
+        </td>
+        <td style="font-size:13px; color:#666;">${m.description || ''}</td>
+        <td style="font-size:13px; color:#e65100; font-weight:bold;">${m.price || '<span style="color:#ccc;">—</span>'}</td>
+        <td style="font-size:13px;">${m.duration || '<span style="color:#ccc;">—</span>'}</td>
+        <td style="font-size:12px;">${m.booking_url ? `<a href="${m.booking_url}" target="_blank" style="color:#1a1a2e;">個別URL</a>` : '<span style="color:#aaa;">共通URLを使用</span>'}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" onclick='openMenuModal(${JSON.stringify(m)})'>編集</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteMenu(${m.id})">削除</button>
+        </td>
+      </tr>`).join('');
+  }
+
+  let _menuImageFile = null;
+
+  function previewMenuImage(input) {
+    if (!input.files[0]) return;
+    _menuImageFile = input.files[0];
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('menu-image-preview').src = e.target.result;
+      document.getElementById('menu-current-image').style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  async function deleteMenuImage() {
+    const id = document.getElementById('menu-edit-id').value;
+    if (id) {
+      await fetch(`/api/store-auth/menus/${id}/image`, { method: 'DELETE' });
+      showToast('画像を削除しました');
+    }
+    document.getElementById('menu-image-file').value = '';
+    document.getElementById('menu-current-image').style.display = 'none';
+    _menuImageFile = null;
+  }
+
+  function openMenuModal(data = null) {
+    document.getElementById('modal-menu-title').textContent = data ? 'メニューを編集' : 'メニューを追加';
+    document.getElementById('menu-edit-id').value = data?.id || '';
+    document.getElementById('menu-name').value = data?.name || '';
+    document.getElementById('menu-desc').value = data?.description || '';
+    document.getElementById('menu-price').value = data?.price || '';
+    document.getElementById('menu-duration').value = data?.duration || '';
+    document.getElementById('menu-booking-url').value = data?.booking_url || '';
+    document.getElementById('menu-display-order').value = data?.display_order ?? '';
+    document.getElementById('menu-image-file').value = '';
+    _menuImageFile = null;
+    const imgDiv = document.getElementById('menu-current-image');
+    if (data?.image_url) {
+      document.getElementById('menu-image-preview').src = data.image_url;
+      imgDiv.style.display = 'block';
+    } else {
+      imgDiv.style.display = 'none';
+    }
+    document.getElementById('modal-menu').classList.add('open');
+  }
+
+  async function saveMenu() {
+    const id = document.getElementById('menu-edit-id').value;
+    const name = document.getElementById('menu-name').value.trim();
+    if (!name) { showToast('メニュー名を入力してください'); return; }
+    const res = await fetch(`/api/store-auth/menus${id ? '/' + id : ''}`, {
+      method: id ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        description: document.getElementById('menu-desc').value,
+        price: document.getElementById('menu-price').value,
+        duration: document.getElementById('menu-duration').value,
+        booking_url: document.getElementById('menu-booking-url').value,
+        display_order: document.getElementById('menu-display-order').value || null,
+      })
+    });
+    const result = await res.json();
+    const savedId = id || result.id;
+    if (_menuImageFile && savedId) {
+      const fd = new FormData();
+      fd.append('image', _menuImageFile);
+      await fetch(`/api/store-auth/menus/${savedId}/image`, { method: 'POST', body: fd });
+      _menuImageFile = null;
+    }
+    closeModal('menu');
+    showToast(id ? 'メニューを更新しました' : 'メニューを追加しました');
+    loadMenus();
+  }
+
+  async function deleteMenu(id) {
+    if (!confirm('このメニューを削除しますか？')) return;
+    await fetch('/api/store-auth/menus/' + id, { method: 'DELETE' });
+    showToast('メニューを削除しました');
+    loadMenus();
+  }
+
+  // ===== 店舗紹介 =====
+
+  async function loadReferral() {
+    const res = await fetch('/api/store-auth/referral');
+    const data = await res.json();
+    document.getElementById('referral-code-display').textContent = data.referral_code || '—';
+    const count = data.referred_stores?.length || 0;
+    const isFree = data.is_free;
+    document.getElementById('referral-status').innerHTML = `
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:8px;">
+        <div style="text-align:center;">
+          <div style="font-size:28px; font-weight:bold; color:${count >= 3 ? '#2e7d32' : '#1a1a2e'};">${count}<span style="font-size:16px; color:#888;">/3</span></div>
+          <div style="font-size:12px; color:#888;">紹介済み店舗数</div>
+        </div>
+        <div style="flex:1; background:#f0f0f0; border-radius:8px; height:12px; overflow:hidden;">
+          <div style="width:${Math.min(count/3*100,100)}%; background:${count>=3?'#2e7d32':'#1a1a2e'}; height:100%; border-radius:8px; transition:width 0.4s;"></div>
+        </div>
+        ${isFree ? '<span style="background:#e8f5e9; color:#2e7d32; padding:4px 10px; border-radius:4px; font-size:13px; font-weight:bold;">✅ 月額無料</span>' : ''}
+      </div>
+      ${count < 3 ? `<p style="font-size:13px; color:#888;">あと${3-count}店舗紹介で月額永久無料になります。</p>` : '<p style="font-size:13px; color:#2e7d32; font-weight:bold;">3店舗達成！月額無料の適用をお待ちください。</p>'}
+    `;
+    const tbody = document.getElementById('referral-stores-table');
+    if (!count) {
+      tbody.innerHTML = '<tr><td colspan="2" class="empty">まだ紹介実績がありません</td></tr>';
+    } else {
+      tbody.innerHTML = data.referred_stores.map(s => `
+        <tr><td style="font-size:12px; color:#888;">${s.id}</td><td>${s.name}</td></tr>`).join('');
+    }
+  }
+
+  function copyReferralCode() {
+    const code = document.getElementById('referral-code-display').textContent;
+    navigator.clipboard.writeText(code);
+    showToast('招待コードをコピーしました');
+  }
+
+  // ===== キャンペーンクーポン =====
+
+  async function loadCampaignCoupons() {
+    const res = await fetch('/api/store-auth/campaign-coupons');
+    const campaigns = await res.json();
+    const tbody = document.getElementById('campaign-coupons-table');
+    if (!campaigns.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">キャンペーンがありません</td></tr>';
+      return;
+    }
+    const today = new Date().toISOString().split('T')[0];
+    tbody.innerHTML = campaigns.map(c => {
+      const isActive = c.starts_at <= today && today <= c.ends_at;
+      const status = isActive
+        ? '<span style="color:#2e7d32; font-weight:bold;">● 実施中</span>'
+        : (c.ends_at < today ? '<span style="color:#aaa;">終了</span>' : '<span style="color:#f57c00;">準備中</span>');
+      return `
+        <tr>
+          <td>${c.title} ${status}</td>
+          <td style="font-size:13px; color:#666;">${c.description || ''}</td>
+          <td style="font-size:12px;">${c.starts_at} 〜 ${c.ends_at}</td>
+          <td><span class="badge">${c.usage_count || 0}回</span></td>
+          <td>
+            <button class="btn btn-sm btn-primary" onclick='openCampaignModal(${JSON.stringify(c)})'>編集</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteCampaignCoupon(${c.id})">削除</button>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function openCampaignModal(data = null) {
+    document.getElementById('modal-campaign-coupon-title').textContent = data ? 'キャンペーンを編集' : 'キャンペーンを追加';
+    document.getElementById('campaign-edit-id').value = data?.id || '';
+    document.getElementById('campaign-title').value = data?.title || '';
+    document.getElementById('campaign-desc').value = data?.description || '';
+    document.getElementById('campaign-starts-at').value = data?.starts_at || '';
+    document.getElementById('campaign-ends-at').value = data?.ends_at || '';
+    document.getElementById('modal-campaign-coupon').classList.add('open');
+  }
+
+  async function saveCampaignCoupon() {
+    const id = document.getElementById('campaign-edit-id').value;
+    const title = document.getElementById('campaign-title').value.trim();
+    const starts_at = document.getElementById('campaign-starts-at').value;
+    const ends_at = document.getElementById('campaign-ends-at').value;
+    if (!title || !starts_at || !ends_at) { showToast('タイトル・開始日・終了日は必須です'); return; }
+    if (starts_at > ends_at) { showToast('終了日は開始日以降にしてください'); return; }
+    await fetch(`/api/store-auth/campaign-coupons${id ? '/' + id : ''}`, {
+      method: id ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, description: document.getElementById('campaign-desc').value, starts_at, ends_at })
+    });
+    closeModal('campaign-coupon');
+    showToast(id ? 'キャンペーンを更新しました' : 'キャンペーンを追加しました');
+    loadCampaignCoupons();
+  }
+
+  async function deleteCampaignCoupon(id) {
+    if (!confirm('このキャンペーンを削除しますか？')) return;
+    await fetch('/api/store-auth/campaign-coupons/' + id, { method: 'DELETE' });
+    showToast('キャンペーンを削除しました');
+    loadCampaignCoupons();
+  }
+
   async function changePassword() {
     const current = document.getElementById('pw-current').value;
     const newPw = document.getElementById('pw-new').value;
@@ -407,5 +1037,11 @@
 
   init();
 </script>
+<footer style="text-align:center;padding:20px 16px 28px;border-top:1px solid #E8EDF4;font-size:12px;color:#8896AB;background:#fff;">
+  <a href="/privacy.html" style="color:#8896AB;text-decoration:none;margin:0 10px;">プライバシーポリシー</a>
+  <span style="color:#D0D8E8;">|</span>
+  <a href="/terms.html" style="color:#8896AB;text-decoration:none;margin:0 10px;">利用規約</a>
+  <p style="margin-top:8px;font-size:11px;">運営：<a href="https://relybit.co.jp" target="_blank" rel="noopener" style="color:#8896AB;text-decoration:none;">株式会社リリビット</a></p>
+</footer>
 </body>
 </html>

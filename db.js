@@ -57,12 +57,50 @@ async function getDb() {
       required_visits INTEGER NOT NULL,
       used_at TEXT NOT NULL
     );
+    CREATE TABLE IF NOT EXISTS user_purchase_coupons (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      store_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      title TEXT NOT NULL,
+      description TEXT,
+      note TEXT,
+      granted_at TEXT NOT NULL,
+      expires_at TEXT,
+      used_at TEXT
+    );
   `);
 
   // マイグレーション
   try { db.run(`ALTER TABLE products ADD COLUMN display_order INTEGER`); } catch(e) {}
   try { db.run(`ALTER TABLE stores ADD COLUMN qr_sent INTEGER DEFAULT 0`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN google_maps_url TEXT`); } catch(e) {}
   try { db.run(`CREATE TABLE IF NOT EXISTS coupon_usages (id INTEGER PRIMARY KEY AUTOINCREMENT, store_id TEXT NOT NULL, user_id TEXT NOT NULL, coupon_id INTEGER NOT NULL, required_visits INTEGER NOT NULL, used_at TEXT NOT NULL)`); } catch(e) {}
+  try { db.run(`CREATE TABLE IF NOT EXISTS user_purchase_coupons (id INTEGER PRIMARY KEY AUTOINCREMENT, store_id TEXT NOT NULL, user_id TEXT NOT NULL, title TEXT NOT NULL, description TEXT, note TEXT, granted_at TEXT NOT NULL, expires_at TEXT, used_at TEXT)`); } catch(e) {}
+  try { db.run(`ALTER TABLE visits ADD COLUMN line_name TEXT`); } catch(e) {}
+  try { db.run(`ALTER TABLE user_purchase_coupons ADD COLUMN notified_at TEXT`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN email TEXT`); } catch(e) {}
+  try { db.run(`CREATE TABLE IF NOT EXISTS campaign_coupons (id INTEGER PRIMARY KEY AUTOINCREMENT, store_id TEXT NOT NULL, title TEXT NOT NULL, description TEXT, starts_at TEXT NOT NULL, ends_at TEXT NOT NULL, created_at TEXT NOT NULL)`); } catch(e) {}
+  try { db.run(`CREATE TABLE IF NOT EXISTS campaign_coupon_usages (id INTEGER PRIMARY KEY AUTOINCREMENT, campaign_coupon_id INTEGER NOT NULL, store_id TEXT NOT NULL, user_id TEXT NOT NULL, used_at TEXT NOT NULL)`); } catch(e) {}
+  try { db.run(`CREATE TABLE IF NOT EXISTS menus (id INTEGER PRIMARY KEY AUTOINCREMENT, store_id TEXT NOT NULL, name TEXT NOT NULL, description TEXT, price TEXT, duration TEXT, booking_url TEXT, display_order INTEGER)`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN referral_code TEXT`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN referred_by TEXT`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN is_free INTEGER DEFAULT 0`); } catch(e) {}
+  try { db.run(`ALTER TABLE menus ADD COLUMN image_url TEXT`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN stripe_customer_id TEXT`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN stripe_subscription_id TEXT`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN subscription_status TEXT DEFAULT 'pending'`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN cpa INTEGER`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN conversion_point TEXT`); } catch(e) {}
+
+  // referral_code 未設定の店舗に自動生成
+  const storesWithoutCode = db.exec("SELECT id FROM stores WHERE referral_code IS NULL OR referral_code = ''");
+  if (storesWithoutCode.length && storesWithoutCode[0].values.length) {
+    for (const [id] of storesWithoutCode[0].values) {
+      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+      db.run('UPDATE stores SET referral_code = ? WHERE id = ?', [code, id]);
+    }
+    save();
+  }
 
   // サンプルデータ
   const exists = db.exec("SELECT id FROM stores WHERE id = 'store001'");

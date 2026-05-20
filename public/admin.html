@@ -3,50 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REHAP 管理画面</title>
+  <link rel="icon" href="/img/favicon.png" type="image/png">
+  <title>リライテン 管理画面</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #f0f2f5; color: #333; }
+    body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #F5F8FC; color: #334155; }
 
-    .header { background: #1a1a2e; color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
-    .header h1 { font-size: 18px; }
+    .header { background: #0F2A4F; color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+    .header h1 { font-size: 18px; font-weight: bold; color: white; }
     .header span { font-size: 12px; opacity: 0.6; background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 4px; }
 
     .layout { display: flex; min-height: calc(100vh - 56px); }
 
     /* サイドバー */
-    .sidebar { width: 220px; background: white; border-right: 1px solid #e0e0e0; padding: 16px 0; flex-shrink: 0; }
-    .sidebar-section { padding: 8px 16px; font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
-    .sidebar a { display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: #555; text-decoration: none; font-size: 14px; cursor: pointer; }
-    .sidebar a:hover, .sidebar a.active { background: #f0f4ff; color: #1a1a2e; font-weight: bold; }
+    .sidebar { width: 220px; background: white; border-right: 1px solid #E8EDF4; padding: 16px 0; flex-shrink: 0; }
+    .sidebar-logo { padding: 12px 16px 16px; font-size: 16px; font-weight: bold; color: #1FA89D; border-bottom: 1px solid #E8EDF4; margin-bottom: 8px; }
+    .sidebar-section { padding: 8px 16px; font-size: 11px; color: #8896AB; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+    .sidebar a { display: flex; align-items: center; gap: 8px; padding: 10px 16px; color: #5A6B85; text-decoration: none; font-size: 14px; cursor: pointer; border-left: 3px solid transparent; }
+    .sidebar a:hover { background: #F5F8FC; color: #0F2A4F; }
+    .sidebar a.active { background: #E8F6F4; color: #0F2A4F; font-weight: bold; border-left-color: #1FA89D; }
 
     /* メイン */
     .main { flex: 1; padding: 24px; overflow-y: auto; }
     .page { display: none; }
     .page.active { display: block; }
 
-    h2 { font-size: 20px; margin-bottom: 20px; color: #1a1a2e; }
+    h2 { font-size: 20px; margin-bottom: 20px; color: #0F2A4F; }
 
     /* カード */
-    .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 6px rgba(15,42,79,0.08); }
 
     /* テーブル */
     table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th { background: #f8f9fa; padding: 10px 12px; text-align: left; font-size: 12px; color: #888; border-bottom: 1px solid #eee; }
-    td { padding: 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    th { background: #F5F8FC; padding: 10px 12px; text-align: left; font-size: 12px; color: #8896AB; border-bottom: 1px solid #E8EDF4; }
+    td { padding: 12px; border-bottom: 1px solid #F0F4F8; vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
 
     /* ボタン */
     .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
-    .btn-primary { background: #1a1a2e; color: white; }
+    .btn-primary { background: #1FA89D; color: white; }
     .btn-danger { background: #ff4444; color: white; }
     .btn-sm { padding: 4px 10px; font-size: 12px; }
     .btn + .btn { margin-left: 6px; }
 
     /* フォーム */
     .form-group { margin-bottom: 14px; }
-    label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
-    input, textarea, select { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    label { display: block; font-size: 13px; color: #5A6B85; margin-bottom: 4px; }
+    input, textarea, select { width: 100%; padding: 8px 12px; border: 1px solid #D0D8E8; border-radius: 6px; font-size: 14px; }
     textarea { height: 80px; resize: vertical; }
     .form-row { display: flex; gap: 12px; }
     .form-row .form-group { flex: 1; }
@@ -55,31 +58,37 @@
     .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
     .modal { background: white; border-radius: 12px; padding: 24px; width: 500px; max-width: 90vw; max-height: 90vh; overflow-y: auto; }
-    .modal h3 { font-size: 16px; margin-bottom: 16px; }
+    .modal h3 { font-size: 16px; margin-bottom: 16px; color: #0F2A4F; }
     .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
 
     /* バッジ */
     .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
-    .badge-blue { background: #e3f2fd; color: #1565c0; }
+    .badge-blue { background: #E8F6F4; color: #1FA89D; }
 
     /* トースト */
-    .toast { position: fixed; bottom: 24px; right: 24px; background: #333; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 200; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #0F2A4F; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 200; }
     .toast.show { opacity: 1; }
 
     /* QRリンク */
-    .qr-link { font-size: 12px; color: #888; font-family: monospace; background: #f5f5f5; padding: 4px 8px; border-radius: 4px; }
+    .qr-link { font-size: 12px; color: #8896AB; font-family: monospace; background: #F5F8FC; padding: 4px 8px; border-radius: 4px; }
 
-    .empty { text-align: center; padding: 40px; color: #aaa; font-size: 14px; }
+    .empty { text-align: center; padding: 40px; color: #8896AB; font-size: 14px; }
 
     /* ログインオーバーレイ */
-    .login-overlay { display: none; position: fixed; inset: 0; background: #1a1a2e; z-index: 999; align-items: center; justify-content: center; }
+    .login-overlay { display: none; position: fixed; inset: 0; background: #0F2A4F; z-index: 999; align-items: center; justify-content: center; }
     .login-overlay.open { display: flex; }
     .login-box { background: white; border-radius: 16px; padding: 40px; width: 360px; text-align: center; }
-    .login-box h2 { font-size: 24px; color: #1a1a2e; margin-bottom: 6px; }
-    .login-box p { font-size: 13px; color: #888; margin-bottom: 24px; }
-    .login-box input { width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; margin-bottom: 12px; text-align: center; letter-spacing: 2px; }
-    .login-box button { width: 100%; padding: 12px; background: #1a1a2e; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; }
+    .login-box h2 { font-size: 24px; color: #0F2A4F; margin-bottom: 6px; }
+    .login-box p { font-size: 13px; color: #8896AB; margin-bottom: 24px; }
+    .login-box input { width: 100%; padding: 12px 16px; border: 1px solid #D0D8E8; border-radius: 8px; font-size: 15px; margin-bottom: 12px; text-align: center; letter-spacing: 2px; }
+    .login-box button { width: 100%; padding: 12px; background: #1FA89D; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; }
     .login-error { font-size: 13px; color: #e53935; margin-bottom: 10px; display: none; }
+
+    /* 店舗詳細タブ */
+    .detail-tab { background: none; border: none; padding: 12px 16px; font-size: 13px; color: #5A6B85; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; white-space: nowrap; }
+    .detail-tab:hover { color: #0F2A4F; }
+    .detail-tab.active { color: #1FA89D; border-bottom-color: #1FA89D; font-weight: bold; }
+    #store-detail-overlay.open { display: flex !important; }
   </style>
 </head>
 <body>
@@ -87,7 +96,7 @@
 <!-- ログインオーバーレイ -->
 <div class="login-overlay open" id="login-overlay">
   <div class="login-box">
-    <h2>REHAP</h2>
+    <h2>リライテン</h2>
     <p>管理画面へのアクセスにはパスワードが必要です</p>
     <input type="password" id="login-password" placeholder="パスワード" onkeydown="if(event.key==='Enter') doLogin()">
     <div class="login-error" id="login-error">パスワードが正しくありません</div>
@@ -96,7 +105,7 @@
 </div>
 
 <div class="header">
-  <h1>REHAP 管理画面</h1>
+  <h1>リライテン 管理画面</h1>
   <span>Prototype</span>
   <button onclick="doLogout()" style="margin-left:auto; padding:6px 14px; background:rgba(255,255,255,0.15); color:white; border:none; border-radius:6px; font-size:13px; cursor:pointer;">ログアウト</button>
 </div>
@@ -104,10 +113,12 @@
 <div class="layout">
   <div class="sidebar">
     <div class="sidebar-section">メニュー</div>
-    <a onclick="showPage('stores')" id="nav-stores" class="active">🏪 店舗管理</a>
-    <a onclick="showPage('products')" id="nav-products">🛍️ 商品管理</a>
-    <a onclick="showPage('coupons')" id="nav-coupons">🎟️ クーポン管理</a>
-    <a onclick="showPage('visits')" id="nav-visits">📊 来店統計</a>
+    <a onclick="showPage('stores')" id="nav-stores" class="active">店舗管理</a>
+    <a onclick="showPage('products')" id="nav-products">商品管理</a>
+    <a onclick="showPage('coupons')" id="nav-coupons">クーポン管理</a>
+    <a onclick="showPage('visits')" id="nav-visits">来店統計</a>
+    <a onclick="showPage('purchase-coupons')" id="nav-purchase-coupons">購入特典</a>
+    <a onclick="showPage('referrals')" id="nav-referrals">紹介管理</a>
   </div>
 
   <div class="main">
@@ -121,7 +132,7 @@
           <button class="btn btn-primary" onclick="openModal('store')">＋ 店舗を追加</button>
         </div>
         <table>
-          <thead><tr><th>店舗ID</th><th>店舗名</th><th>予約URL</th><th>QRリンク</th><th>QRコード</th><th>QR郵送</th><th>操作</th></tr></thead>
+          <thead><tr><th>店舗ID</th><th>店舗名</th><th>サブスク</th><th>QRリンク</th><th>QRコード</th><th>QR郵送</th><th>操作</th></tr></thead>
           <tbody id="stores-table"></tbody>
         </table>
       </div>
@@ -184,6 +195,175 @@
       </div>
     </div>
 
+    <!-- 購入特典クーポン管理 -->
+    <div class="page" id="page-purchase-coupons">
+      <h2>購入特典クーポン管理</h2>
+      <div class="card" style="margin-bottom:16px;">
+        <div style="font-size:13px; color:#666; margin-bottom:16px;">
+          アフィリエイト商品の購入・サービス登録を確認したユーザーに、手動でクーポンを付与できます。
+        </div>
+        <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+          <div>
+            <label style="display:block; font-size:12px; color:#888; margin-bottom:4px;">対象店舗</label>
+            <select id="pc-store-filter" onchange="loadPurchaseCoupons()" style="width:200px; padding:8px; border:1px solid #ddd; border-radius:6px; font-size:14px;">
+              <option value="">店舗を選択</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="openGrantForm()" id="pc-grant-btn" style="display:none;">＋ クーポンを付与する</button>
+        </div>
+      </div>
+
+      <!-- 付与フォーム -->
+      <div class="card" id="pc-grant-form" style="display:none; border:2px solid #1FA89D; margin-bottom:16px;">
+        <h3 style="font-size:15px; color:#0F2A4F; margin-bottom:16px;">クーポンを付与する</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>LINE ユーザーID</label>
+            <input type="text" id="pc-user-id" placeholder="U0a1b2c3d4...">
+          </div>
+          <div class="form-group">
+            <label>有効期限（省略可）</label>
+            <input type="date" id="pc-expires-at">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>クーポンタイトル</label>
+          <input type="text" id="pc-title" placeholder="例: ○○サプリ購入特典 500円OFF">
+        </div>
+        <div class="form-group">
+          <label>クーポン説明</label>
+          <input type="text" id="pc-description" placeholder="例: 次回施術時にご利用ください">
+        </div>
+        <div class="form-group">
+          <label>管理メモ（ユーザーには非表示）</label>
+          <input type="text" id="pc-note" placeholder="例: A8経由でプロテイン購入を確認 2026-04-06">
+        </div>
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <button class="btn btn-primary" onclick="grantPurchaseCoupon()">付与する</button>
+          <button class="btn" onclick="closeGrantForm()">キャンセル</button>
+        </div>
+      </div>
+
+      <!-- 一覧 -->
+      <div class="card">
+        <table>
+          <thead><tr><th>ユーザーID</th><th>クーポン</th><th>付与日</th><th>有効期限</th><th>ステータス</th><th>管理メモ</th><th>操作</th></tr></thead>
+          <tbody id="pc-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 紹介管理 -->
+    <div class="page" id="page-referrals">
+      <h2>紹介管理</h2>
+      <p style="font-size:13px; color:#888; margin-bottom:16px;">3店舗紹介達成した店舗は「無料化する」ボタンで月額無料に変更できます。Stripeサブスクが自動解約されます。</p>
+      <div class="card">
+        <table>
+          <thead><tr><th>店舗ID</th><th>店舗名</th><th>招待コード</th><th>紹介元コード</th><th>紹介数</th><th>月額状態</th></tr></thead>
+          <tbody id="referrals-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 店舗詳細オーバーレイ -->
+<div id="store-detail-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-start;justify-content:flex-end;">
+  <div style="width:min(900px,95vw);height:100vh;background:#F5F8FC;overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,0.15);">
+    <div style="background:#0F2A4F;color:white;padding:16px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;">
+      <span id="detail-store-name" style="font-size:16px;font-weight:bold;flex:1;color:#1FA89D;"></span>
+      <button onclick="openResetPasswordModal()" style="padding:6px 14px;background:rgba(255,255,255,0.15);color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer;">パスワードリセット</button>
+      <button onclick="closeStoreDetail()" style="padding:6px 14px;background:rgba(255,255,255,0.15);color:white;border:none;border-radius:6px;font-size:13px;cursor:pointer;">✕ 閉じる</button>
+    </div>
+    <!-- タブ -->
+    <div style="display:flex;gap:0;background:white;border-bottom:2px solid #E8EDF4;padding:0 24px;position:sticky;top:56px;z-index:9;">
+      <button class="detail-tab active" onclick="switchDetailTab('overview')" id="dtab-overview">概要</button>
+      <button class="detail-tab" onclick="switchDetailTab('analytics')" id="dtab-analytics">詳細分析</button>
+      <button class="detail-tab" onclick="switchDetailTab('users')" id="dtab-users">来店ユーザー</button>
+      <button class="detail-tab" onclick="switchDetailTab('products')" id="dtab-products">商品</button>
+      <button class="detail-tab" onclick="switchDetailTab('menus')" id="dtab-menus">メニュー</button>
+      <button class="detail-tab" onclick="switchDetailTab('coupons')" id="dtab-coupons">クーポン</button>
+      <button class="detail-tab" onclick="switchDetailTab('purchase')" id="dtab-purchase">購入特典</button>
+      <button class="detail-tab" onclick="switchDetailTab('campaign')" id="dtab-campaign">キャンペーン</button>
+    </div>
+    <div style="padding:24px;">
+      <!-- 概要 -->
+      <div id="detail-section-overview" class="detail-section">
+        <div id="detail-stats" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;"></div>
+        <div class="card">
+          <h2 style="font-size:14px;margin-bottom:12px;">月次来店数（直近6ヶ月）</h2>
+          <div id="detail-monthly-chart" style="display:flex;gap:8px;align-items:flex-end;height:100px;"></div>
+        </div>
+      </div>
+      <!-- 詳細分析 -->
+      <div id="detail-section-analytics" class="detail-section" style="display:none;">
+        <div style="display:flex;gap:12px;margin-bottom:16px;">
+          <div class="card" style="flex:1;text-align:center;">
+            <div id="detail-avg-interval" style="font-size:28px;font-weight:bold;color:#0F2A4F;">-</div>
+            <div style="font-size:12px;color:#8896AB;margin-top:4px;">平均来店間隔</div>
+          </div>
+          <div class="card" style="flex:1;text-align:center;">
+            <div id="detail-lost-users" style="font-size:28px;font-weight:bold;color:#0F2A4F;">-</div>
+            <div style="font-size:12px;color:#8896AB;margin-top:4px;">離脱ユーザー（30日以上未来店）</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+          <div class="card"><h2 style="font-size:14px;margin-bottom:12px;">来店回数の分布</h2><div id="detail-chart-distrib"></div></div>
+          <div class="card"><h2 style="font-size:14px;margin-bottom:12px;">曜日別来店傾向</h2><div id="detail-chart-weekday"></div></div>
+        </div>
+        <div class="card" style="margin-bottom:16px;">
+          <h2 style="font-size:14px;margin-bottom:12px;">月次 新規 vs リピーター</h2>
+          <div id="detail-chart-monthly-nr" style="display:flex;gap:12px;align-items:flex-end;height:120px;"></div>
+          <div style="margin-top:8px;display:flex;gap:16px;font-size:12px;">
+            <span><span style="display:inline-block;width:12px;height:12px;background:#0F2A4F;border-radius:2px;margin-right:4px;"></span>新規</span>
+            <span><span style="display:inline-block;width:12px;height:12px;background:#1FA89D;border-radius:2px;margin-right:4px;"></span>リピーター</span>
+          </div>
+        </div>
+        <div class="card"><h2 style="font-size:14px;margin-bottom:12px;">クーポン別使用数</h2><div id="detail-chart-coupon"></div></div>
+      </div>
+      <!-- 来店ユーザー -->
+      <div id="detail-section-users" class="detail-section" style="display:none;">
+        <div class="card"><table><thead><tr><th>LINE名</th><th>来店回数</th><th>最終来店日</th></tr></thead><tbody id="detail-users-table"></tbody></table></div>
+      </div>
+      <!-- 商品 -->
+      <div id="detail-section-products" class="detail-section" style="display:none;">
+        <div class="card"><table><thead><tr><th>商品名</th><th>説明</th><th>アフィリエイトURL</th></tr></thead><tbody id="detail-products-table"></tbody></table></div>
+      </div>
+      <!-- メニュー -->
+      <div id="detail-section-menus" class="detail-section" style="display:none;">
+        <div class="card"><table><thead><tr><th>メニュー名</th><th>料金</th><th>時間</th><th>説明</th></tr></thead><tbody id="detail-menus-table"></tbody></table></div>
+      </div>
+      <!-- クーポン -->
+      <div id="detail-section-coupons" class="detail-section" style="display:none;">
+        <div class="card"><table><thead><tr><th>タイトル</th><th>説明</th><th>解放条件</th><th>使用回数</th></tr></thead><tbody id="detail-coupons-table"></tbody></table></div>
+      </div>
+      <!-- 購入特典 -->
+      <div id="detail-section-purchase" class="detail-section" style="display:none;">
+        <div class="card"><table><thead><tr><th>ユーザー</th><th>クーポン</th><th>付与日</th><th>有効期限</th><th>ステータス</th></tr></thead><tbody id="detail-purchase-table"></tbody></table></div>
+      </div>
+      <!-- キャンペーン -->
+      <div id="detail-section-campaign" class="detail-section" style="display:none;">
+        <div class="card"><table><thead><tr><th>タイトル</th><th>期間</th><th>使用回数</th></tr></thead><tbody id="detail-campaign-table"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- パスワードリセットモーダル -->
+<div class="modal-overlay" id="modal-reset-password">
+  <div class="modal" style="max-width:400px;">
+    <h3>パスワードリセット</h3>
+    <p style="font-size:13px;color:#5A6B85;margin-bottom:16px;"><strong id="reset-pw-store-name"></strong> のパスワードを変更します</p>
+    <div class="form-group">
+      <label>新しいパスワード（4文字以上）</label>
+      <input type="text" id="reset-pw-input" placeholder="例: newpass123">
+    </div>
+    <div id="reset-pw-error" style="font-size:12px;color:#e53935;margin-bottom:8px;display:none;"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('reset-password')">キャンセル</button>
+      <button class="btn btn-primary" onclick="execResetPassword()">変更する</button>
+    </div>
   </div>
 </div>
 
@@ -196,6 +376,9 @@
     <div class="form-group"><label>店舗名</label><input type="text" id="store-name" placeholder="例: リラックス整体院 渋谷店"></div>
     <div class="form-group"><label>説明</label><textarea id="store-desc" placeholder="店舗の説明文"></textarea></div>
     <div class="form-group"><label>予約URL</label><input type="text" id="store-booking" placeholder="https://..."></div>
+    <div class="form-group"><label>紹介元コード（紹介で登録の場合）</label><input type="text" id="store-referred-by" placeholder="例: ABC123（省略可）" style="text-transform:uppercase;"></div>
+    <div class="form-group"><label>成果単価（円）</label><input type="number" id="store-cpa" placeholder="例: 500" min="0"></div>
+    <div class="form-group"><label>成果地点</label><input type="text" id="store-conversion-point" placeholder="例: 来店・会員登録・購入など"></div>
     <div class="form-group">
       <label>QRコード画像</label>
       <div style="display:flex; align-items:center; gap:16px; margin-top:6px;">
@@ -215,6 +398,21 @@
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('store')">キャンセル</button>
       <button class="btn btn-primary" onclick="saveStore()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 無料化確認モーダル -->
+<div class="modal-overlay" id="modal-free-confirm">
+  <div class="modal" style="max-width:420px;">
+    <h3>月額無料への変更確認</h3>
+    <p id="free-confirm-text" style="margin:12px 0; font-size:14px; line-height:1.6;"></p>
+    <p style="font-size:13px; color:#c62828; background:#fff3f3; padding:12px; border-radius:6px; margin-bottom:4px;">
+      ⚠️ Stripeのサブスクリプションが自動解約されます。この操作は取り消せません。
+    </p>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('free-confirm')">キャンセル</button>
+      <button class="btn btn-primary" onclick="confirmIsFree()" style="background:#2e7d32;">確定する</button>
     </div>
   </div>
 </div>
@@ -258,6 +456,27 @@
   </div>
 </div>
 
+<!-- 店舗削除確認モーダル -->
+<div class="modal-overlay" id="modal-delete-store">
+  <div class="modal" style="max-width:420px;">
+    <h3 style="color:#c62828;">店舗の削除</h3>
+    <p style="font-size:14px; margin-bottom:8px;">削除する店舗：<strong id="delete-store-label"></strong></p>
+    <div style="background:#ffeaea; border:1px solid #ffcdd2; border-radius:8px; padding:14px 16px; margin-bottom:20px; font-size:13px; color:#b71c1c; line-height:1.7;">
+      この操作は取り消せません。<br>
+      店舗に関連するすべてのデータ（来店履歴・クーポン・商品など）が完全に削除されます。
+    </div>
+    <div class="form-group">
+      <label>管理画面のパスワードを入力して確認してください</label>
+      <input type="password" id="delete-confirm-password" placeholder="パスワード" onkeydown="if(event.key==='Enter') execDeleteStore()">
+      <div id="delete-password-error" style="font-size:12px; color:#e53935; margin-top:6px; display:none;">パスワードが正しくありません</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeDeleteModal()">キャンセル</button>
+      <button class="btn btn-danger" onclick="execDeleteStore()">削除する</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -272,6 +491,8 @@ function showPage(name) {
   if (name === 'products') loadProducts();
   if (name === 'coupons') loadCoupons();
   if (name === 'visits') loadVisits();
+  if (name === 'purchase-coupons') loadPurchaseCoupons();
+  if (name === 'referrals') loadReferrals();
 }
 
 // トースト通知
@@ -292,6 +513,9 @@ function openModal(type, data = null) {
     document.getElementById('store-name').value = data?.name || '';
     document.getElementById('store-desc').value = data?.description || '';
     document.getElementById('store-booking').value = data?.booking_url || '';
+    document.getElementById('store-referred-by').value = data?.referred_by || '';
+    document.getElementById('store-cpa').value = data?.cpa || '';
+    document.getElementById('store-conversion-point').value = data?.conversion_point || '';
     document.getElementById('store-qr-data').value = data?.qr_image || '';
     document.getElementById('store-qr-file').value = '';
     if (data?.qr_image) {
@@ -337,14 +561,21 @@ async function loadStores() {
   allStores = await res.json();
 
   const tbody = document.getElementById('stores-table');
+  const statusMap = {
+    pending:        '<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;font-size:11px;white-space:nowrap;">⚪ 未払い</span>',
+    active:         '<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:4px;font-size:11px;white-space:nowrap;">🟢 支払済み</span>',
+    free:           '<span style="background:#e0f2fe;color:#0369a1;padding:2px 8px;border-radius:4px;font-size:11px;white-space:nowrap;">🎉 無料</span>',
+    canceled:       '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:4px;font-size:11px;white-space:nowrap;">❌ 解約</span>',
+    payment_failed: '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:4px;font-size:11px;white-space:nowrap;">⚠️ 支払失敗</span>',
+  };
   if (!allStores.length) {
-    tbody.innerHTML = '<tr><td colspan="5" class="empty">店舗がありません</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">店舗がありません</td></tr>';
   } else {
     tbody.innerHTML = allStores.map(s => `
       <tr>
         <td><span class="badge badge-blue">${s.id}</span></td>
         <td>${s.name}</td>
-        <td style="font-size:12px; color:#888;">${s.booking_url ? '設定済み' : '未設定'}</td>
+        <td>${statusMap[s.subscription_status] || statusMap.pending}</td>
         <td>
           <span class="qr-link">${location.origin}/store/${s.id}</span>
           <button class="btn btn-sm" style="margin-left:6px; background:#f0f0f0; color:#333;" onclick="copyStoreUrl('${s.id}')">コピー</button>
@@ -361,7 +592,9 @@ async function loadStores() {
           </label>
         </td>
         <td>
+          <button class="btn btn-sm" style="background:#E8F6F4;color:#1FA89D;" onclick="openStoreDetail('${s.id}','${s.name.replace(/'/g,"\\'")}')">詳細</button>
           <button class="btn btn-sm btn-primary" onclick='openModal("store", ${JSON.stringify(s)})'>編集</button>
+          <button class="btn btn-sm" style="background:#f0f4ff;color:#3730a3;" onclick="copyPaymentLink('${s.id}')" title="支払いリンクをコピー">💳 支払いリンク</button>
           <button class="btn btn-sm btn-danger" onclick="deleteStore('${s.id}')">削除</button>
         </td>
       </tr>
@@ -374,7 +607,7 @@ async function loadStores() {
   productSel.innerHTML = '<option value="all">📋 全商品（全店舗）</option>' + allStores.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
   productSel.value = productCurrent;
 
-  ['coupon-store-filter', 'visit-store-filter'].forEach(id => {
+  ['coupon-store-filter', 'visit-store-filter', 'pc-store-filter'].forEach(id => {
     const sel = document.getElementById(id);
     const current = sel.value;
     sel.innerHTML = '<option value="">店舗を選択</option>' + allStores.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
@@ -412,6 +645,9 @@ async function saveStore() {
     description: document.getElementById('store-desc').value,
     booking_url: document.getElementById('store-booking').value,
     qr_image: document.getElementById('store-qr-data').value || null,
+    referred_by: document.getElementById('store-referred-by').value.toUpperCase() || null,
+    cpa: document.getElementById('store-cpa').value ? parseInt(document.getElementById('store-cpa').value) : null,
+    conversion_point: document.getElementById('store-conversion-point').value || null,
   };
   const isEdit = !!document.getElementById('store-edit-id').value;
   await fetch(`/api/admin/stores${isEdit ? '/' + id : ''}`, {
@@ -424,6 +660,14 @@ async function saveStore() {
   loadStores();
 }
 
+async function copyPaymentLink(storeId) {
+  const res = await fetch(`/api/admin/stores/${storeId}/payment-link`);
+  if (!res.ok) { showToast('支払いリンクが未設定です（STRIPE_PAYMENT_LINK_URL を .env に設定してください）'); return; }
+  const { url } = await res.json();
+  await navigator.clipboard.writeText(url);
+  showToast('支払いリンクをコピーしました');
+}
+
 async function toggleQrSent(id, sent) {
   await fetch(`/api/admin/stores/${id}/qr-sent`, {
     method: 'PATCH',
@@ -433,9 +677,39 @@ async function toggleQrSent(id, sent) {
   showToast(sent ? 'QR郵送済みに設定しました' : '郵送済みを解除しました');
 }
 
-async function deleteStore(id) {
-  if (!confirm(`店舗「${id}」を削除しますか？`)) return;
-  await fetch('/api/admin/stores/' + id, { method: 'DELETE' });
+let _deleteStoreId = null;
+
+function deleteStore(id) {
+  _deleteStoreId = id;
+  const store = allStores.find(s => s.id === id);
+  document.getElementById('delete-store-label').textContent = store ? `${store.name}（${id}）` : id;
+  document.getElementById('delete-confirm-password').value = '';
+  document.getElementById('delete-password-error').style.display = 'none';
+  document.getElementById('modal-delete-store').classList.add('open');
+  setTimeout(() => document.getElementById('delete-confirm-password').focus(), 100);
+}
+
+function closeDeleteModal() {
+  document.getElementById('modal-delete-store').classList.remove('open');
+  _deleteStoreId = null;
+}
+
+async function execDeleteStore() {
+  const password = document.getElementById('delete-confirm-password').value;
+  const verifyRes = await fetch('/api/admin/verify-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password }),
+  });
+  const { ok } = await verifyRes.json();
+  if (!ok) {
+    document.getElementById('delete-password-error').style.display = 'block';
+    document.getElementById('delete-confirm-password').value = '';
+    document.getElementById('delete-confirm-password').focus();
+    return;
+  }
+  await fetch('/api/admin/stores/' + _deleteStoreId, { method: 'DELETE' });
+  closeDeleteModal();
   showToast('店舗を削除しました');
   loadStores();
 }
@@ -463,7 +737,7 @@ async function loadProducts() {
             ? `<img src="${g.info.image_url}" style="width:48px; height:48px; border-radius:6px; object-fit:cover;">`
             : `<div style="width:48px; height:48px; border-radius:6px; background:#e0e0e0; display:flex; align-items:center; justify-content:center; font-size:20px;">🛍️</div>`}
         </td>
-        <td><strong>${g.info.name}</strong>${g.info.display_order != null ? `<br><span style="font-size:11px; color:#1a1a2e; background:#e8f0ff; padding:1px 6px; border-radius:4px;">表示順: ${g.info.display_order}</span>` : `<br><span style="font-size:11px; color:#aaa;">ランダム</span>`}</td>
+        <td><strong>${g.info.name}</strong>${g.info.display_order != null ? `<br><span style="font-size:11px; color:#0F2A4F; background:#E8F6F4; padding:1px 6px; border-radius:4px;">表示順: ${g.info.display_order}</span>` : `<br><span style="font-size:11px; color:#aaa;">ランダム</span>`}</td>
         <td style="font-size:13px; color:#666;">${g.info.description || ''}</td>
         <td style="font-size:12px; color:#888;">${g.stores.join('、')}</td>
         <td>
@@ -583,15 +857,15 @@ async function loadVisits() {
 
   document.getElementById('visit-stats').innerHTML = `
     <div class="card" style="flex:1; text-align:center;">
-      <div style="font-size:28px; font-weight:bold; color:#1a1a2e;">${data.totalVisits}</div>
+      <div style="font-size:28px; font-weight:bold; color:#0F2A4F;">${data.totalVisits}</div>
       <div style="font-size:12px; color:#888; margin-top:4px;">累計来店数</div>
     </div>
     <div class="card" style="flex:1; text-align:center;">
-      <div style="font-size:28px; font-weight:bold; color:#1a1a2e;">${data.uniqueUsers}</div>
+      <div style="font-size:28px; font-weight:bold; color:#0F2A4F;">${data.uniqueUsers}</div>
       <div style="font-size:12px; color:#888; margin-top:4px;">ユニークユーザー数</div>
     </div>
     <div class="card" style="flex:1; text-align:center;">
-      <div style="font-size:28px; font-weight:bold; color:#1a1a2e;">${data.todayVisits}</div>
+      <div style="font-size:28px; font-weight:bold; color:#0F2A4F;">${data.todayVisits}</div>
       <div style="font-size:12px; color:#888; margin-top:4px;">本日の来店数</div>
     </div>
   `;
@@ -613,6 +887,156 @@ async function loadVisits() {
 function copyStoreUrl(storeId) {
   navigator.clipboard.writeText(`${location.origin}/store/${storeId}`);
   showToast('URLをコピーしました');
+}
+
+// ===== 購入特典クーポン =====
+async function loadPurchaseCoupons() {
+  const storeId = document.getElementById('pc-store-filter').value;
+  const grantBtn = document.getElementById('pc-grant-btn');
+  if (!storeId) {
+    document.getElementById('pc-table').innerHTML = '<tr><td colspan="7" class="empty">店舗を選択してください</td></tr>';
+    grantBtn.style.display = 'none';
+    return;
+  }
+  grantBtn.style.display = 'inline-block';
+  const res = await fetch('/api/admin/purchase-coupons/' + storeId);
+  const coupons = await res.json();
+  const tbody = document.getElementById('pc-table');
+  const today = new Date().toISOString().split('T')[0];
+  if (!coupons.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">付与済みクーポンがありません</td></tr>';
+    return;
+  }
+  tbody.innerHTML = coupons.map(c => {
+    const isUsed = !!c.used_at;
+    const isExpired = !isUsed && c.expires_at && c.expires_at < today;
+    const status = isUsed
+      ? `<span class="badge" style="background:#e8f5e9; color:#2e7d32;">✅ 使用済み ${c.used_at}</span>`
+      : isExpired
+        ? `<span class="badge" style="background:#ffeaea; color:#c62828;">⏰ 期限切れ</span>`
+        : `<span class="badge" style="background:#f3e5f5; color:#6a1b9a;">未使用</span>`;
+    const shortId = c.user_id.length > 16 ? c.user_id.slice(0, 16) + '…' : c.user_id;
+    return `
+      <tr>
+        <td style="font-family:monospace; font-size:11px; color:#888;" title="${c.user_id}">${shortId}</td>
+        <td>
+          <strong>${c.title}</strong>
+          ${c.description ? `<br><span style="font-size:12px; color:#888;">${c.description}</span>` : ''}
+        </td>
+        <td style="font-size:12px;">${c.granted_at}</td>
+        <td style="font-size:12px; color:${c.expires_at && c.expires_at < today ? '#e53935' : '#555'};">${c.expires_at || '—'}</td>
+        <td>${status}</td>
+        <td style="font-size:11px; color:#aaa;">${c.note || '—'}</td>
+        <td style="white-space:nowrap;">
+          ${!isUsed && !isExpired ? `<button class="btn btn-sm btn-primary" onclick="markPurchaseCouponUsed(${c.id})">使用済みに</button>` : ''}
+          <button class="btn btn-sm btn-danger" onclick="deletePurchaseCoupon(${c.id})">削除</button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function openGrantForm() {
+  document.getElementById('pc-grant-form').style.display = 'block';
+  document.getElementById('pc-user-id').focus();
+}
+
+function closeGrantForm() {
+  document.getElementById('pc-grant-form').style.display = 'none';
+  ['pc-user-id', 'pc-title', 'pc-description', 'pc-note', 'pc-expires-at'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+async function grantPurchaseCoupon() {
+  const storeId = document.getElementById('pc-store-filter').value;
+  const userId = document.getElementById('pc-user-id').value.trim();
+  const title = document.getElementById('pc-title').value.trim();
+  if (!userId || !title) { alert('ユーザーIDとタイトルは必須です'); return; }
+  await fetch('/api/admin/purchase-coupons', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      store_id: storeId,
+      user_id: userId,
+      title,
+      description: document.getElementById('pc-description').value.trim(),
+      note: document.getElementById('pc-note').value.trim(),
+      expires_at: document.getElementById('pc-expires-at').value || null,
+    }),
+  });
+  closeGrantForm();
+  showToast('クーポンを付与しました');
+  loadPurchaseCoupons();
+}
+
+async function deletePurchaseCoupon(id) {
+  if (!confirm('このクーポンを削除しますか？')) return;
+  await fetch('/api/admin/purchase-coupons/' + id, { method: 'DELETE' });
+  showToast('クーポンを削除しました');
+  loadPurchaseCoupons();
+}
+
+async function markPurchaseCouponUsed(id) {
+  if (!confirm('このクーポンを使用済みにしますか？')) return;
+  await fetch('/api/admin/purchase-coupons/' + id + '/mark-used', { method: 'POST' });
+  showToast('使用済みにしました');
+  loadPurchaseCoupons();
+}
+
+// ===== 紹介管理 =====
+async function loadReferrals() {
+  const res = await fetch('/api/admin/referrals');
+  const stores = await res.json();
+  const tbody = document.getElementById('referrals-table');
+  if (!stores.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">店舗がありません</td></tr>';
+    return;
+  }
+  const referralCountMap = {};
+  stores.forEach(s => {
+    if (s.referred_by) referralCountMap[s.referred_by] = (referralCountMap[s.referred_by] || 0) + 1;
+  });
+  tbody.innerHTML = stores.map(s => {
+    const count = referralCountMap[s.referral_code] || 0;
+    return `
+      <tr>
+        <td><span class="badge badge-blue">${s.id}</span></td>
+        <td>${s.name}</td>
+        <td style="font-family:monospace; font-size:14px; font-weight:bold; letter-spacing:2px;">${s.referral_code || '—'}</td>
+        <td style="font-size:13px; color:#888;">${s.referred_by || '—'}</td>
+        <td><span style="font-weight:bold; color:${count>=3?'#2e7d32':'#333'};">${count}</span> / 3</td>
+        <td>
+          ${s.is_free
+            ? '<span style="color:#2e7d32; font-weight:bold; font-size:13px;">🎉 無料</span>'
+            : count >= 3
+              ? `<button class="btn btn-sm" style="background:#2e7d32;color:white;" onclick="openFreeConfirm('${s.id}','${s.name.replace(/'/g,"\\'")}',${count})">無料化する</button>`
+              : `<span style="font-size:13px; color:#888;">有料（${count}/3）</span>`
+          }
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+let _freeConfirmStoreId = null;
+
+function openFreeConfirm(storeId, storeName, count) {
+  _freeConfirmStoreId = storeId;
+  document.getElementById('free-confirm-text').textContent =
+    `「${storeName}」の紹介達成数は ${count}/3 です。月額無料に変更しますか？`;
+  document.getElementById('modal-free-confirm').classList.add('open');
+}
+
+async function confirmIsFree() {
+  if (!_freeConfirmStoreId) return;
+  closeModal('free-confirm');
+  await fetch(`/api/admin/stores/${_freeConfirmStoreId}/is-free`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ is_free: true }),
+  });
+  _freeConfirmStoreId = null;
+  showToast('月額無料に設定しました');
+  loadReferrals();
 }
 
 // ===== 認証 =====
@@ -648,6 +1072,172 @@ async function doLogout() {
   await fetch('/api/admin/logout', { method: 'POST' });
   document.getElementById('login-password').value = '';
   document.getElementById('login-overlay').classList.add('open');
+}
+
+// ===== 店舗詳細 =====
+let _detailStoreId = null;
+
+function adminBarChart(containerId, items, labelKey, countKey, color = '#1FA89D') {
+  const max = Math.max(...items.map(i => i[countKey] || 0), 1);
+  document.getElementById(containerId).innerHTML = items.map(item => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="width:70px;font-size:12px;color:#5A6B85;text-align:right;flex-shrink:0;">${item[labelKey]}</div>
+      <div style="flex:1;background:#F0F4F8;border-radius:4px;height:18px;overflow:hidden;">
+        <div style="width:${Math.round((item[countKey]||0)/max*100)}%;background:${color};height:100%;border-radius:4px;"></div>
+      </div>
+      <div style="width:24px;font-size:12px;color:#5A6B85;text-align:right;">${item[countKey]||0}</div>
+    </div>`).join('');
+}
+
+async function openStoreDetail(storeId, storeName) {
+  _detailStoreId = storeId;
+  document.getElementById('detail-store-name').textContent = storeName;
+  document.getElementById('reset-pw-store-name').textContent = storeName;
+  document.getElementById('store-detail-overlay').classList.add('open');
+  switchDetailTab('overview');
+}
+
+function closeStoreDetail() {
+  document.getElementById('store-detail-overlay').classList.remove('open');
+  _detailStoreId = null;
+}
+
+function switchDetailTab(tab) {
+  document.querySelectorAll('.detail-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.detail-section').forEach(s => s.style.display = 'none');
+  document.getElementById('dtab-' + tab).classList.add('active');
+  document.getElementById('detail-section-' + tab).style.display = 'block';
+  loadDetailSection(tab);
+}
+
+const _detailLoaded = {};
+async function loadDetailSection(tab) {
+  if (_detailLoaded[_detailStoreId + '_' + tab]) return;
+  _detailLoaded[_detailStoreId + '_' + tab] = true;
+  const sid = _detailStoreId;
+
+  if (tab === 'overview') {
+    const r = await fetch('/api/admin/visits/' + sid).then(r => r.json());
+    document.getElementById('detail-stats').innerHTML = [
+      ['累計来店数', r.totalVisits], ['ユニークユーザー', r.uniqueUsers],
+      ['本日の来店', r.todayVisits], ['クーポン使用', r.couponUsageCount],
+    ].map(([label, val]) => `<div class="card" style="flex:1;min-width:120px;text-align:center;padding:16px 12px;">
+      <div style="font-size:26px;font-weight:bold;color:#0F2A4F;">${val}</div>
+      <div style="font-size:12px;color:#8896AB;margin-top:4px;">${label}</div></div>`).join('');
+    const max = Math.max(...(r.monthlyVisits||[]).map(m => m.count), 1);
+    document.getElementById('detail-monthly-chart').innerHTML = (r.monthlyVisits||[]).map(m => {
+      const h = Math.round(m.count / max * 80);
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;justify-content:flex-end;">
+        <div style="font-size:10px;color:#5A6B85;">${m.count}</div>
+        <div style="width:100%;height:${h}px;background:#1FA89D;border-radius:4px 4px 0 0;"></div>
+        <div style="font-size:10px;color:#8896AB;">${(m.month||'').slice(5)}月</div></div>`;
+    }).join('') || '<div style="color:#8896AB;font-size:13px;">データなし</div>';
+  }
+
+  if (tab === 'analytics') {
+    const d = await fetch('/api/admin/stores/' + sid + '/analytics').then(r => r.json());
+    document.getElementById('detail-avg-interval').textContent = d.avgInterval !== null ? d.avgInterval + '日' : '-';
+    document.getElementById('detail-lost-users').textContent = d.lostUsers;
+    const order = ['1回のみ','2〜3回','4〜5回','6回以上'];
+    adminBarChart('detail-chart-distrib', order.map(g => d.visitDistribution.find(v => v.group === g) || {group:g,count:0}), 'group', 'count');
+    const days = ['日','月','火','水','木','金','土'].map(day => {
+      const f = d.weekdayVisits.find(v => v.day === day); return {day, count: f ? f.count : 0};
+    });
+    adminBarChart('detail-chart-weekday', days, 'day', 'count');
+    if (d.monthlyNewRepeat.length) {
+      const maxNR = Math.max(...d.monthlyNewRepeat.map(m => (m.newUsers||0) + (m.repeatUsers||0)), 1);
+      document.getElementById('detail-chart-monthly-nr').innerHTML = d.monthlyNewRepeat.map(m => {
+        const total = (m.newUsers||0) + (m.repeatUsers||0);
+        const h = Math.round(total / maxNR * 100);
+        const nH = total > 0 ? Math.round((m.newUsers||0)/total*h) : 0;
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;justify-content:flex-end;">
+          <div style="font-size:10px;color:#5A6B85;">${total}</div>
+          <div style="width:100%;display:flex;flex-direction:column;border-radius:4px 4px 0 0;overflow:hidden;">
+            <div style="height:${nH}px;background:#0F2A4F;"></div>
+            <div style="height:${h-nH}px;background:#1FA89D;"></div>
+          </div>
+          <div style="font-size:10px;color:#8896AB;">${(m.month||'').slice(5)}月</div></div>`;
+      }).join('');
+    } else {
+      document.getElementById('detail-chart-monthly-nr').innerHTML = '<div style="color:#8896AB;font-size:13px;">データなし</div>';
+    }
+    adminBarChart('detail-chart-coupon', d.couponStats, 'title', 'usage_count', '#1FA89D');
+  }
+
+  if (tab === 'users') {
+    const r = await fetch('/api/admin/visits/' + sid).then(r => r.json());
+    const tbody = document.getElementById('detail-users-table');
+    tbody.innerHTML = r.users.length
+      ? r.users.map(u => `<tr><td>${u.line_name || '<span style="color:#8896AB;">不明</span>'}</td><td>${u.visit_count}回</td><td>${u.last_visit}</td></tr>`).join('')
+      : '<tr><td colspan="3" class="empty">データなし</td></tr>';
+  }
+
+  if (tab === 'products') {
+    const products = await fetch('/api/admin/products/' + sid).then(r => r.json());
+    document.getElementById('detail-products-table').innerHTML = products.length
+      ? products.map(p => `<tr><td>${p.name}</td><td style="font-size:12px;color:#5A6B85;">${p.description||''}</td><td style="font-size:11px;"><a href="${p.affiliate_url}" target="_blank" style="color:#1FA89D;">リンク</a></td></tr>`).join('')
+      : '<tr><td colspan="3" class="empty">商品なし</td></tr>';
+  }
+
+  if (tab === 'menus') {
+    const menus = await fetch('/api/admin/stores/' + sid + '/menus').then(r => r.json());
+    document.getElementById('detail-menus-table').innerHTML = menus.length
+      ? menus.map(m => `<tr><td>${m.name}</td><td>${m.price||'-'}</td><td>${m.duration||'-'}</td><td style="font-size:12px;color:#5A6B85;">${m.description||''}</td></tr>`).join('')
+      : '<tr><td colspan="4" class="empty">メニューなし</td></tr>';
+  }
+
+  if (tab === 'coupons') {
+    const coupons = await fetch('/api/admin/coupons/' + sid).then(r => r.json());
+    document.getElementById('detail-coupons-table').innerHTML = coupons.length
+      ? coupons.map(c => `<tr><td>${c.title}</td><td style="font-size:12px;color:#5A6B85;">${c.description||''}</td><td>${c.required_visits}回</td><td>-</td></tr>`).join('')
+      : '<tr><td colspan="4" class="empty">クーポンなし</td></tr>';
+  }
+
+  if (tab === 'purchase') {
+    const today = new Date().toISOString().split('T')[0];
+    const coupons = await fetch('/api/admin/purchase-coupons/' + sid).then(r => r.json());
+    document.getElementById('detail-purchase-table').innerHTML = coupons.length
+      ? coupons.map(c => {
+          const isUsed = !!c.used_at, isExp = !isUsed && c.expires_at && c.expires_at < today;
+          const status = isUsed ? '使用済み' : isExp ? '期限切れ' : '未使用';
+          const short = c.user_id.length > 12 ? c.user_id.slice(0,12)+'…' : c.user_id;
+          return `<tr><td style="font-size:11px;font-family:monospace;" title="${c.user_id}">${short}</td><td>${c.title}</td><td style="font-size:12px;">${c.granted_at}</td><td style="font-size:12px;">${c.expires_at||'—'}</td><td>${status}</td></tr>`;
+        }).join('')
+      : '<tr><td colspan="5" class="empty">データなし</td></tr>';
+  }
+
+  if (tab === 'campaign') {
+    const coupons = await fetch('/api/admin/stores/' + sid + '/campaign-coupons').then(r => r.json());
+    document.getElementById('detail-campaign-table').innerHTML = coupons.length
+      ? coupons.map(c => `<tr><td>${c.title}</td><td style="font-size:12px;">${c.starts_at} 〜 ${c.ends_at}</td><td>${c.usage_count||0}回</td></tr>`).join('')
+      : '<tr><td colspan="3" class="empty">キャンペーンなし</td></tr>';
+  }
+}
+
+// パスワードリセット
+function openResetPasswordModal() {
+  document.getElementById('reset-pw-input').value = '';
+  document.getElementById('reset-pw-error').style.display = 'none';
+  document.getElementById('modal-reset-password').classList.add('open');
+}
+
+async function execResetPassword() {
+  const pw = document.getElementById('reset-pw-input').value.trim();
+  const errEl = document.getElementById('reset-pw-error');
+  if (!pw || pw.length < 4) { errEl.textContent = 'パスワードは4文字以上で入力してください'; errEl.style.display = 'block'; return; }
+  const res = await fetch('/api/admin/stores/' + _detailStoreId + '/reset-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ new_password: pw }),
+  });
+  const data = await res.json();
+  if (data.success) {
+    closeModal('reset-password');
+    showToast('パスワードを変更しました');
+  } else {
+    errEl.textContent = data.error || 'エラーが発生しました';
+    errEl.style.display = 'block';
+  }
 }
 
 // 初期化
