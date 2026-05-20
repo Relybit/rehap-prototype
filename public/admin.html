@@ -430,6 +430,8 @@
     <div class="form-group"><label>説明</label><textarea id="product-desc" placeholder="商品の説明"></textarea></div>
     <div class="form-group"><label>アフィリエイトURL</label><input type="text" id="product-url" placeholder="https://..."></div>
     <div class="form-group"><label>商品画像URL</label><input type="text" id="product-image-url" placeholder="https://... (省略可)"></div>
+    <div class="form-group"><label>成果単価（円）</label><input type="number" id="product-cpa" placeholder="例: 500" min="0"></div>
+    <div class="form-group"><label>成果地点</label><input type="text" id="product-conversion-point" placeholder="例: 来店・会員登録・購入など"></div>
     <div class="form-group"><label>表示順（空白でランダム）</label><input type="number" id="product-display-order" placeholder="例: 1（空白=ランダム）" min="1" style="width:200px;"></div>
     <div class="modal-actions">
       <button class="btn" onclick="closeModal('product')">キャンセル</button>
@@ -536,6 +538,8 @@ function openModal(type, data = null) {
     document.getElementById('product-desc').value = data?.description || '';
     document.getElementById('product-url').value = data?.affiliate_url || '';
     document.getElementById('product-image-url').value = data?.image_url || '';
+    document.getElementById('product-cpa').value = data?.cpa || '';
+    document.getElementById('product-conversion-point').value = data?.conversion_point || '';
     document.getElementById('product-display-order').value = data?.display_order ?? '';
     const sel = document.getElementById('product-store-id');
     sel.innerHTML = allStores.map(s => `<option value="${s.id}" ${data?.store_id === s.id ? 'selected' : ''}>${s.name}</option>`).join('');
@@ -773,6 +777,8 @@ async function saveProduct() {
     description: document.getElementById('product-desc').value,
     affiliate_url: document.getElementById('product-url').value,
     image_url: document.getElementById('product-image-url').value,
+    cpa: document.getElementById('product-cpa').value ? parseInt(document.getElementById('product-cpa').value) : null,
+    conversion_point: document.getElementById('product-conversion-point').value || null,
     display_order: document.getElementById('product-display-order').value,
   };
   await fetch(`/api/admin/products${id ? '/' + id : ''}`, {

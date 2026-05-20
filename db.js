@@ -91,6 +91,8 @@ async function getDb() {
   try { db.run(`ALTER TABLE stores ADD COLUMN subscription_status TEXT DEFAULT 'pending'`); } catch(e) {}
   try { db.run(`ALTER TABLE stores ADD COLUMN cpa INTEGER`); } catch(e) {}
   try { db.run(`ALTER TABLE stores ADD COLUMN conversion_point TEXT`); } catch(e) {}
+  try { db.run(`ALTER TABLE products ADD COLUMN cpa INTEGER`); } catch(e) {}
+  try { db.run(`ALTER TABLE products ADD COLUMN conversion_point TEXT`); } catch(e) {}
 
   // referral_code 未設定の店舗に自動生成
   const storesWithoutCode = db.exec("SELECT id FROM stores WHERE referral_code IS NULL OR referral_code = ''");

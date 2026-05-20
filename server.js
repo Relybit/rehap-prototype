@@ -1036,10 +1036,10 @@ app.get('/api/admin/products/:store_id', adminAuth, async (req, res) => {
 
 app.post('/api/admin/products', adminAuth, async (req, res) => {
   const db = await getDb();
-  const { store_id, name, description, affiliate_url, image_url } = req.body;
+  const { store_id, name, description, affiliate_url, image_url, cpa, conversion_point } = req.body;
   db.run(
-    'INSERT INTO products (store_id, name, description, affiliate_url, image_url) VALUES (?, ?, ?, ?, ?)',
-    [store_id, name, description, affiliate_url, image_url || null]
+    'INSERT INTO products (store_id, name, description, affiliate_url, image_url, cpa, conversion_point) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [store_id, name, description, affiliate_url, image_url || null, cpa || null, conversion_point || null]
   );
   save();
   res.json({ success: true });
@@ -1047,11 +1047,11 @@ app.post('/api/admin/products', adminAuth, async (req, res) => {
 
 app.put('/api/admin/products/:id', adminAuth, async (req, res) => {
   const db = await getDb();
-  const { name, description, affiliate_url, image_url, display_order } = req.body;
+  const { name, description, affiliate_url, image_url, display_order, cpa, conversion_point } = req.body;
   const order = display_order !== '' && display_order != null ? parseInt(display_order) : null;
   db.run(
-    'UPDATE products SET name = ?, description = ?, affiliate_url = ?, image_url = ?, display_order = ? WHERE id = ?',
-    [name, description, affiliate_url, image_url || null, order, req.params.id]
+    'UPDATE products SET name = ?, description = ?, affiliate_url = ?, image_url = ?, display_order = ?, cpa = ?, conversion_point = ? WHERE id = ?',
+    [name, description, affiliate_url, image_url || null, order, cpa || null, conversion_point || null, req.params.id]
   );
   save();
   res.json({ success: true });
