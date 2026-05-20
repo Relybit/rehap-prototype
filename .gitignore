@@ -1,3 +1,5 @@
 node_modules/
 rehap.sqlite
 rehap.db
+.env
+wp/wp-config.php
