@@ -3,61 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REHAP</title>
+  <link rel="icon" href="/img/favicon.png" type="image/png">
+  <title>リライテン</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #f5f5f5; color: #333; }
+    body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #F5F8FC; color: #334155; }
 
-    .header { background: #1a1a2e; color: white; padding: 16px 20px; text-align: center; }
-    .header h1 { font-size: 20px; letter-spacing: 2px; }
-    .header p { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+    .header { background: white; color: #0F2A4F; padding: 16px 20px; text-align: center; box-shadow: 0 1px 4px rgba(15,42,79,0.08); }
+    .header p { font-size: 18px; font-weight: bold; color: #1FA89D; letter-spacing: 1px; margin-top: 0; }
 
     .container { max-width: 480px; margin: 0 auto; padding: 16px; }
 
-    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    .card h2 { font-size: 14px; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 6px rgba(15,42,79,0.08); }
+    .card h2 { font-size: 12px; color: #8896AB; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
 
     /* 来店エリア */
     .visit-area { text-align: center; }
-    .visit-badge { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 8px 20px; border-radius: 20px; font-size: 14px; margin-bottom: 8px; }
-    .visit-badge.new { background: #e3f2fd; color: #1565c0; animation: pulse 1s ease-in-out; }
-    .visit-count { font-size: 32px; font-weight: bold; color: #1a1a2e; }
-    .visit-count span { font-size: 14px; font-weight: normal; color: #888; }
+    .visit-badge { display: inline-block; background: #E8F6F4; color: #1FA89D; padding: 8px 20px; border-radius: 20px; font-size: 14px; margin-bottom: 8px; font-weight: 600; }
+    .visit-badge.new { background: #C9EAE6; color: #1FA89D; animation: pulse 1s ease-in-out; }
+    .visit-count { font-size: 32px; font-weight: bold; color: #0F2A4F; }
+    .visit-count span { font-size: 14px; font-weight: normal; color: #8896AB; }
 
     /* スタンプ */
     .stamps { display: grid; grid-template-columns: repeat(5, 48px); gap: 8px; justify-content: center; }
-    .stamp { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-    .stamp.filled { background: #ffd700; border-color: #ffa000; }
-    .stamp.used { background: #e0e0e0; border-color: #bdbdbd; color: #999; font-size: 16px; }
-    .stamp-card-label { font-size: 11px; color: #aaa; margin-bottom: 8px; text-align: center; letter-spacing: 1px; }
+    .stamp { width: 48px; height: 48px; border-radius: 50%; border: 2px dashed #D0D8E8; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+    .stamp.filled { background: #ffffff; border: 2px solid #1FA89D; }
+    .stamp.filled img { width: 28px; height: 28px; object-fit: contain; }
+    .stamp.used { background: #E8EDF4; border: 2px solid #D0D8E8; color: #8896AB; font-size: 16px; }
+    .stamp-card-label { font-size: 11px; color: #8896AB; margin-bottom: 8px; text-align: center; letter-spacing: 1px; }
+    .stamp-carousel { width: 100%; }
+    .stamp-carousel-nav { display: flex; align-items: center; gap: 8px; }
+    .stamp-carousel-content { flex: 1; }
+    .stamp-nav-btn { background: none; border: 1.5px solid #D0D8E8; color: #8896AB; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .stamp-nav-btn:hover { border-color: #1FA89D; color: #1FA89D; }
 
     /* クーポン */
-    .coupon { border: 2px dashed #ccc; border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 10px; }
-    .coupon.locked { opacity: 0.4; }
-    .coupon.unlocked { border-color: #1a1a2e; background: #fff9e6; }
-    .coupon.confirming { border-color: #e53935; background: #fff5f5; }
-    .coupon.used-history { border-color: #ccc; background: #f5f5f5; opacity: 0.6; }
-    .coupon-title { font-size: 16px; font-weight: bold; color: #1a1a2e; }
-    .coupon-desc { font-size: 13px; color: #666; margin-top: 4px; }
-    .coupon-lock { font-size: 12px; color: #999; margin-top: 6px; }
-    .coupon-use-btn { margin-top: 12px; padding: 10px 24px; background: #1a1a2e; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
-    .coupon-confirm-btn { margin-top: 10px; width: 100%; padding: 14px; background: #e53935; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
-    .coupon-cancel-btn { margin-top: 8px; width: 100%; padding: 10px; background: #f0f0f0; color: #333; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
-    .confirm-msg { font-size: 13px; color: #e53935; margin: 8px 0; font-weight: bold; }
+    .coupon { border: 2px dashed #D0D8E8; border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 10px; }
+    .coupon.locked { opacity: 0.45; }
+    .coupon.unlocked { border-color: #1FA89D; background: #E8F6F4; }
+    .coupon.confirming { border-color: #E74C3C; background: #FEF2F2; }
+    .coupon.used-history { border-color: #D0D8E8; background: #F5F8FC; opacity: 0.6; }
+    .coupon-title { font-size: 16px; font-weight: bold; color: #0F2A4F; }
+    .coupon-desc { font-size: 13px; color: #5A6B85; margin-top: 4px; }
+    .coupon-lock { font-size: 12px; color: #8896AB; margin-top: 6px; }
+    .coupon-use-btn { margin-top: 12px; padding: 10px 24px; background: #1FA89D; color: white; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 600; }
+    .coupon-use-btn:hover { background: #189186; }
+    .coupon-confirm-btn { margin-top: 10px; width: 100%; padding: 14px; background: #E74C3C; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    .coupon-cancel-btn { margin-top: 8px; width: 100%; padding: 10px; background: #F0F4F8; color: #5A6B85; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
+    .confirm-msg { font-size: 13px; color: #E74C3C; margin: 8px 0; font-weight: bold; }
 
     /* 予約ボタン */
-    .booking-btn { display: block; width: 100%; padding: 14px; background: #00c853; color: white; text-align: center; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
+    .booking-btn { display: block; width: 100%; padding: 14px; background: #1FA89D; color: white; text-align: center; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: bold; }
+    .booking-btn:hover { background: #189186; }
+
+    /* GoogleマップCTA */
+    .gmaps-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px; background: #fff; border: 2px solid #4285F4; color: #4285F4; text-align: center; text-decoration: none; border-radius: 8px; font-size: 15px; font-weight: bold; }
+    .gmaps-btn svg { flex-shrink: 0; }
 
     /* 商品PR */
-    .product { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+    .product { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #F0F4F8; }
     .product:last-child { border-bottom: none; }
-    .product-img { width: 60px; height: 60px; border-radius: 8px; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+    .product-img { width: 60px; height: 60px; border-radius: 8px; background: #E8EDF4; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
     .product-info { flex: 1; }
-    .product-name { font-size: 14px; font-weight: bold; }
-    .product-desc { font-size: 12px; color: #888; margin-top: 2px; }
-    .product-btn { padding: 6px 14px; background: #1a1a2e; color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .product-name { font-size: 14px; font-weight: bold; color: #0F2A4F; }
+    .product-desc { font-size: 12px; color: #8896AB; margin-top: 2px; }
+    .product-btn { padding: 6px 14px; background: #1FA89D; color: white; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; white-space: nowrap; font-weight: 600; }
+    .product-btn:hover { background: #189186; }
 
-    .loading { text-align: center; padding: 40px; color: #888; }
+    .loading { text-align: center; padding: 40px; color: #8896AB; }
 
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -65,10 +78,46 @@
       100% { transform: scale(1); }
     }
 
+    /* 購入特典クーポン */
+    .purchase-coupon { border: 2px solid #1FA89D; border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 10px; background: #E8F6F4; }
+    .purchase-coupon.used { border-color: #D0D8E8; background: #F5F8FC; opacity: 0.6; }
+    .purchase-coupon.confirming { border-color: #E74C3C; background: #FEF2F2; }
+    .purchase-coupon.expired { border-color: #D0D8E8; background: #F5F8FC; opacity: 0.5; }
+    .purchase-coupon-badge { display: inline-block; background: #1FA89D; color: white; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; font-weight: 600; }
+    .purchase-coupon-title { font-size: 16px; font-weight: bold; color: #0F2A4F; }
+    .purchase-coupon-desc { font-size: 13px; color: #5A6B85; margin-top: 4px; }
+    .purchase-coupon-expires { font-size: 11px; color: #8896AB; margin-top: 6px; }
+
+    /* メニュー */
+    .menu-section { background: #ffffff; border-radius: 12px; overflow: hidden; margin-bottom: 16px; box-shadow: 0 1px 6px rgba(15,42,79,0.08); }
+    .menu-section-header { display: flex; align-items: center; gap: 8px; padding: 12px 16px; color: #8896AB; font-size: 12px; font-weight: 600; border-bottom: 1px solid #E8EDF4; text-transform: uppercase; letter-spacing: 1px; }
+    .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #F0F4F8; }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-thumb-wrap { position: relative; flex-shrink: 0; width: 88px; height: 66px; }
+    .menu-thumb { width: 88px; height: 66px; object-fit: cover; border-radius: 6px; display: block; }
+    .menu-thumb-placeholder { width: 88px; height: 66px; background: #F0F4F8; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #D0D8E8; font-size: 22px; }
+    .menu-duration-badge { position: absolute; top: 5px; left: 5px; background: #1FA89D; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; }
+    .menu-info { flex: 1; min-width: 0; }
+    .menu-name { font-size: 15px; font-weight: bold; color: #0F2A4F; margin-bottom: 3px; }
+    .menu-desc { font-size: 12px; color: #8896AB; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .menu-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+    .menu-price { font-size: 17px; font-weight: bold; color: #1FA89D; white-space: nowrap; }
+    .menu-book-btn { background: #1FA89D; color: white; border: none; border-radius: 6px; padding: 6px 12px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .menu-more-bar { padding: 12px 16px; text-align: center; color: #8896AB; font-size: 13px; cursor: pointer; background: #F8FAFC; border-top: 1px solid #F0F4F8; }
+
+    /* キャンペーンクーポン */
+    .campaign-coupon { border: 2px solid #1FA89D; border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 10px; background: #E8F6F4; }
+    .campaign-coupon.used { border-color: #D0D8E8; background: #F5F8FC; opacity: 0.6; }
+    .campaign-coupon.confirming { border-color: #E74C3C; background: #FEF2F2; }
+    .campaign-coupon-badge { display: inline-block; background: #1FA89D; color: white; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; font-weight: 600; }
+    .campaign-coupon-title { font-size: 16px; font-weight: bold; color: #0F2A4F; }
+    .campaign-coupon-desc { font-size: 13px; color: #5A6B85; margin-top: 4px; }
+    .campaign-coupon-period { font-size: 11px; color: #8896AB; margin-top: 6px; }
+
     /* LINEログイン画面 */
     .line-login-screen { text-align: center; padding: 60px 20px; }
-    .line-login-screen h2 { font-size: 20px; color: #1a1a2e; margin-bottom: 8px; }
-    .line-login-screen p { font-size: 14px; color: #888; margin-bottom: 32px; }
+    .line-login-screen h2 { font-size: 20px; color: #0F2A4F; margin-bottom: 8px; }
+    .line-login-screen p { font-size: 14px; color: #8896AB; margin-bottom: 32px; }
     .line-login-btn { display: inline-flex; align-items: center; gap: 10px; background: #06C755; color: white; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: bold; text-decoration: none; }
     .line-login-btn img { width: 24px; height: 24px; }
   </style>
@@ -76,7 +125,6 @@
 <body>
 
 <div class="header">
-  <h1>REHAP</h1>
   <p id="store-name">読み込み中...</p>
 </div>
 
@@ -87,14 +135,28 @@
 <script>
   const storeId = location.pathname.split('/store/')[1];
   let userId = null;
+  let displayName = null;
 
   let visitCount = 0;
   let usedStamps = 0;
   let usedCoupons = [];
   let storeData = null;
   let confirmingCouponId = null;
+  let purchaseCoupons = [];
+  let confirmingPurchaseCouponId = null;
+  let campaignCoupons = [];
+  let confirmingCampaignCouponId = null;
+  let currentStampCard = -1;
 
   async function checkLineLogin() {
+    // クロスブラウザ対応：URLにltトークンがあればセッションに紐付け
+    const urlParams = new URLSearchParams(location.search);
+    const lt = urlParams.get('lt');
+    if (lt) {
+      await fetch(`/api/line/claim-token?lt=${lt}`);
+      urlParams.delete('lt');
+      history.replaceState(null, '', location.pathname + (urlParams.toString() ? '?' + urlParams.toString() : ''));
+    }
     const res = await fetch('/api/line/me');
     const data = await res.json();
     if (!data.userId) {
@@ -112,6 +174,7 @@
       return false;
     }
     userId = data.userId;
+    displayName = data.displayName;
     return true;
   }
 
@@ -129,12 +192,18 @@
     const visitRes = await fetch('/api/visit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ store_id: storeId, user_id: userId })
+      body: JSON.stringify({ store_id: storeId, user_id: userId, line_name: displayName })
     });
     const visitData = await visitRes.json();
     visitCount = visitData.visitCount;
     usedStamps = visitData.usedStamps || 0;
     usedCoupons = visitData.usedCoupons || [];
+
+    const pcRes = await fetch(`/api/purchase-coupons/${storeId}/${userId}`);
+    purchaseCoupons = await pcRes.json();
+
+    const ccRes = await fetch(`/api/campaign-coupons/${storeId}/${userId}`);
+    campaignCoupons = await ccRes.json();
 
     render(visitData.isNew);
   }
@@ -142,25 +211,39 @@
   function renderStamps() {
     const stampsPerCard = 10;
     const totalCards = Math.max(1, Math.ceil(visitCount / stampsPerCard));
-    let html = '';
-    for (let card = 0; card < totalCards; card++) {
-      const cardStart = card * stampsPerCard + 1;
-      if (totalCards > 1) {
-        html += `<div class="stamp-card-label">${card + 1}枚目</div>`;
-      }
-      html += `<div class="stamps" style="margin-bottom:${card < totalCards - 1 ? '20px' : '0'};">`;
-      for (let i = cardStart; i < cardStart + stampsPerCard; i++) {
-        if (i <= usedStamps) {
-          html += `<div class="stamp used">✓</div>`;
-        } else if (i <= visitCount) {
-          html += `<div class="stamp filled">⭐</div>`;
-        } else {
-          html += `<div class="stamp"></div>`;
-        }
-      }
-      html += `</div>`;
+    if (currentStampCard < 0 || currentStampCard >= totalCards) {
+      currentStampCard = totalCards - 1;
     }
-    return html;
+    const card = currentStampCard;
+    const cardStart = card * stampsPerCard + 1;
+    let stampsHtml = '<div class="stamps">';
+    for (let i = cardStart; i < cardStart + stampsPerCard; i++) {
+      if (i <= usedStamps) {
+        stampsHtml += `<div class="stamp used">✓</div>`;
+      } else if (i <= visitCount) {
+        stampsHtml += `<div class="stamp filled"><img src="/img/stamp-icon.png" alt="stamp"></div>`;
+      } else {
+        stampsHtml += `<div class="stamp"></div>`;
+      }
+    }
+    stampsHtml += '</div>';
+    const prevBtn = card > 0
+      ? `<button class="stamp-nav-btn" onclick="navigateStampCard(-1)">←</button>`
+      : `<button class="stamp-nav-btn" style="visibility:hidden;" disabled>←</button>`;
+    const nextBtn = card < totalCards - 1
+      ? `<button class="stamp-nav-btn" onclick="navigateStampCard(1)">→</button>`
+      : `<button class="stamp-nav-btn" style="visibility:hidden;" disabled>→</button>`;
+    const label = totalCards > 1
+      ? `<div class="stamp-card-label">${card + 1} / ${totalCards} 枚目</div>`
+      : '';
+    return `<div class="stamp-carousel"><div class="stamp-carousel-nav">${prevBtn}<div class="stamp-carousel-content">${label}${stampsHtml}</div>${nextBtn}</div></div>`;
+  }
+
+  function navigateStampCard(direction) {
+    const stampsPerCard = 10;
+    const totalCards = Math.max(1, Math.ceil(visitCount / stampsPerCard));
+    currentStampCard = Math.max(0, Math.min(totalCards - 1, currentStampCard + direction));
+    render(false);
   }
 
   function render(isNewVisit) {
@@ -177,7 +260,7 @@
         <h2>来店記録</h2>
         <div class="visit-area">
           <div class="visit-badge ${isNewVisit ? 'new' : ''}">
-            ${isNewVisit ? '✅ 本日の来店を記録しました！' : '📅 本日来店済み'}
+            ${isNewVisit ? '本日の来店を記録しました！' : '本日来店済み'}
           </div>
           <div class="visit-count">${visitCount}<span> 回来店</span></div>
         </div>
@@ -217,11 +300,24 @@
         ${activeCoupons.length === 0 ? '<p style="text-align:center; color:#aaa; font-size:13px;">現在利用可能なクーポンはありません</p>' : ''}
       </div>
 
+      <!-- メニュー -->
+      ${renderMenus()}
+
       <!-- 予約 -->
       ${store.booking_url ? `
         <div class="card">
           <h2>予約</h2>
-          <a href="${store.booking_url}" target="_blank" class="booking-btn">📅 予約はこちら</a>
+          <a href="${store.booking_url}" target="_blank" class="booking-btn">次回予約はこちら</a>
+        </div>
+      ` : ''}
+
+      <!-- GoogleマップCTA -->
+      ${store.google_maps_url ? `
+        <div class="card" style="text-align:center; padding-bottom:14px;">
+          <p style="font-size:13px; color:#888; margin-bottom:12px;">ご来店ありがとうございます。<br>よろしければ口コミをお願いします🙏</p>
+          <a href="${store.google_maps_url}" target="_blank" style="display:block;">
+            <img src="/img/gmaps-btn.jpg" alt="Googleマップに口コミを書く" style="width:100%; max-width:400px; height:auto; border-radius:8px;">
+          </a>
         </div>
       ` : ''}
 
@@ -244,6 +340,12 @@
         </div>
       ` : ''}
 
+      <!-- 購入特典クーポン -->
+      ${renderPurchaseCoupons()}
+
+      <!-- キャンペーンクーポン -->
+      ${renderCampaignCoupons()}
+
       <!-- クーポン使用履歴 -->
       ${usedCoupons.length > 0 ? `
         <div class="card">
@@ -257,6 +359,175 @@
         </div>
       ` : ''}
     `;
+  }
+
+  function renderPurchaseCoupons() {
+    const today = new Date().toISOString().split('T')[0];
+    const active = purchaseCoupons.filter(c => !c.used_at && (!c.expires_at || c.expires_at >= today));
+    const usedOrExpired = purchaseCoupons.filter(c => c.used_at || (c.expires_at && c.expires_at < today));
+    if (purchaseCoupons.length === 0) return '';
+
+    const activeHtml = active.map(c => {
+      if (confirmingPurchaseCouponId === c.id) {
+        return `
+          <div class="purchase-coupon confirming">
+            <div class="purchase-coupon-badge">🎁 購入特典</div>
+            <div class="purchase-coupon-title">${c.title}</div>
+            ${c.description ? `<div class="purchase-coupon-desc">${c.description}</div>` : ''}
+            <div class="confirm-msg" style="margin-top:10px;">スタッフに画面を見せて<br>「使用済みにする」を押してもらってください</div>
+            <button class="coupon-confirm-btn" onclick="usePurchaseCoupon(${c.id})">使用済みにする</button>
+            <button class="coupon-cancel-btn" onclick="cancelPurchaseConfirm()">キャンセル</button>
+          </div>`;
+      }
+      return `
+        <div class="purchase-coupon">
+          <div class="purchase-coupon-badge">🎁 購入特典</div>
+          <div class="purchase-coupon-title">${c.title}</div>
+          ${c.description ? `<div class="purchase-coupon-desc">${c.description}</div>` : ''}
+          ${c.expires_at ? `<div class="purchase-coupon-expires">有効期限：${c.expires_at}</div>` : ''}
+          <button class="coupon-use-btn" style="background:#7b1fa2;" onclick="startPurchaseConfirm(${c.id})">クーポンを使う</button>
+        </div>`;
+    }).join('');
+
+    const historyHtml = usedOrExpired.map(c => `
+      <div class="purchase-coupon used">
+        <div class="purchase-coupon-badge" style="background:#999;">購入特典</div>
+        <div class="purchase-coupon-title" style="color:#999;">${c.used_at ? '✅ ' : '⏰ '}${c.title}</div>
+        <div style="font-size:12px; color:#aaa; margin-top:4px;">
+          ${c.used_at ? `使用日：${c.used_at}` : `期限切れ：${c.expires_at}`}
+        </div>
+      </div>`).join('');
+
+    return `
+      <div class="card">
+        <h2>購入特典クーポン</h2>
+        ${activeHtml}
+        ${historyHtml}
+      </div>`;
+  }
+
+  let menuExpanded = false;
+
+  function renderMenus() {
+    const menus = storeData.menus || [];
+    if (!menus.length) return '';
+    const LIMIT = 5;
+    const visible = menuExpanded ? menus : menus.slice(0, LIMIT);
+    const itemsHtml = visible.map(m => {
+      const bookingUrl = m.booking_url || storeData.store.booking_url;
+      const thumb = m.image_url
+        ? `<img class="menu-thumb" src="${m.image_url}" alt="" onerror="onMenuThumbError(this)">`
+        : `<div class="menu-thumb-placeholder">✂️</div>`;
+      return `
+        <div class="menu-item">
+          <div class="menu-thumb-wrap">
+            ${thumb}
+            ${m.duration ? `<div class="menu-duration-badge">⏱ ${m.duration}</div>` : ''}
+          </div>
+          <div class="menu-info">
+            <div class="menu-name">${m.name}</div>
+            ${m.description ? `<div class="menu-desc">${m.description}</div>` : ''}
+          </div>
+          <div class="menu-right">
+            ${m.price ? `<div class="menu-price">${m.price}</div>` : ''}
+            ${bookingUrl ? `<button class="menu-book-btn" onclick="window.open('${bookingUrl}', '_blank')">予約する</button>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+    const toggleBtn = menus.length > LIMIT ? `
+      <div class="menu-more-bar" onclick="toggleMenuExpand()">
+        ${menuExpanded ? '▲ 閉じる' : `∨ 他のメニューを見る（残り${menus.length - LIMIT}件）`}
+      </div>` : '';
+    return `<div class="menu-section">
+      <div class="menu-section-header">メニュー</div>
+      ${itemsHtml}${toggleBtn}
+    </div>`;
+  }
+
+  function onMenuThumbError(el) {
+    el.outerHTML = '<div class="menu-thumb-placeholder"></div>';
+  }
+
+  function toggleMenuExpand() {
+    menuExpanded = !menuExpanded;
+    render(false);
+  }
+
+  function renderCampaignCoupons() {
+    if (campaignCoupons.length === 0) return '';
+    const html = campaignCoupons.map(c => {
+      if (c.used_at) {
+        return `
+          <div class="campaign-coupon used">
+            <div class="campaign-coupon-badge">🎫 キャンペーン</div>
+            <div class="campaign-coupon-title" style="color:#999;">✅ ${c.title}</div>
+            ${c.description ? `<div class="campaign-coupon-desc">${c.description}</div>` : ''}
+            <div style="font-size:12px; color:#aaa; margin-top:4px;">使用日：${c.used_at.split('T')[0]}</div>
+          </div>`;
+      }
+      if (confirmingCampaignCouponId === c.id) {
+        return `
+          <div class="campaign-coupon confirming">
+            <div class="campaign-coupon-badge">🎫 キャンペーン</div>
+            <div class="campaign-coupon-title">${c.title}</div>
+            ${c.description ? `<div class="campaign-coupon-desc">${c.description}</div>` : ''}
+            <div class="confirm-msg" style="margin-top:10px;">スタッフに画面を見せて<br>「使用済みにする」を押してもらってください</div>
+            <button class="coupon-confirm-btn" onclick="useCampaignCoupon(${c.id})">使用済みにする</button>
+            <button class="coupon-cancel-btn" onclick="cancelCampaignConfirm()">キャンセル</button>
+          </div>`;
+      }
+      return `
+        <div class="campaign-coupon">
+          <div class="campaign-coupon-badge">🎫 キャンペーン</div>
+          <div class="campaign-coupon-title">${c.title}</div>
+          ${c.description ? `<div class="campaign-coupon-desc">${c.description}</div>` : ''}
+          <div class="campaign-coupon-period">期間：${c.starts_at} 〜 ${c.ends_at}</div>
+          <button class="coupon-use-btn" style="background:#f57c00;" onclick="startCampaignConfirm(${c.id})">クーポンを使う</button>
+        </div>`;
+    }).join('');
+    return `<div class="card"><h2>キャンペーンクーポン</h2>${html}</div>`;
+  }
+
+  function startCampaignConfirm(id) {
+    confirmingCampaignCouponId = id;
+    render(false);
+  }
+
+  function cancelCampaignConfirm() {
+    confirmingCampaignCouponId = null;
+    render(false);
+  }
+
+  async function useCampaignCoupon(id) {
+    const res = await fetch(`/api/campaign-coupons/${id}/use`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: userId, store_id: storeId })
+    });
+    const data = await res.json();
+    if (!data.success) { alert(data.error || 'エラーが発生しました'); return; }
+    confirmingCampaignCouponId = null;
+    const ccRes = await fetch(`/api/campaign-coupons/${storeId}/${userId}`);
+    campaignCoupons = await ccRes.json();
+    render(false);
+  }
+
+  function startPurchaseConfirm(id) {
+    confirmingPurchaseCouponId = id;
+    render(false);
+  }
+
+  function cancelPurchaseConfirm() {
+    confirmingPurchaseCouponId = null;
+    render(false);
+  }
+
+  async function usePurchaseCoupon(id) {
+    await fetch(`/api/purchase-coupons/${id}/use`, { method: 'POST' });
+    confirmingPurchaseCouponId = null;
+    const pcRes = await fetch(`/api/purchase-coupons/${storeId}/${userId}`);
+    purchaseCoupons = await pcRes.json();
+    render(false);
   }
 
   function startConfirm(couponId) {
@@ -280,7 +551,7 @@
     const visitRes = await fetch('/api/visit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ store_id: storeId, user_id: userId })
+      body: JSON.stringify({ store_id: storeId, user_id: userId, line_name: displayName })
     });
     const visitData = await visitRes.json();
     usedStamps = visitData.usedStamps || 0;
@@ -290,5 +561,11 @@
 
   init();
 </script>
+<footer style="text-align:center;padding:24px 16px 32px;margin-top:8px;border-top:1px solid #E8EDF4;font-size:12px;color:#8896AB;">
+  <a href="/privacy.html" style="color:#8896AB;text-decoration:none;margin:0 10px;">プライバシーポリシー</a>
+  <span style="color:#D0D8E8;">|</span>
+  <a href="/terms.html" style="color:#8896AB;text-decoration:none;margin:0 10px;">利用規約</a>
+  <p style="margin-top:8px;font-size:11px;">運営：<a href="https://relybit.co.jp" target="_blank" rel="noopener" style="color:#8896AB;text-decoration:none;">株式会社リリビット</a></p>
+</footer>
 </body>
 </html>

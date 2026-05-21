@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>REHAP | 来店が、収益になる。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    color: #1A202C; background: #FFFFFF; line-height: 1.7;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+  img { max-width: 100%; display: block; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  input, select, textarea { font-family: inherit; }
+  :root {
+    --navy: #0F2A4F; --navy-2: #163B6D; --navy-deep: #0A1F3D;
+    --teal: #1FA89D; --teal-dark: #178A82; --teal-50: #E8F6F4;
+    --teal-100: #C9EAE6; --mint: #DBF1ED; --red: #D63327;
+    --ink: #0F2A4F; --ink-2: #2A3F5F; --gray: #5A6B85;
+    --gray-2: #8896AB; --line: #DCE3EE; --bg: #F5F8FC;
+  }
+  .lp { max-width: 1080px; margin: 0 auto; background: #fff; box-shadow: 0 0 60px rgba(0,0,0,0.04); }
+  html { scroll-behavior: smooth; }
+  a { color: inherit; }
+  @media (max-width: 720px) {
+    .lp section { padding-left: 20px !important; padding-right: 20px !important; }
+    .lp h1 { font-size: 32px !important; }
+    .lp h2 { font-size: 22px !important; }
+    .lp [data-grid="hero"],
+    .lp [data-grid="about"],
+    .lp [data-grid="pricing"],
+    .lp [data-grid="values"],
+    .lp [data-grid="faq"] {
+      grid-template-columns: 1fr !important;
+    }
+    .lp [data-grid="worries"],
+    .lp [data-grid="features"] {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .lp [data-grid="form"] {
+      grid-template-columns: 1fr !important;
+    }
+    .lp [data-grid="steps"] {
+      grid-template-columns: repeat(5, 1fr) !important;
+      gap: 2px !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="lp" id="app"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+/* ── Logo ── */
+function Logo({ size = 1 }) {
+  const w = 110 * size;
+  return <img src="assets/rehap-logo.png" alt="REHAP" style={{ width: w, height: "auto", display: "block" }} />;
+}
+
+/* ── Hero ── */
+const heroS = {
+  wrap: { position:"relative", background:"linear-gradient(180deg,#0F2A4F 0%,#163B6D 100%)", overflow:"hidden" },
+  glow: { position:"absolute", inset:0, background:"radial-gradient(ellipse at 80% 30%, rgba(31,168,157,0.35) 0%, transparent 55%)", pointerEvents:"none" },
+  inner: { position:"relative", padding:"22px 40px 8px" },
+  topbar: { display:"flex", alignItems:"center", justifyContent:"space-between" },
+  logoBox: { background:"#fff", padding:"8px 14px", borderRadius:8, display:"inline-block" },
+  hero: { position:"relative", display:"grid", gridTemplateColumns:"1.1fr 1fr", gap:24, alignItems:"center", padding:"32px 40px 56px" },
+  h1: { fontSize:46, lineHeight:1.25, fontWeight:900, color:"#fff", letterSpacing:"0.01em", margin:"8px 0 22px" },
+  lead: { color:"#C9D6EA", fontSize:14, lineHeight:1.9, fontWeight:500, margin:"0 0 28px" },
+  cta: { display:"inline-flex", alignItems:"center", justifyContent:"space-between", gap:12, background:"#1FA89D", color:"#fff", fontWeight:700, fontSize:16, padding:"14px 28px", borderRadius:999, boxShadow:"0 8px 18px rgba(31,168,157,0.35)", minWidth:240, textDecoration:"none" },
+  rightWrap: { position:"relative", height:280 },
+  phone: { position:"absolute", left:"8%", top:"5%", width:120, height:240, background:"#1A1A1A", borderRadius:22, padding:5, transform:"rotate(-4deg)", boxShadow:"0 18px 40px rgba(0,0,0,0.4)" },
+  phoneScreen: { width:"100%", height:"100%", background:"#E8F6F4", borderRadius:18, overflow:"hidden", position:"relative" },
+  phoneHeader: { background:"#1FA89D", color:"#fff", fontSize:9, fontWeight:700, textAlign:"center", padding:"16px 0 8px" },
+  phoneCard: { margin:6, background:"#fff", borderRadius:6, padding:6, fontSize:8, color:"#0F2A4F" },
+  qrStand: { position:"absolute", right:"5%", bottom:"5%", width:160, background:"#fff", borderRadius:6, padding:"8px 8px 12px", boxShadow:"0 12px 30px rgba(0,0,0,0.25)", transform:"rotate(3deg)" },
+  standTop: { background:"#0F2A4F", color:"#fff", fontSize:11, fontWeight:700, textAlign:"center", padding:"5px 4px", borderRadius:3, marginBottom:6 },
+  qrBox: { width:"100%", aspectRatio:"1/1", background:"conic-gradient(from 0deg at 50% 50%, #111 25%, #fff 0 50%, #111 0 75%, #fff 0)", backgroundSize:"10px 10px", border:"3px solid #fff", outline:"1px solid #111", borderRadius:2 },
+  standIcons: { display:"flex", justifyContent:"space-around", marginTop:6, color:"#1FA89D", fontSize:9 },
+};
+
+function Hero() {
+  return (
+    <section style={heroS.wrap}>
+      <div style={heroS.glow}></div>
+      <div style={heroS.inner}>
+        <div style={heroS.topbar}>
+          <div style={heroS.logoBox}><Logo size={1.2} /></div>
+        </div>
+      </div>
+      <div style={heroS.hero} data-grid="hero">
+        <div>
+          <h1 style={heroS.h1}>来店が、<br />収益になる。</h1>
+          <p style={heroS.lead}>実店舗の来店客を活かした、新しい副収益のかたち。<br />在庫リスクなし、成果報酬型。QRコード1枚から始められる。</p>
+          <a href="#contact" style={heroS.cta}>
+            <span style={{ flex:1, textAlign:"left" }}>無料で相談する</span>
+            <span style={{ display:"inline-flex", alignItems:"center", justifyContent:"center", width:22, height:22, borderRadius:999, background:"rgba(255,255,255,0.22)", fontSize:12 }}>›</span>
+          </a>
+        </div>
+        <div style={heroS.rightWrap}>
+          <div style={heroS.phone}>
+            <div style={heroS.phoneScreen}>
+              <div style={heroS.phoneHeader}>REHAP</div>
+              <div style={heroS.phoneCard}><div style={{ fontWeight:700 }}>ようこそ！</div><div style={{ color:"#5A6B85", marginTop:3 }}>+10pt</div></div>
+              <div style={heroS.phoneCard}><div style={{ fontWeight:700 }}>本日のクーポン</div><div style={{ height:3, background:"#C9EAE6", margin:"3px 0", borderRadius:2 }}></div><div style={{ height:3, background:"#C9EAE6", borderRadius:2 }}></div></div>
+            </div>
+          </div>
+          <div style={heroS.qrStand}>
+            <div style={heroS.standTop}>REHAP<br />来店登録はこちら</div>
+            <div style={heroS.qrBox}></div>
+            <div style={heroS.standIcons}><span>◆</span><span>◆</span><span>◆</span><span>◆</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Worries ── */
+const WORRIES = [
+  "集客にお金をかけても、リピートにつながらない",
+  "来店客のデータが取れず、顧客単価向上やリピート施策が打てていない",
+  "売上がサービス料金だけに依存している",
+  "物販をやりたいが、在庫リスクが怖い",
+];
+const wS = {
+  wrap: { padding:"44px 40px", background:"#0F2A4F", color:"#fff" },
+  inner: { maxWidth:900, margin:"0 auto" },
+  title: { fontSize:24, fontWeight:800, color:"#fff", margin:"0 0 20px", letterSpacing:"0.02em", textAlign:"center" },
+  list: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 },
+  row: { display:"flex", alignItems:"center", gap:14, background:"#163B6D", borderRadius:6, padding:"14px 18px", border:"1px solid #1F4A85" },
+  check: { width:22, height:22, borderRadius:"50%", background:"#1FA89D", color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, flexShrink:0 },
+  rowText: { fontSize:13, fontWeight:500, color:"#E1E8F2", lineHeight:1.6, margin:0 },
+};
+function Worries() {
+  return (
+    <section style={wS.wrap}>
+      <div style={wS.inner}>
+        <h2 style={wS.title}>こんなお悩みはありませんか？</h2>
+        <div style={wS.list} data-grid="worries">
+          {WORRIES.map((w, i) => (
+            <div key={i} style={wS.row}>
+              <div style={wS.check}>✓</div>
+              <p style={wS.rowText}>{w}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── About ── */
+const aS = {
+  wrap: { padding:"44px 40px 40px", background:"#fff" },
+  inner: { maxWidth:820, margin:"0 auto", textAlign:"center" },
+  title: { fontSize:28, fontWeight:900, color:"#0F2A4F", margin:"0 0 18px", letterSpacing:"0.02em" },
+  p: { fontSize:14, lineHeight:2, color:"#2A3F5F", margin:"0 0 12px", fontWeight:500 },
+};
+function About() {
+  return (
+    <section style={aS.wrap}>
+      <div style={aS.inner}>
+        <h2 style={aS.title}><span style={{ color:"#1FA89D" }}>REHAP</span>とは</h2>
+        <p style={aS.p}>REHAP（リハップ）は、実店舗と広告主をつなぐ<strong style={{ color:"#0F2A4F", fontWeight:800 }}>成果報酬型パートナーサービス</strong>です。</p>
+        <p style={aS.p}>従来のアフィリエイトはWebメディア・SNSが中心でしたが、REHAPでは「リアル店舗 × 成果報酬」という新しい形で、店舗の来店客・既存顧客・ファン層を活かした収益化を実現します。</p>
+        <p style={aS.p}>店舗の信頼・価値を守りながら、無理なく収益を生み出すことを目的として設計されています。</p>
+      </div>
+    </section>
+  );
+}
+
+/* ── Values ── */
+const vS = {
+  wrap: { padding:"44px 40px 36px", background:"#F5F8FC" },
+  head: { textAlign:"center", marginBottom:26 },
+  title: { fontSize:26, fontWeight:900, color:"#0F2A4F", margin:0, letterSpacing:"0.02em" },
+  grid: { display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 },
+  card: { background:"#fff", border:"1px solid #C9EAE6", borderRadius:10, padding:"20px 22px 18px", position:"relative", display:"flex", gap:14 },
+  badge: { background:"#1FA89D", color:"#fff", width:38, minHeight:70, borderRadius:6, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", flexShrink:0, padding:"8px 0" },
+  badgeLabel: { fontSize:9, fontWeight:700, letterSpacing:"0.05em", marginBottom:4 },
+  badgeNum: { fontSize:22, fontWeight:900, lineHeight:1 },
+  cBody: { flex:1 },
+  cTitle: { fontSize:17, fontWeight:800, color:"#0F2A4F", margin:"0 0 12px", lineHeight:1.4 },
+  body: { display:"grid", gridTemplateColumns:"1.4fr 1fr", gap:10, alignItems:"start" },
+  desc: { fontSize:11.5, lineHeight:1.85, color:"#2A3F5F", margin:0 },
+  chartBox: { aspectRatio:"1/1", borderRadius:6, background:"#E8F6F4", padding:8, display:"flex", flexDirection:"column", justifyContent:"space-between" },
+  chartHead: { height:4, background:"#C9EAE6", borderRadius:2, marginBottom:6, width:"70%" },
+  bars: { display:"flex", alignItems:"flex-end", gap:4, height:50 },
+  bar: { flex:1, background:"#1FA89D", borderRadius:2 },
+  barAlt: { flex:1, background:"#C9EAE6", borderRadius:2 },
+  donut: { width:30, height:30, borderRadius:"50%", background:"conic-gradient(#1FA89D 0 60%, #C9EAE6 0 100%)", margin:"auto 0" },
+  chartFoot: { display:"flex", alignItems:"center", gap:6 },
+  imgBox: { aspectRatio:"1/1", borderRadius:6, background:"linear-gradient(135deg,#e8eef5 0%,#b8c5d6 100%)", position:"relative", overflow:"hidden" },
+  imgStripe: { position:"absolute", inset:0, backgroundImage:"repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0 6px, rgba(0,0,0,0.04) 6px 12px)" },
+  imgLabel: { position:"absolute", bottom:5, left:5, fontFamily:"ui-monospace,Menlo,monospace", fontSize:9, color:"#5A6B85", background:"rgba(255,255,255,0.7)", padding:"2px 5px", borderRadius:3 },
+};
+function Values() {
+  return (
+    <section style={vS.wrap}>
+      <div style={vS.head}>
+        <h2 style={vS.title}><span style={{ color:"#1FA89D" }}>REHAP</span>が選ばれる<span style={{ fontSize:32, color:"#1FA89D", fontWeight:900, padding:"0 4px" }}>2</span>つの価値</h2>
+      </div>
+      <div style={vS.grid} data-grid="values">
+        <div style={vS.card}>
+          <div style={vS.badge}><div style={vS.badgeLabel}>価値</div><div style={vS.badgeNum}>1</div></div>
+          <div style={vS.cBody}>
+            <h3 style={vS.cTitle}>来店データで、<br />顧客が資産になる</h3>
+            <div style={vS.body}>
+              <p style={vS.desc}>QRコードを設置するだけで来店客を自動記録。リピート率・離脱ユーザー・曜日別来店傾向など、これまで見えなかった「お客様の動き」が一目でわかります。クーポン・スタンプカードで再来店の仕組みを手間なく作れ、顧客単価の向上やリピート施策を、感覚ではなく数字で動かせるようになります。</p>
+              <div style={vS.chartBox}>
+                <div><div style={vS.chartHead}></div><div style={vS.bars}><div style={{ ...vS.bar, height:"30%" }}></div><div style={{ ...vS.barAlt, height:"55%" }}></div><div style={{ ...vS.bar, height:"70%" }}></div><div style={{ ...vS.barAlt, height:"45%" }}></div><div style={{ ...vS.bar, height:"85%" }}></div></div></div>
+                <div style={vS.chartFoot}><div style={vS.donut}></div><div style={{ flex:1 }}><div style={{ height:3, background:"#C9EAE6", borderRadius:2, marginBottom:3 }}></div><div style={{ height:3, background:"#C9EAE6", borderRadius:2, width:"70%" }}></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style={vS.card}>
+          <div style={vS.badge}><div style={vS.badgeLabel}>価値</div><div style={vS.badgeNum}>2</div></div>
+          <div style={vS.cBody}>
+            <h3 style={vS.cTitle}>成果報酬型の副収益で、<br />施術外の収入を作る</h3>
+            <div style={vS.body}>
+              <p style={vS.desc}>来店したユーザーに、店舗の雰囲気に合った商品・サービスをご案内。購入が発生したときだけ報酬が入る成果報酬型なので、在庫リスクはゼロ。「売る」のではなく「紹介する」感覚で、店舗の信頼を損なわずに収益が生まれます。</p>
+              <div style={vS.imgBox}><div style={vS.imgStripe}></div><div style={vS.imgLabel}>// product photo</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Features ── */
+const fS = {
+  wrap: { padding:"32px 40px 36px", background:"#fff" },
+  head: { textAlign:"center", marginBottom:26 },
+  title: { fontSize:26, fontWeight:900, color:"#0F2A4F", margin:0, letterSpacing:"0.02em" },
+  grid: { display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:12 },
+  card: { position:"relative", background:"#fff", border:"1px solid #DCE3EE", borderRadius:8, padding:"26px 12px 18px", minHeight:170, display:"flex", flexDirection:"column", alignItems:"center", textAlign:"center", gap:10 },
+  num: { position:"absolute", top:-12, left:12, width:26, height:26, borderRadius:"50%", background:"#1FA89D", color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, fontSize:12, boxShadow:"0 4px 8px rgba(31,168,157,0.3)" },
+  iconImg: { width:60, height:60, objectFit:"contain", display:"block" },
+  text: { fontSize:13, fontWeight:700, color:"#0F2A4F", lineHeight:1.5, margin:0 },
+  sub: { fontSize:10, color:"#8896AB", marginTop:4, fontWeight:500 },
+};
+function FCard({ n, iconSrc, text, sub }) {
+  return (
+    <div style={fS.card}>
+      <div style={fS.num}>{n}</div>
+      <img src={iconSrc} alt="" style={fS.iconImg} />
+      <div><p style={fS.text}>{text}</p>{sub && <div style={fS.sub}>{sub}</div>}</div>
+    </div>
+  );
+}
+function Features() {
+  return (
+    <section style={fS.wrap}>
+      <div style={fS.head}><h2 style={fS.title}><span style={{ color:"#1FA89D" }}>REHAP</span>でできること</h2></div>
+      <div style={fS.grid} data-grid="features">
+        <FCard n={1} text={<>QRコードで<br />来店を自動記録</>} iconSrc="assets/icon_09_person_lock.png" />
+        <FCard n={2} text={<>デジタル<br />スタンプカード</>} iconSrc="assets/icon_08_book_open.png" />
+        <FCard n={3} text={<>来店回数に応じた<br />クーポン自動配布</>} iconSrc="assets/icon_07_box_gift.png" />
+        <FCard n={4} text={<>成果報酬型の商品PR<br />(在庫リスクなし)</>} iconSrc="assets/icon_06_coins_database.png" />
+        <FCard n={5} text={<>来店分析ダッシュボード</>} sub="(リピート率・曜日別・離脱ユーザー など)" iconSrc="assets/icon_03_lock_person.png" />
+        <FCard n={6} text={<>Googleマップ<br />口コミ誘導</>} iconSrc="assets/icon_04_location_pin.png" />
+        <FCard n={7} text={<>公式サイト・メディアへの<br />無料掲載</>} iconSrc="assets/icon_02_shop_register.png" />
+        <FCard n={8} text={<>Webマーケティング<br />無料相談</>} iconSrc="assets/icon_05_person_group.png" />
+      </div>
+    </section>
+  );
+}
+
+/* ── Pricing ── */
+const pS = {
+  wrap: { padding:"32px 40px 40px", background:"#fff" },
+  inner: { maxWidth:720, margin:"0 auto" },
+  card: { background:"#E8F6F4", border:"1px solid #C9EAE6", borderRadius:10, padding:"28px 32px 24px" },
+  title: { fontSize:19, fontWeight:800, color:"#0F2A4F", textAlign:"center", margin:"0 0 16px" },
+  priceRow: { display:"flex", alignItems:"center", gap:8, padding:"10px 0", borderBottom:"1px dashed #C9EAE6", fontSize:14, fontWeight:600, color:"#2A3F5F" },
+  bullet: { color:"#1FA89D", fontWeight:800 },
+  bigNum: { fontSize:32, fontWeight:900, color:"#1FA89D", letterSpacing:"-0.01em" },
+  bigUnit: { fontSize:15, color:"#1FA89D", fontWeight:700 },
+  bigTax: { fontSize:12, color:"#8896AB" },
+  note: { fontSize:11, color:"#8896AB", textAlign:"center", marginTop:14, lineHeight:1.7 },
+};
+function Pricing() {
+  return (
+    <section style={pS.wrap}>
+      <div style={pS.inner}>
+        <div style={pS.card}>
+          <h3 style={pS.title}>シンプルな料金体系</h3>
+          <div style={pS.priceRow}><span style={pS.bullet}>●</span><span>初月無料</span></div>
+          <div style={{ ...pS.priceRow, justifyContent:"flex-start" }}>
+            <span style={pS.bullet}>●</span><span>2ヶ月目から　月額</span>
+            <span style={pS.bigNum}>980</span><span style={pS.bigUnit}>円</span><span style={pS.bigTax}>(税込)</span>
+          </div>
+          <div style={pS.priceRow}><span style={pS.bullet}>●</span><span>初期費用なし</span></div>
+          <div style={{ ...pS.priceRow, borderBottom:"none" }}><span style={pS.bullet}>●</span><span>解約はいつでも可能</span></div>
+          <p style={pS.note}>成果報酬型のため、商品が売れない限り追加コストは発生しません。</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Flow ── */
+const flS = {
+  wrap: { padding:"16px 40px 40px", background:"#fff" },
+  inner: { maxWidth:900, margin:"0 auto" },
+  card: { background:"#fff", border:"1px solid #DCE3EE", borderRadius:10, padding:"26px 28px 24px" },
+  title: { fontSize:19, fontWeight:800, color:"#0F2A4F", textAlign:"center", margin:"0 0 20px" },
+  steps: { display:"grid", gridTemplateColumns:"repeat(5, 1fr)", gap:4 },
+  step: { display:"flex", flexDirection:"column", alignItems:"center", textAlign:"center", fontSize:11, color:"#2A3F5F", gap:8 },
+  stepLabel: { color:"#1FA89D", fontWeight:800, fontSize:12, letterSpacing:"0.06em" },
+  stepCircle: { width:60, height:60, borderRadius:"50%", background:"#E8F6F4", display:"flex", alignItems:"center", justifyContent:"center", color:"#1FA89D", border:"1.5px solid #C9EAE6" },
+  stepText: { fontWeight:600, lineHeight:1.4 },
+  arrow: { position:"absolute", top:30, right:-8, color:"#C9EAE6", fontSize:18, fontWeight:700 },
+  stepWrap: { position:"relative" },
+};
+function Flow() {
+  const steps = [
+    { l:"STEP1", t:<>お問い合わせ<br />(フォーム送信)</>, i:<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg> },
+    { l:"STEP2", t:<>担当者よりご連絡<br />(1〜2営業日以内)</>, i:<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><circle cx="12" cy="9" r="3.5"/><path d="M5 21c1-3.5 4-5 7-5s6 1.5 7 5"/></svg> },
+    { l:"STEP3", t:<>登録案内・<br />初期設定</>, i:<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg> },
+    { l:"STEP4", t:"QRコード発行", i:<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M19 14v7M14 19h3"/></svg> },
+    { l:"STEP5", t:<>QR設置・<br />運用開始</>, i:<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><rect x="9" y="12" width="6" height="9"/></svg> },
+  ];
+  return (
+    <section style={flS.wrap}>
+      <div style={flS.inner}>
+        <div style={flS.card}>
+          <h3 style={flS.title}>はじめるまでの流れ</h3>
+          <div style={flS.steps} data-grid="steps">
+            {steps.map((s, i) => (
+              <div key={i} style={flS.stepWrap}>
+                <div style={flS.step}>
+                  <div style={flS.stepLabel}>{s.l}</div>
+                  <div style={flS.stepCircle}>{s.i}</div>
+                  <div style={flS.stepText}>{s.t}</div>
+                </div>
+                {i < steps.length - 1 && <div style={flS.arrow}>›</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── FAQ ── */
+const FAQ_ITEMS = [
+  { q:"専門的な知識は必要ですか？", a:"不要です。QRコードを設置するだけで自動で動きます。" },
+  { q:"掲載される商品はどんなものですか？", a:"健康・美容・ライフスタイル関連の商品が中心です。店舗の雰囲気に合わないものは掲載しません。" },
+  { q:"解約はできますか？", a:"いつでも解約可能です。違約金等はありません。" },
+  { q:"LINEは必須ですか？", a:"ユーザーのLINEログインで来店を個人特定します。店舗側はLINEアカウント不要です。" },
+  { q:"どんな業種でも導入できますか？", a:"来店型のビジネスであれば業種を問わず導入いただけます。" },
+];
+function FAQ() {
+  const [open, setOpen] = useState(null);
+  return (
+    <section style={{ padding:"16px 40px 40px", background:"#fff" }}>
+      <div style={{ maxWidth:820, margin:"0 auto" }}>
+        <div style={{ background:"#F5F8FC", border:"1px solid #DCE3EE", borderRadius:10, padding:"26px 28px 24px" }}>
+          <h2 style={{ fontSize:20, fontWeight:900, color:"#0F2A4F", margin:"0 0 16px", textAlign:"center" }}>よくあるご質問</h2>
+          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+            {FAQ_ITEMS.map((f, i) => {
+              const isOpen = open === i;
+              return (
+                <div key={i} style={{ background:"#fff", borderRadius:6, border:"1px solid #DCE3EE", overflow:"hidden" }}>
+                  <button
+                    style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 16px", fontSize:13, fontWeight:600, color:"#2A3F5F", cursor:"pointer", width:"100%", textAlign:"left", background:"#fff", border:0 }}
+                    onClick={() => setOpen(isOpen ? null : i)}
+                  >
+                    <span style={{ color:"#1FA89D", fontWeight:800, fontSize:14 }}>Q.</span>
+                    <span style={{ flex:1 }}>{f.q}</span>
+                    <span style={{ color:"#1FA89D", fontSize:13, transform:isOpen?"rotate(180deg)":"none", transition:"transform 0.2s" }}>⌄</span>
+                  </button>
+                  {isOpen && <div style={{ padding:"0 16px 14px 38px", fontSize:12, color:"#5A6B85", lineHeight:1.85 }}>{f.a}</div>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── ContactForm ── */
+function ContactForm() {
+  const [data, setData] = useState({ company:"", industry:"", name:"", phone:"", email:"", message:"" });
+  const [sent, setSent] = useState(false);
+  const set = (k) => (e) => setData({ ...data, [k]: e.target.value });
+  const iS = { width:"100%", border:0, borderRadius:4, padding:"9px 11px", fontSize:13, background:"#fff", outline:"none", color:"#0F2A4F" };
+  const sS = { ...iS, appearance:"none", backgroundImage:"url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%231FA89D' stroke-width='2' fill='none'/></svg>\")", backgroundRepeat:"no-repeat", backgroundPosition:"right 10px center", paddingRight:28 };
+  return (
+    <section id="contact" style={{ padding:"16px 40px 40px", background:"#fff", scrollMarginTop:20 }}>
+      <div style={{ maxWidth:820, margin:"0 auto" }}>
+        <div style={{ background:"#1FA89D", borderRadius:10, padding:"26px 32px 28px", color:"#fff" }}>
+          <h2 style={{ fontSize:22, fontWeight:900, color:"#fff", margin:"0 0 4px", textAlign:"center" }}>まずは無料で相談する</h2>
+          <p style={{ fontSize:12, color:"#E8F6F4", textAlign:"center", margin:"0 0 18px" }}>お気軽にお問い合わせください。1〜2営業日以内にご連絡します。</p>
+          {sent ? (
+            <div style={{ textAlign:"center", padding:"30px 16px", color:"#fff" }}>
+              <div style={{ fontSize:36, marginBottom:8 }}>✓</div>
+              <div style={{ fontWeight:800, fontSize:17 }}>送信ありがとうございました</div>
+              <div style={{ color:"#E8F6F4", fontSize:12, marginTop:6 }}>担当者より1〜2営業日以内にご連絡いたします。</div>
+            </div>
+          ) : (
+            <>
+              <div style={{ display:"grid", gridTemplateColumns:"140px 1fr", gap:"12px 14px", alignItems:"center" }} data-grid="form">
+                <div style={{ display:"flex", alignItems:"center", gap:6, fontSize:13, fontWeight:700, color:"#fff" }}>店舗名 <span style={{ background:"#D63327", color:"#fff", fontSize:9, fontWeight:700, padding:"1px 5px", borderRadius:3 }}>必須</span></div>
+                <input style={iS} placeholder="例) リハップ整体院" value={data.company} onChange={set("company")} />
+                <div style={{ display:"flex", alignItems:"center", gap:6, fontSize:13, fontWeight:700, color:"#fff" }}>業種 <span style={{ background:"#D63327", color:"#fff", fontSize:9, fontWeight:700, padding:"1px 5px", borderRadius:3 }}>必須</span></div>
+                <select style={sS} value={data.industry} onChange={set("industry")}>
+                  <option value="">選択してください</option>
+                  <option>整体院</option><option>サロン</option><option>ジム</option><option>飲食店</option><option>その他</option>
+                </select>
+                <div style={{ display:"flex", alignItems:"center", gap:6, fontSize:13, fontWeight:700, color:"#fff" }}>お名前 <span style={{ background:"#D63327", color:"#fff", fontSize:9, fontWeight:700, padding:"1px 5px", borderRadius:3 }}>必須</span></div>
+                <input style={iS} placeholder="例) 山田 太郎" value={data.name} onChange={set("name")} />
+                <div style={{ display:"flex", alignItems:"center", gap:6, fontSize:13, fontWeight:700, color:"#fff" }}>メールアドレス <span style={{ background:"#D63327", color:"#fff", fontSize:9, fontWeight:700, padding:"1px 5px", borderRadius:3 }}>必須</span></div>
+                <input style={iS} type="email" placeholder="例) yamada@example.com" value={data.email} onChange={set("email")} />
+                <div style={{ fontSize:13, fontWeight:700, color:"#fff" }}>電話番号</div>
+                <input style={iS} type="tel" placeholder="例) 090-1234-5678" value={data.phone} onChange={set("phone")} />
+                <div style={{ fontSize:13, fontWeight:700, color:"#fff" }}>ご質問・ご要望</div>
+                <textarea style={{ ...iS, resize:"vertical", minHeight:70, fontFamily:"inherit" }} placeholder="ご自由にご記入ください" value={data.message} onChange={set("message")} />
+              </div>
+              <div style={{ textAlign:"center", marginTop:18 }}>
+                <button style={{ background:"#0F2A4F", color:"#fff", padding:"13px 56px", borderRadius:999, fontWeight:700, fontSize:15, boxShadow:"0 6px 14px rgba(15,42,79,0.35)", display:"inline-flex", alignItems:"center", gap:10, border:0, cursor:"pointer" }} onClick={() => setSent(true)}>
+                  <span>無料で相談する</span>
+                  <span style={{ display:"inline-flex", alignItems:"center", justifyContent:"center", width:22, height:22, borderRadius:999, background:"rgba(255,255,255,0.22)", fontSize:12 }}>›</span>
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Footer ── */
+function Footer() {
+  return (
+    <footer style={{ background:"#0A1F3D", padding:"20px 40px", display:"flex", alignItems:"center", justifyContent:"space-between", fontSize:11, color:"#C9D6EA" }}>
+      <div style={{ display:"flex", flexDirection:"column", gap:2, fontSize:10.5 }}>
+        <div>運営: 株式会社リリビット</div>
+        <div><a style={{ color:"#1FA89D", textDecoration:"none" }} href="https://relybit.co.jp" target="_blank" rel="noreferrer">https://relybit.co.jp</a></div>
+      </div>
+      <div>© 2026 Relybit Inc.</div>
+    </footer>
+  );
+}
+
+/* ── App ── */
+function App() {
+  return (
+    <React.Fragment>
+      <Hero />
+      <Worries />
+      <About />
+      <Values />
+      <Features />
+      <Pricing />
+      <Flow />
+      <FAQ />
+      <ContactForm />
+      <Footer />
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("app")).render(<App />);
+</script>
+</body>
+</html>

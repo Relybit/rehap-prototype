@@ -121,11 +121,19 @@
       <h2>ダッシュボード</h2>
       <div class="stats" id="stats"></div>
       <div class="card" id="monthly-card" style="display:none;">
-        <h2 style="font-size:15px; margin-bottom:16px;">📈 月間来店推移</h2>
+        <h2 style="font-size:15px; margin-bottom:16px;">月間来店推移</h2>
         <div class="chart-wrap" id="monthly-chart"></div>
       </div>
+      <div class="card" id="monthly-line-card" style="display:none;">
+        <h2 style="font-size:15px; margin-bottom:10px;">来店数の推移（新規 / 既存）</h2>
+        <div style="display:flex; gap:16px; margin-bottom:10px; font-size:12px; color:#5A6B85;">
+          <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block; width:14px; height:3px; background:#0F2A4F; border-radius:2px;"></span>新規</span>
+          <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block; width:14px; height:3px; background:#1FA89D; border-radius:2px;"></span>既存</span>
+        </div>
+        <div id="monthly-line-chart"></div>
+      </div>
       <div class="card">
-        <h2 style="font-size:15px; margin-bottom:16px;">🔗 店舗QRリンク</h2>
+        <h2 style="font-size:15px; margin-bottom:16px;">店舗QRリンク</h2>
         <div class="qr-area">
           <div class="qr-url-block">
             <div class="qr-url" id="store-url"></div>
@@ -139,7 +147,7 @@
         <p style="font-size:11px; color:#aaa; margin-top:8px;">QRコードはREHAP運営（リリビット）より設定されます</p>
       </div>
       <div class="card">
-        <h2 style="font-size:15px; margin-bottom:12px;">📋 来店ユーザー</h2>
+        <h2 style="font-size:15px; margin-bottom:12px;">来店ユーザー</h2>
         <table>
           <thead><tr><th>名前</th><th>来店回数</th><th>最終来店日</th></tr></thead>
           <tbody id="visits-table"></tbody>
@@ -158,7 +166,7 @@
         <button class="btn btn-primary" onclick="saveInfo()">保存する</button>
       </div>
       <div class="card" style="margin-top:16px;">
-        <h2 style="font-size:15px; margin-bottom:12px;">📊 アフィリエイト設定（REHAP運営設定）</h2>
+        <h2 style="font-size:15px; margin-bottom:12px;">アフィリエイト設定（REHAP運営設定）</h2>
         <div class="form-group">
           <label>成果単価</label>
           <div id="info-cpa" style="padding:10px 12px; background:#f5f8fc; border-radius:8px; font-size:14px; color:#334155;">未設定</div>
@@ -170,7 +178,7 @@
         <p style="font-size:12px; color:#aaa; margin-top:8px;">※ これらの設定はリライテンおよびREHAPを運営するリリビットが行います。</p>
       </div>
       <div class="card" style="margin-top:16px;">
-        <h2 style="font-size:15px; margin-bottom:4px;">📧 月次レポート送信先メール</h2>
+        <h2 style="font-size:15px; margin-bottom:4px;">月次レポート送信先メール</h2>
         <p style="font-size:13px; color:#888; margin-bottom:16px;">毎月1日に先月の来店レポートを自動送信します。</p>
         <div class="form-group"><label>メールアドレス</label><input type="email" id="info-email" placeholder="example@gmail.com"></div>
         <button class="btn btn-primary" onclick="saveEmail()">メールアドレスを保存</button>
@@ -212,19 +220,19 @@
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
 
         <div class="card">
-          <h2 style="font-size:15px; margin-bottom:16px;">👥 来店回数の分布</h2>
+          <h2 style="font-size:15px; margin-bottom:16px;">来店回数の分布</h2>
           <div id="chart-distrib"></div>
         </div>
 
         <div class="card">
-          <h2 style="font-size:15px; margin-bottom:16px;">📅 曜日別来店傾向</h2>
+          <h2 style="font-size:15px; margin-bottom:16px;">曜日別来店傾向</h2>
           <div id="chart-weekday"></div>
         </div>
 
       </div>
 
       <div class="card" style="margin-bottom:16px;">
-        <h2 style="font-size:15px; margin-bottom:16px;">📈 月次 新規 vs リピーター</h2>
+        <h2 style="font-size:15px; margin-bottom:16px;">月次 新規 vs リピーター</h2>
         <div id="chart-monthly-nr" style="display:flex; gap:12px; align-items:flex-end; height:140px;"></div>
         <div style="margin-top:10px; display:flex; gap:16px; font-size:12px;">
           <span><span style="display:inline-block;width:12px;height:12px;background:#0F2A4F;border-radius:2px;margin-right:4px;"></span>新規</span>
@@ -233,7 +241,7 @@
       </div>
 
       <div class="card">
-        <h2 style="font-size:15px; margin-bottom:16px;">🎟️ クーポン別使用数</h2>
+        <h2 style="font-size:15px; margin-bottom:16px;">クーポン別使用数</h2>
         <div id="chart-coupon"></div>
       </div>
 
@@ -243,7 +251,7 @@
     <div class="page" id="page-grant-coupon">
       <h2>即時クーポン付与</h2>
       <div class="card" style="margin-bottom:16px;">
-        <h2 style="font-size:15px; margin-bottom:12px;">👥 来店ユーザー一覧</h2>
+        <h2 style="font-size:15px; margin-bottom:12px;">来店ユーザー一覧</h2>
         <p style="font-size:13px; color:#888; margin-bottom:12px;">ユーザーを選択してクーポンを付与してください。</p>
         <table>
           <thead><tr><th>名前</th><th>来店回数</th><th>最終来店日</th><th>操作</th></tr></thead>
@@ -254,7 +262,7 @@
         </div>
       </div>
       <div class="card">
-        <h2 style="font-size:15px; margin-bottom:12px;">📋 付与履歴</h2>
+        <h2 style="font-size:15px; margin-bottom:12px;">付与履歴</h2>
         <table>
           <thead><tr><th>名前</th><th>クーポン名</th><th>付与日</th><th>有効期限</th><th>使用状況</th></tr></thead>
           <tbody id="granted-history-table"></tbody>
@@ -281,7 +289,7 @@
     <div class="page" id="page-referral">
       <h2>店舗紹介</h2>
       <div class="card" style="max-width:500px; margin-bottom:16px;">
-        <h2 style="font-size:15px; margin-bottom:4px;">🔑 あなたの招待コード</h2>
+        <h2 style="font-size:15px; margin-bottom:4px;">あなたの招待コード</h2>
         <p style="font-size:13px; color:#888; margin-bottom:16px;">このコードを紹介した店舗に伝えてください。3店舗紹介達成で月額無料になります。</p>
         <div style="display:flex; align-items:center; gap:12px;">
           <div id="referral-code-display" style="font-size:28px; font-weight:bold; letter-spacing:4px; color:#1a1a2e; background:#f5f5f5; padding:12px 24px; border-radius:8px;"></div>
@@ -289,7 +297,7 @@
         </div>
       </div>
       <div class="card" style="max-width:500px;">
-        <h2 style="font-size:15px; margin-bottom:12px;">📊 紹介状況</h2>
+        <h2 style="font-size:15px; margin-bottom:12px;">紹介状況</h2>
         <div id="referral-status"></div>
         <table style="margin-top:12px;">
           <thead><tr><th>店舗ID</th><th>店舗名</th></tr></thead>
@@ -554,6 +562,45 @@
     }
   }
 
+  function renderLineChart(data) {
+    const W = 500, H = 90;
+    const pl = 36, pr = 16, pt = 10, pb = 22;
+    const cw = W - pl - pr, ch = H - pt - pb;
+    const maxVal = Math.max(...data.map(d => Math.max(d.newUsers || 0, d.repeatUsers || 0)), 1);
+    const n = data.length;
+    const getX = i => pl + (n > 1 ? i * cw / (n - 1) : cw / 2);
+    const getY = v => pt + ch - (v / maxVal * ch);
+
+    const ticks = [0, 0.5, 1].map(r => {
+      const y = pt + ch * (1 - r);
+      const v = Math.round(maxVal * r);
+      return `<line x1="${pl}" y1="${y}" x2="${W - pr}" y2="${y}" stroke="#F0F4F8" stroke-width="1"/>
+              <text x="${pl - 4}" y="${y + 4}" text-anchor="end" font-size="5" fill="#8896AB">${v}</text>`;
+    }).join('');
+
+    const newPts = data.map((d, i) => `${getX(i)},${getY(d.newUsers || 0)}`).join(' ');
+    const repPts = data.map((d, i) => `${getX(i)},${getY(d.repeatUsers || 0)}`).join(' ');
+    const newDots = data.map((d, i) => {
+      const v = d.newUsers || 0;
+      return `<circle cx="${getX(i)}" cy="${getY(v)}" r="3.5" fill="#0F2A4F"/>
+              <title>${d.month.slice(5)}月: 新規 ${v}</title>`;
+    }).join('');
+    const repDots = data.map((d, i) => {
+      const v = d.repeatUsers || 0;
+      return `<circle cx="${getX(i)}" cy="${getY(v)}" r="3.5" fill="#1FA89D"/>
+              <title>${d.month.slice(5)}月: 既存 ${v}</title>`;
+    }).join('');
+    const labels = data.map((d, i) => `<text x="${getX(i)}" y="${H - 4}" text-anchor="middle" font-size="5" fill="#8896AB">${d.month.slice(5)}月</text>`).join('');
+
+    return `<svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
+      ${ticks}
+      <polyline points="${newPts}" fill="none" stroke="#0F2A4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      <polyline points="${repPts}" fill="none" stroke="#1FA89D" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      ${newDots}${repDots}
+      ${labels}
+    </svg>`;
+  }
+
   async function loadDashboard() {
     const res = await fetch('/api/store-auth/stats');
     const data = await res.json();
@@ -576,6 +623,12 @@
         </div>
       `).join('');
       document.getElementById('monthly-card').style.display = 'block';
+    }
+
+    // 新規／既存 折れ線グラフ
+    if (data.monthlyNewRepeat && data.monthlyNewRepeat.length > 0) {
+      document.getElementById('monthly-line-chart').innerHTML = renderLineChart(data.monthlyNewRepeat);
+      document.getElementById('monthly-line-card').style.display = 'block';
     }
 
     const tbody = document.getElementById('visits-table');

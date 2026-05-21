@@ -440,6 +440,17 @@ app.get('/api/store-auth/stats', storeAuth, async (req, res) => {
      GROUP BY month ORDER BY month DESC LIMIT 6`,
     [sid]
   );
+  const monthlyNR = query(db,
+    `SELECT month, SUM(is_new) as new_users, SUM(1 - is_new) as repeat_users FROM (
+       SELECT v.user_id, strftime('%Y-%m', v.visited_at) as month,
+         CASE WHEN v.visited_at = fv.first_visit THEN 1 ELSE 0 END as is_new
+       FROM visits v
+       JOIN (SELECT user_id, MIN(visited_at) as first_visit FROM visits WHERE store_id = ? GROUP BY user_id) fv
+         ON v.user_id = fv.user_id
+       WHERE v.store_id = ?
+     ) GROUP BY month ORDER BY month DESC LIMIT 6`,
+    [sid, sid]
+  );
   const users = query(db,
     'SELECT user_id, MAX(line_name) as line_name, COUNT(*) as visit_count, MAX(visited_at) as last_visit FROM visits WHERE store_id = ? GROUP BY user_id ORDER BY visit_count DESC',
     [sid]
@@ -453,6 +464,7 @@ app.get('/api/store-auth/stats', storeAuth, async (req, res) => {
     couponUsageCount: couponUsed[0]?.cnt || 0,
     repeatRate: uniqueCount > 0 ? Math.round((repeaters[0]?.cnt || 0) / uniqueCount * 100) : 0,
     monthlyVisits: monthly.reverse(),
+    monthlyNewRepeat: monthlyNR.map(r => ({ month: r.month, newUsers: r.new_users, repeatUsers: r.repeat_users })).reverse(),
     users,
   });
 });

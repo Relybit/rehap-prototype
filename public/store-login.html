@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REHAP 店舗ログイン</title>
+  <link rel="icon" href="/img/favicon.png" type="image/png">
+  <title>リライテン 店舗管理画面</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #f0f2f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
     .card { background: white; border-radius: 16px; padding: 40px; width: 380px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-    .logo { text-align: center; margin-bottom: 32px; }
-    .logo h1 { font-size: 28px; color: #1a1a2e; letter-spacing: 3px; }
-    .logo p { font-size: 13px; color: #888; margin-top: 6px; }
+    .logo { text-align: center; margin-bottom: 28px; }
+    .logo img { height: 64px; width: auto; max-width: 100%; }
+    .logo p { font-size: 13px; color: #888; margin-top: 8px; }
     .form-group { margin-bottom: 16px; }
     label { display: block; font-size: 13px; color: #666; margin-bottom: 6px; }
     input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; transition: border 0.2s; }
@@ -23,7 +24,7 @@
 <body>
 <div class="card">
   <div class="logo">
-    <h1>REHAP</h1>
+    <img src="/img/logo-reraiten.png" alt="リライテン">
     <p>店舗管理ポータル</p>
   </div>
   <div class="error" id="error">店舗IDまたはパスワードが違います</div>
@@ -54,5 +55,11 @@
     }
   }
 </script>
+<footer style="text-align:center;padding:24px 16px 32px;margin-top:8px;border-top:1px solid #E8EDF4;font-size:12px;color:#8896AB;">
+  <a href="/privacy.html" style="color:#8896AB;text-decoration:none;margin:0 10px;">プライバシーポリシー</a>
+  <span style="color:#D0D8E8;">|</span>
+  <a href="/terms.html" style="color:#8896AB;text-decoration:none;margin:0 10px;">利用規約</a>
+  <p style="margin-top:8px;font-size:11px;">運営：<a href="https://relybit.co.jp" target="_blank" rel="noopener" style="color:#8896AB;text-decoration:none;">株式会社リリビット</a></p>
+</footer>
 </body>
 </html>
