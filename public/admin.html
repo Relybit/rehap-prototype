@@ -119,6 +119,7 @@
     <a onclick="showPage('visits')" id="nav-visits">来店統計</a>
     <a onclick="showPage('purchase-coupons')" id="nav-purchase-coupons">購入特典</a>
     <a onclick="showPage('referrals')" id="nav-referrals">紹介管理</a>
+    <a onclick="showPage('registrations')" id="nav-registrations">新規登録申請</a>
   </div>
 
   <div class="main">
@@ -261,6 +262,32 @@
         <table>
           <thead><tr><th>店舗ID</th><th>店舗名</th><th>招待コード</th><th>紹介元コード</th><th>紹介数</th><th>月額状態</th></tr></thead>
           <tbody id="referrals-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 新規登録申請 -->
+    <div class="page" id="page-registrations">
+      <h2>新規登録申請</h2>
+      <p style="font-size:13px; color:#888; margin-bottom:16px;">店舗登録フォームから自己登録した店舗の一覧です。招待コード未入力の場合は「編集」から手動で追加できます。</p>
+      <div class="card">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap;">
+          <span id="registrations-count" style="font-size:13px; color:#888;"></span>
+          <input type="text" id="registrations-search" placeholder="店舗名・IDで絞り込み" oninput="filterRegistrations()" style="padding:6px 10px; border:1px solid #ddd; border-radius:6px; font-size:13px; width:220px;">
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>登録日時</th>
+              <th>店舗名</th>
+              <th>店舗ID</th>
+              <th>予約URL</th>
+              <th>招待コード</th>
+              <th>サブスク</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="registrations-table"></tbody>
         </table>
       </div>
     </div>
@@ -495,6 +522,7 @@ function showPage(name) {
   if (name === 'visits') loadVisits();
   if (name === 'purchase-coupons') loadPurchaseCoupons();
   if (name === 'referrals') loadReferrals();
+  if (name === 'registrations') loadRegistrations();
 }
 
 // トースト通知
@@ -995,6 +1023,64 @@ async function markPurchaseCouponUsed(id) {
   await fetch('/api/admin/purchase-coupons/' + id + '/mark-used', { method: 'POST' });
   showToast('使用済みにしました');
   loadPurchaseCoupons();
+}
+
+// ===== 新規登録申請 =====
+let _allRegistrations = [];
+
+async function loadRegistrations() {
+  const res = await fetch('/api/admin/stores');
+  const stores = await res.json();
+  _allRegistrations = stores
+    .filter(s => s.registered_at)
+    .sort((a, b) => b.registered_at.localeCompare(a.registered_at));
+  document.getElementById('registrations-count').textContent = `${_allRegistrations.length}件の自己登録`;
+  renderRegistrations(_allRegistrations);
+}
+
+function filterRegistrations() {
+  const q = document.getElementById('registrations-search').value.toLowerCase();
+  const filtered = _allRegistrations.filter(s =>
+    s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q)
+  );
+  renderRegistrations(filtered);
+}
+
+function renderRegistrations(list) {
+  const statusMap = {
+    pending:        '<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:4px;font-size:11px;">⚪ 未払い</span>',
+    active:         '<span style="background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:4px;font-size:11px;">🟢 支払済み</span>',
+    free:           '<span style="background:#e0f2fe;color:#0369a1;padding:2px 8px;border-radius:4px;font-size:11px;">🎉 無料</span>',
+    canceled:       '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:4px;font-size:11px;">❌ 解約</span>',
+    payment_failed: '<span style="background:#fee2e2;color:#991b1b;padding:2px 8px;border-radius:4px;font-size:11px;">⚠️ 支払失敗</span>',
+  };
+  const tbody = document.getElementById('registrations-table');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">該当する登録がありません</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(s => {
+    const dt = s.registered_at ? s.registered_at.replace('T', ' ').slice(0, 16) : '—';
+    const bookingUrl = s.booking_url
+      ? `<a href="${s.booking_url}" target="_blank" rel="noopener" style="color:#1FA89D; font-size:12px; word-break:break-all;">${s.booking_url.replace(/^https?:\/\//, '').slice(0, 30)}${s.booking_url.length > 35 ? '…' : ''}</a>`
+      : '<span style="color:#aaa; font-size:12px;">未設定</span>';
+    const referredBy = s.referred_by
+      ? `<span style="background:#f3e8ff; color:#7c3aed; padding:2px 8px; border-radius:4px; font-size:12px; font-weight:bold;">${s.referred_by}</span>`
+      : `<button class="btn btn-sm" style="background:#f0f4ff;color:#3730a3;font-size:11px;" onclick='openModal("store",${JSON.stringify(s)})'>追加する</button>`;
+    return `
+      <tr>
+        <td style="font-size:12px; white-space:nowrap;">${dt}</td>
+        <td style="font-weight:bold;">${s.name}</td>
+        <td><span class="badge badge-blue" style="font-size:11px;">${s.id}</span></td>
+        <td>${bookingUrl}</td>
+        <td>${referredBy}</td>
+        <td>${statusMap[s.subscription_status] || statusMap.pending}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" onclick='openModal("store",${JSON.stringify(s)})'>編集</button>
+          <button class="btn btn-sm" style="background:#E8F6F4;color:#1FA89D;" onclick="openStoreDetail('${s.id}','${s.name.replace(/'/g,"\\'")}')">詳細</button>
+        </td>
+      </tr>`;
+  }).join('');
 }
 
 // ===== 紹介管理 =====
