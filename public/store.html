@@ -430,7 +430,7 @@
           </div>
           <div class="menu-right">
             ${m.price ? `<div class="menu-price">${m.price}</div>` : ''}
-            ${bookingUrl ? `<button class="menu-book-btn" onclick="window.open('${bookingUrl}', '_blank')">予約する</button>` : ''}
+            ${bookingUrl ? `<button class="menu-book-btn" onclick="trackMenuBooking(${m.id}, '${bookingUrl}')">予約する</button>` : ''}
           </div>
         </div>`;
     }).join('');
@@ -451,6 +451,11 @@
   function toggleMenuExpand() {
     menuExpanded = !menuExpanded;
     render(false);
+  }
+
+  function trackMenuBooking(menuId, bookingUrl) {
+    fetch(`/api/menu-booking/${storeId}/${menuId}`, { method: 'POST' }).catch(() => {});
+    window.open(bookingUrl, '_blank');
   }
 
   function renderCampaignCoupons() {

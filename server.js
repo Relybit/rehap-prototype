@@ -776,6 +776,17 @@ app.delete('/api/store-auth/menus/:id', storeAuth, async (req, res) => {
   res.json({ success: true });
 });
 
+// メニュー予約クリック計測（公開エンドポイント）
+app.post('/api/menu-booking/:storeId/:menuId', async (req, res) => {
+  const db = await getDb();
+  db.run(
+    'UPDATE menus SET booking_count = COALESCE(booking_count, 0) + 1 WHERE id = ? AND store_id = ?',
+    [req.params.menuId, req.params.storeId]
+  );
+  save();
+  res.json({ ok: true });
+});
+
 // ===== 店舗紹介（招待コード）=====
 
 app.get('/api/store-auth/referral', storeAuth, async (req, res) => {

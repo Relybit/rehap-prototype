@@ -1109,6 +1109,8 @@ async function openStoreDetail(storeId, storeName) {
 
 function closeStoreDetail() {
   document.getElementById('store-detail-overlay').classList.remove('open');
+  const prefix = _detailStoreId + '_';
+  Object.keys(_detailLoaded).filter(k => k.startsWith(prefix)).forEach(k => delete _detailLoaded[k]);
   _detailStoreId = null;
 }
 

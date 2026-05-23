@@ -166,18 +166,6 @@
         <button class="btn btn-primary" onclick="saveInfo()">保存する</button>
       </div>
       <div class="card" style="margin-top:16px;">
-        <h2 style="font-size:15px; margin-bottom:12px;">アフィリエイト設定（REHAP運営設定）</h2>
-        <div class="form-group">
-          <label>成果単価</label>
-          <div id="info-cpa" style="padding:10px 12px; background:#f5f8fc; border-radius:8px; font-size:14px; color:#334155;">未設定</div>
-        </div>
-        <div class="form-group">
-          <label>成果地点</label>
-          <div id="info-conversion-point" style="padding:10px 12px; background:#f5f8fc; border-radius:8px; font-size:14px; color:#334155;">未設定</div>
-        </div>
-        <p style="font-size:12px; color:#aaa; margin-top:8px;">※ これらの設定はリライテンおよびREHAPを運営するリリビットが行います。</p>
-      </div>
-      <div class="card" style="margin-top:16px;">
         <h2 style="font-size:15px; margin-bottom:4px;">月次レポート送信先メール</h2>
         <p style="font-size:13px; color:#888; margin-bottom:16px;">毎月1日に先月の来店レポートを自動送信します。</p>
         <div class="form-group"><label>メールアドレス</label><input type="email" id="info-email" placeholder="example@gmail.com"></div>
@@ -240,9 +228,14 @@
         </div>
       </div>
 
-      <div class="card">
-        <h2 style="font-size:15px; margin-bottom:16px;">クーポン別使用数</h2>
+      <div class="card" style="margin-bottom:16px;">
+        <h2 style="font-size:15px; margin-bottom:16px;">ク��ポン別使用数</h2>
         <div id="chart-coupon"></div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size:15px; margin-bottom:16px;">メニュー別 予約クリック数</h2>
+        <div id="chart-menu-booking"></div>
       </div>
 
     </div>
@@ -279,7 +272,7 @@
           <button class="btn btn-primary" onclick="openMenuModal()">＋ メニューを追加</button>
         </div>
         <table>
-          <thead><tr><th>メニュー名</th><th>説明</th><th>料金</th><th>時間</th><th>個別予約URL</th><th>操作</th></tr></thead>
+          <thead><tr><th>メニュー名</th><th>説明</th><th>料金</th><th>時間</th><th>個別予約URL</th><th>予約クリック数</th><th>操作</th></tr></thead>
           <tbody id="menus-table"></tbody>
         </table>
       </div>
@@ -508,6 +501,16 @@
       makeBarChart('chart-coupon', d.couponStats, 'title', 'usage_count', '#1FA89D');
     } else {
       document.getElementById('chart-coupon').innerHTML = '<div style="color:#aaa;font-size:13px;padding:20px;">クーポンがありません</div>';
+    }
+
+    // メニュー別予約クリック数
+    const menusRes = await fetch('/api/store-auth/menus');
+    const menus = await menusRes.json();
+    const menuWithCount = menus.filter(m => (m.booking_count || 0) > 0);
+    if (menuWithCount.length > 0) {
+      makeBarChart('chart-menu-booking', menus, 'name', 'booking_count', '#0F2A4F');
+    } else {
+      document.getElementById('chart-menu-booking').innerHTML = '<div style="color:#aaa;font-size:13px;padding:20px;">まだクリックデータがありません</div>';
     }
   }
 
@@ -881,6 +884,7 @@
         <td style="font-size:13px; color:#e65100; font-weight:bold;">${m.price || '<span style="color:#ccc;">—</span>'}</td>
         <td style="font-size:13px;">${m.duration || '<span style="color:#ccc;">—</span>'}</td>
         <td style="font-size:12px;">${m.booking_url ? `<a href="${m.booking_url}" target="_blank" style="color:#1a1a2e;">個別URL</a>` : '<span style="color:#aaa;">共通URLを使用</span>'}</td>
+        <td style="text-align:center; font-weight:bold; color:#1FA89D;">${m.booking_count || 0}</td>
         <td>
           <button class="btn btn-sm btn-primary" onclick='openMenuModal(${JSON.stringify(m)})'>編集</button>
           <button class="btn btn-sm btn-danger" onclick="deleteMenu(${m.id})">削除</button>
