@@ -323,9 +323,10 @@ app.post('/api/visit', async (req, res) => {
   let isNew = false;
 
   try {
+    const visitedTime = new Date(Date.now() + 9*60*60*1000).toISOString().split('T')[1].slice(0, 5);
     db.run(
-      'INSERT INTO visits (store_id, user_id, visited_at, line_name) VALUES (?, ?, ?, ?)',
-      [store_id, user_id, today, line_name || null]
+      'INSERT INTO visits (store_id, user_id, visited_at, visited_time, line_name) VALUES (?, ?, ?, ?, ?)',
+      [store_id, user_id, today, visitedTime, line_name || null]
     );
     isNew = true;
     save();
@@ -541,6 +542,58 @@ app.get('/api/store-auth/analytics', storeAuth, async (req, res) => {
     [sid]
   );
 
+  // リテンション率：各月に来店したユーザーが翌月も来店した割合
+  const retentionRaw = query(db,
+    `SELECT month, COUNT(DISTINCT user_id) as users FROM (
+       SELECT user_id, strftime('%Y-%m', visited_at) as month FROM visits WHERE store_id = ?
+     ) GROUP BY month ORDER BY month DESC LIMIT 7`,
+    [sid]
+  );
+  const retentionData = [];
+  for (let i = 0; i < retentionRaw.length - 1; i++) {
+    const cur = retentionRaw[i];
+    const prev = retentionRaw[i + 1];
+    const retained = query(db,
+      `SELECT COUNT(DISTINCT v1.user_id) as cnt FROM visits v1
+       INNER JOIN visits v2 ON v1.user_id = v2.user_id AND v1.store_id = v2.store_id
+       WHERE v1.store_id = ?
+         AND strftime('%Y-%m', v1.visited_at) = ?
+         AND strftime('%Y-%m', v2.visited_at) = ?`,
+      [sid, cur.month, prev.month]
+    );
+    retentionData.push({
+      month: prev.month,
+      retainedUsers: retained[0]?.cnt || 0,
+      totalUsers: prev.users,
+      rate: prev.users > 0 ? Math.round((retained[0]?.cnt || 0) / prev.users * 100) : 0,
+    });
+  }
+
+  // キャンペーンクーポン効果
+  const campaignStats = query(db,
+    `SELECT cc.title, cc.starts_at, cc.ends_at,
+       COUNT(cu.id) as usage_count
+     FROM campaign_coupons cc
+     LEFT JOIN campaign_coupon_usages cu ON cc.id = cu.campaign_coupon_id
+     WHERE cc.store_id = ?
+     GROUP BY cc.id ORDER BY cc.starts_at DESC LIMIT 10`,
+    [sid]
+  );
+
+  // 商品クリック数
+  const productClicks = query(db,
+    `SELECT id, name, COALESCE(click_count, 0) as click_count
+     FROM products WHERE store_id = ? ORDER BY click_count DESC`,
+    [sid]
+  );
+
+  // メニュー予約クリック数
+  const menuBookingClicks = query(db,
+    `SELECT id, name, COALESCE(booking_count, 0) as booking_count
+     FROM menus WHERE store_id = ? ORDER BY booking_count DESC`,
+    [sid]
+  );
+
   const weekdayNames = ['日', '月', '火', '水', '木', '金', '土'];
   res.json({
     visitDistribution: distrib.map(r => ({ group: r.cnt_group, count: r.user_count })),
@@ -549,6 +602,10 @@ app.get('/api/store-auth/analytics', storeAuth, async (req, res) => {
     lostUsers: lost[0]?.cnt || 0,
     avgInterval,
     couponStats,
+    retentionData: retentionData.reverse(),
+    campaignStats,
+    productClicks,
+    menuBookingClicks,
   });
 });
 
@@ -852,6 +909,17 @@ app.post('/api/menu-booking/:storeId/:menuId', async (req, res) => {
   db.run(
     'UPDATE menus SET booking_count = COALESCE(booking_count, 0) + 1 WHERE id = ? AND store_id = ?',
     [req.params.menuId, req.params.storeId]
+  );
+  save();
+  res.json({ ok: true });
+});
+
+// 商品クリック計測（公開エンドポイント）
+app.post('/api/product-click/:storeId/:productId', async (req, res) => {
+  const db = await getDb();
+  db.run(
+    'UPDATE products SET click_count = COALESCE(click_count, 0) + 1 WHERE id = ? AND store_id = ?',
+    [req.params.productId, req.params.storeId]
   );
   save();
   res.json({ ok: true });

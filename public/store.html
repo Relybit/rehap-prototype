@@ -357,7 +357,7 @@
                 <div class="product-name">${p.name} <span style="font-size:10px; background:#ff6b35; color:white; padding:2px 6px; border-radius:4px; font-weight:normal; vertical-align:middle;">PR</span></div>
                 <div class="product-desc">${p.description}</div>
               </div>
-              <button class="product-btn" onclick="window.open('${p.affiliate_url}', '_blank')">詳しく見る</button>
+              <button class="product-btn" onclick="trackProductClick(${p.id}, '${p.affiliate_url}')">詳しく見る</button>
             </div>
           `).join('')}
         </div>
@@ -479,6 +479,11 @@
   function trackMenuBooking(menuId, bookingUrl) {
     fetch(`/api/menu-booking/${storeId}/${menuId}`, { method: 'POST' }).catch(() => {});
     window.open(bookingUrl, '_blank');
+  }
+
+  function trackProductClick(productId, affiliateUrl) {
+    fetch(`/api/product-click/${storeId}/${productId}`, { method: 'POST' }).catch(() => {});
+    window.open(affiliateUrl, '_blank');
   }
 
   function renderCampaignCoupons() {

@@ -94,6 +94,8 @@ async function getDb() {
   try { db.run(`ALTER TABLE products ADD COLUMN cpa INTEGER`); } catch(e) {}
   try { db.run(`ALTER TABLE products ADD COLUMN conversion_point TEXT`); } catch(e) {}
   try { db.run(`ALTER TABLE menus ADD COLUMN booking_count INTEGER DEFAULT 0`); } catch(e) {}
+  try { db.run(`ALTER TABLE visits ADD COLUMN visited_time TEXT`); } catch(e) {}
+  try { db.run(`ALTER TABLE products ADD COLUMN click_count INTEGER DEFAULT 0`); } catch(e) {}
   try { db.run(`CREATE TABLE IF NOT EXISTS referral_coupons (id INTEGER PRIMARY KEY AUTOINCREMENT, store_id TEXT NOT NULL, title TEXT NOT NULL, description TEXT, code TEXT NOT NULL UNIQUE, max_uses INTEGER, expires_at TEXT, created_at TEXT NOT NULL)`); } catch(e) {}
   try { db.run(`CREATE TABLE IF NOT EXISTS referral_coupon_claims (id INTEGER PRIMARY KEY AUTOINCREMENT, coupon_id INTEGER NOT NULL, store_id TEXT NOT NULL, user_id TEXT NOT NULL, claimed_at TEXT NOT NULL, UNIQUE(coupon_id, user_id))`); } catch(e) {}
 

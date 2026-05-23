@@ -226,9 +226,25 @@
         <div id="chart-coupon"></div>
       </div>
 
-      <div class="card">
+      <div class="card" style="margin-bottom:16px;">
         <h2 style="font-size:15px; margin-bottom:16px;">メニュー別 予約クリック数</h2>
         <div id="chart-menu-booking"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h2 style="font-size:15px; margin-bottom:16px;">商品別 クリック数</h2>
+        <div id="chart-product-clicks"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h2 style="font-size:15px; margin-bottom:8px;">顧客リテンション率</h2>
+        <p style="font-size:12px; color:#888; margin-bottom:12px;">前月来店したユーザーが当月も来店した割合</p>
+        <div id="chart-retention" style="display:flex; gap:12px; align-items:flex-end; height:140px;"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h2 style="font-size:15px; margin-bottom:8px;">キャンペーンクーポン効果</h2>
+        <div id="chart-campaign-effect"></div>
       </div>
 
     </div>
@@ -528,13 +544,61 @@
     }
 
     // メニュー別予約クリック数
-    const menusRes = await fetch('/api/store-auth/menus');
-    const menus = await menusRes.json();
-    const menuWithCount = menus.filter(m => (m.booking_count || 0) > 0);
-    if (menuWithCount.length > 0) {
-      makeBarChart('chart-menu-booking', menus, 'name', 'booking_count', '#0F2A4F');
+    if (d.menuBookingClicks && d.menuBookingClicks.some(m => m.booking_count > 0)) {
+      makeBarChart('chart-menu-booking', d.menuBookingClicks, 'name', 'booking_count', '#0F2A4F');
     } else {
       document.getElementById('chart-menu-booking').innerHTML = '<div style="color:#aaa;font-size:13px;padding:20px;">まだクリックデータがありません</div>';
+    }
+
+    // 商品別クリック数
+    if (d.productClicks && d.productClicks.some(p => p.click_count > 0)) {
+      makeBarChart('chart-product-clicks', d.productClicks, 'name', 'click_count', '#F59E0B');
+    } else {
+      document.getElementById('chart-product-clicks').innerHTML = '<div style="color:#aaa;font-size:13px;padding:20px;">まだクリックデータがありません</div>';
+    }
+
+    // 顧客リテンション率
+    if (d.retentionData && d.retentionData.length > 0) {
+      const maxR = Math.max(...d.retentionData.map(r => r.totalUsers), 1);
+      document.getElementById('chart-retention').innerHTML = d.retentionData.map(r => {
+        const h = Math.round(r.totalUsers / maxR * 110);
+        const rh = Math.round(r.retainedUsers / maxR * 110);
+        return `
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; justify-content:flex-end;">
+            <div style="font-size:10px; color:#555;">${r.rate}%</div>
+            <div style="width:100%; position:relative; display:flex; flex-direction:column; border-radius:4px 4px 0 0; overflow:hidden; background:#f0f0f0; height:${h}px;">
+              <div style="position:absolute; bottom:0; width:100%; height:${rh}px; background:#1FA89D;"></div>
+            </div>
+            <div style="font-size:10px; color:#aaa;">${r.month.slice(5)}月</div>
+          </div>`;
+      }).join('');
+    } else {
+      document.getElementById('chart-retention').innerHTML = '<div style="color:#aaa;font-size:13px;padding:20px;">データが不足しています（2ヶ月以上のデータが必要）</div>';
+    }
+
+    // キャンペーンクーポン効果
+    if (d.campaignStats && d.campaignStats.length > 0) {
+      document.getElementById('chart-campaign-effect').innerHTML = `
+        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+          <thead>
+            <tr style="border-bottom:1px solid #eee;">
+              <th style="text-align:left; padding:6px 4px; color:#888; font-weight:normal;">クーポン名</th>
+              <th style="text-align:center; padding:6px 4px; color:#888; font-weight:normal;">期間</th>
+              <th style="text-align:right; padding:6px 4px; color:#888; font-weight:normal;">利用数</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${d.campaignStats.map(c => `
+              <tr style="border-bottom:1px solid #f5f5f5;">
+                <td style="padding:8px 4px;">${c.title}</td>
+                <td style="padding:8px 4px; text-align:center; font-size:11px; color:#888;">${c.starts_at.slice(0,10)} 〜 ${c.ends_at.slice(0,10)}</td>
+                <td style="padding:8px 4px; text-align:right; font-weight:bold; color:#1FA89D;">${c.usage_count}回</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>`;
+    } else {
+      document.getElementById('chart-campaign-effect').innerHTML = '<div style="color:#aaa;font-size:13px;padding:20px;">キャンペーンクーポンがありません</div>';
     }
   }
 
