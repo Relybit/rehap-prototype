@@ -776,6 +776,76 @@ app.delete('/api/store-auth/menus/:id', storeAuth, async (req, res) => {
   res.json({ success: true });
 });
 
+// ===== 紹介クーポン =====
+
+app.get('/api/store-auth/referral-coupons', storeAuth, async (req, res) => {
+  const db = await getDb();
+  const rows = query(db,
+    `SELECT rc.*, COUNT(rcc.id) as claim_count
+     FROM referral_coupons rc
+     LEFT JOIN referral_coupon_claims rcc ON rc.id = rcc.coupon_id
+     WHERE rc.store_id = ?
+     GROUP BY rc.id
+     ORDER BY rc.created_at DESC`,
+    [req.session.storeId]
+  );
+  res.json(rows);
+});
+
+app.post('/api/store-auth/referral-coupons', storeAuth, async (req, res) => {
+  const db = await getDb();
+  const { title, description, max_uses, expires_at } = req.body;
+  if (!title) return res.status(400).json({ error: 'タイトルは必須です' });
+  const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const now = new Date().toISOString();
+  db.run(
+    'INSERT INTO referral_coupons (store_id, title, description, code, max_uses, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [req.session.storeId, title, description || null, code, max_uses || null, expires_at || null, now]
+  );
+  save();
+  res.json({ success: true, code });
+});
+
+app.delete('/api/store-auth/referral-coupons/:id', storeAuth, async (req, res) => {
+  const db = await getDb();
+  db.run('DELETE FROM referral_coupons WHERE id = ? AND store_id = ?', [req.params.id, req.session.storeId]);
+  db.run('DELETE FROM referral_coupon_claims WHERE coupon_id = ?', [req.params.id]);
+  save();
+  res.json({ success: true });
+});
+
+// 紹介クーポン受け取り（ユーザー側・LINE認証必須）
+app.post('/api/store/:storeId/claim-referral', async (req, res) => {
+  const userId = req.session.lineUserId;
+  if (!userId) return res.status(401).json({ error: 'LINEログインが必要です' });
+  const { code } = req.body;
+  const db = await getDb();
+  const coupons = query(db,
+    'SELECT * FROM referral_coupons WHERE store_id = ? AND code = ?',
+    [req.params.storeId, code]
+  );
+  if (!coupons.length) return res.status(404).json({ error: 'クーポンが見つかりません' });
+  const coupon = coupons[0];
+  const now = new Date().toISOString();
+  if (coupon.expires_at && coupon.expires_at < now) return res.status(400).json({ error: 'このクーポンは期限切れです' });
+  if (coupon.max_uses) {
+    const cnt = query(db, 'SELECT COUNT(*) as cnt FROM referral_coupon_claims WHERE coupon_id = ?', [coupon.id])[0].cnt;
+    if (cnt >= coupon.max_uses) return res.status(400).json({ error: 'このクーポンは上限に達しました' });
+  }
+  const already = query(db, 'SELECT id FROM referral_coupon_claims WHERE coupon_id = ? AND user_id = ?', [coupon.id, userId]);
+  if (already.length) return res.status(400).json({ error: 'すでに受け取り済みです', already: true });
+  db.run(
+    'INSERT INTO referral_coupon_claims (coupon_id, store_id, user_id, claimed_at) VALUES (?, ?, ?, ?)',
+    [coupon.id, req.params.storeId, userId, now]
+  );
+  db.run(
+    'INSERT INTO user_purchase_coupons (store_id, user_id, title, description, granted_at, expires_at) VALUES (?, ?, ?, ?, ?, ?)',
+    [req.params.storeId, userId, coupon.title, coupon.description || null, now, coupon.expires_at || null]
+  );
+  save();
+  res.json({ success: true, coupon });
+});
+
 // メニュー予約クリック計測（公開エンドポイント）
 app.post('/api/menu-booking/:storeId/:menuId', async (req, res) => {
   const db = await getDb();

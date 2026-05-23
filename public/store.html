@@ -134,6 +134,8 @@
 
 <script>
   const storeId = location.pathname.split('/store/')[1];
+  const _urlParams = new URLSearchParams(location.search);
+  const refCouponCode = _urlParams.get('ref_coupon') || null;
   let userId = null;
   let displayName = null;
 
@@ -165,7 +167,7 @@
         <div class="card line-login-screen">
           <h2>LINEでログイン</h2>
           <p>来店スタンプ・クーポンを利用するには<br>LINEログインが必要です</p>
-          <a href="/auth/line/login?return_to=/store/${storeId}" class="line-login-btn">
+          <a href="/auth/line/login?return_to=${encodeURIComponent('/store/' + storeId + (refCouponCode ? '?ref_coupon=' + refCouponCode : ''))}" class="line-login-btn">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.03 2 11c0 3.16 1.73 5.95 4.36 7.67-.19.67-.68 2.44-.78 2.82-.12.47.17.46.36.34.15-.1 1.97-1.32 2.77-1.85.38.06.78.09 1.19.09 5.52 0 10-4.03 10-9S17.52 2 12 2z"/></svg>
             LINEでログイン
           </a>
@@ -204,6 +206,23 @@
 
     const ccRes = await fetch(`/api/campaign-coupons/${storeId}/${userId}`);
     campaignCoupons = await ccRes.json();
+
+    // 紹介クーポンの受け取り処理
+    if (refCouponCode) {
+      const claimRes = await fetch(`/api/store/${storeId}/claim-referral`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: refCouponCode })
+      });
+      const claimData = await claimRes.json();
+      if (claimData.success) {
+        purchaseCoupons = await (await fetch(`/api/purchase-coupons/${storeId}/${userId}`)).json();
+        sessionStorage.setItem('refCouponMsg', `「${claimData.coupon.title}」クーポンを受け取りました！`);
+      } else if (!claimData.already) {
+        sessionStorage.setItem('refCouponMsg', claimData.error || 'クーポンを取得できませんでした');
+      }
+      history.replaceState(null, '', location.pathname);
+    }
 
     render(visitData.isNew);
   }
@@ -254,7 +273,11 @@
     const unlockedCoupons = activeCoupons.filter(c => effectiveStamps >= c.required_visits);
     const lockedCoupons = activeCoupons.filter(c => effectiveStamps < c.required_visits);
 
+    const refMsg = sessionStorage.getItem('refCouponMsg');
+    if (refMsg) sessionStorage.removeItem('refCouponMsg');
+
     document.getElementById('app').innerHTML = `
+      ${refMsg ? `<div style="background:#E8F6F4;border-left:4px solid #1FA89D;padding:14px 16px;border-radius:8px;margin-bottom:16px;font-size:14px;color:#0F2A4F;">🎁 ${refMsg}</div>` : ''}
       <!-- 来店エリア -->
       <div class="card">
         <h2>来店記録</h2>

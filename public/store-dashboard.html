@@ -109,6 +109,7 @@
     <a onclick="showPage('campaign-coupons')" id="nav-campaign-coupons">キャンペーンクーポン</a>
     <a onclick="showPage('store-info')" id="nav-store-info">店舗情報</a>
     <a onclick="showPage('referral')" id="nav-referral">店舗紹介</a>
+    <a onclick="showPage('referral-coupons')" id="nav-referral-coupons">紹介クーポン</a>
     <a onclick="showPage('password')" id="nav-password">パスワード変更</a>
     <div class="sidebar-section">サポート</div>
     <a href="mailto:rehap.info@relybit.co.jp">お問い合わせ</a>
@@ -123,14 +124,6 @@
       <div class="card" id="monthly-card" style="display:none;">
         <h2 style="font-size:15px; margin-bottom:16px;">月間来店推移</h2>
         <div class="chart-wrap" id="monthly-chart"></div>
-      </div>
-      <div class="card" id="monthly-line-card" style="display:none;">
-        <h2 style="font-size:15px; margin-bottom:10px;">来店数の推移（新規 / 既存）</h2>
-        <div style="display:flex; gap:16px; margin-bottom:10px; font-size:12px; color:#5A6B85;">
-          <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block; width:14px; height:3px; background:#0F2A4F; border-radius:2px;"></span>新規</span>
-          <span style="display:flex; align-items:center; gap:5px;"><span style="display:inline-block; width:14px; height:3px; background:#1FA89D; border-radius:2px;"></span>既存</span>
-        </div>
-        <div id="monthly-line-chart"></div>
       </div>
       <div class="card">
         <h2 style="font-size:15px; margin-bottom:16px;">店舗QRリンク</h2>
@@ -299,6 +292,21 @@
       </div>
     </div>
 
+    <!-- 紹介クーポン -->
+    <div class="page" id="page-referral-coupons">
+      <h2>紹介クーポン</h2>
+      <p style="font-size:13px; color:#888; margin-bottom:16px;">お客様に紹介用URLを共有してもらうと、友人が来店時にクーポンを受け取れます。</p>
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+          <button class="btn btn-primary" onclick="openRefCouponModal()">＋ 紹介クーポンを作成</button>
+        </div>
+        <table>
+          <thead><tr><th>タイトル</th><th>共有URL</th><th>受け取り数</th><th>上限</th><th>有効期限</th><th>操作</th></tr></thead>
+          <tbody id="ref-coupons-table"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- キャンペーンクーポン -->
     <div class="page" id="page-campaign-coupons">
       <h2>キャンペーンクーポン管理</h2>
@@ -325,6 +333,21 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- 紹介クーポン作成モーダル -->
+<div class="modal-overlay" id="modal-ref-coupon">
+  <div class="modal">
+    <h3>紹介クーポンを作成</h3>
+    <div class="form-group"><label>タイトル <span style="color:red;">*</span></label><input type="text" id="rc-title" placeholder="例：友達紹介クーポン"></div>
+    <div class="form-group"><label>説明</label><textarea id="rc-desc" placeholder="例：初回来店時に施術10%オフ"></textarea></div>
+    <div class="form-group"><label>上限人数（空白＝無制限）</label><input type="number" id="rc-max-uses" placeholder="例：50" min="1" style="width:140px;"></div>
+    <div class="form-group"><label>有効期限（空白＝無期限）</label><input type="date" id="rc-expires-at"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeRefCouponModal()">キャンセル</button>
+      <button class="btn btn-primary" onclick="saveRefCoupon()">作成する</button>
+    </div>
   </div>
 </div>
 
@@ -431,6 +454,7 @@
     if (name === 'grant-coupon') loadGrantCouponPage();
     if (name === 'campaign-coupons') loadCampaignCoupons();
     if (name === 'referral') loadReferral();
+    if (name === 'referral-coupons') loadRefCoupons();
   }
 
   function makeBarChart(containerId, items, labelKey, countKey, color = '#1FA89D') {
@@ -626,12 +650,6 @@
         </div>
       `).join('');
       document.getElementById('monthly-card').style.display = 'block';
-    }
-
-    // 新規／既存 折れ線グラフ
-    if (data.monthlyNewRepeat && data.monthlyNewRepeat.length > 0) {
-      document.getElementById('monthly-line-chart').innerHTML = renderLineChart(data.monthlyNewRepeat);
-      document.getElementById('monthly-line-card').style.display = 'block';
     }
 
     const tbody = document.getElementById('visits-table');
@@ -1007,6 +1025,85 @@
     const code = document.getElementById('referral-code-display').textContent;
     navigator.clipboard.writeText(code);
     showToast('招待コードをコピーしました');
+  }
+
+  // ===== 紹介クーポン =====
+
+  async function loadRefCoupons() {
+    const res = await fetch('/api/store-auth/referral-coupons');
+    const coupons = await res.json();
+    const tbody = document.getElementById('ref-coupons-table');
+    if (!coupons.length) {
+      tbody.innerHTML = '<tr><td colspan="6" class="empty">紹介クーポンがありません</td></tr>';
+      return;
+    }
+    tbody.innerHTML = coupons.map(c => {
+      const shareUrl = `${location.origin}/store/${storeId}?ref_coupon=${c.code}`;
+      const now = new Date().toISOString();
+      const expired = c.expires_at && c.expires_at < now;
+      const full = c.max_uses && c.claim_count >= c.max_uses;
+      const statusBadge = expired
+        ? '<span style="background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:4px;font-size:11px;">期限切れ</span>'
+        : full
+        ? '<span style="background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:4px;font-size:11px;">上限達成</span>'
+        : '<span style="background:#d1fae5;color:#065f46;padding:1px 6px;border-radius:4px;font-size:11px;">有効</span>';
+      return `<tr>
+        <td><strong>${c.title}</strong>${c.description ? `<br><span style="font-size:11px;color:#888;">${c.description}</span>` : ''}<br>${statusBadge}</td>
+        <td style="font-size:12px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-family:monospace;font-size:11px;color:#555;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${shareUrl}</span>
+            <button class="btn btn-sm" style="background:#E8F6F4;color:#1FA89D;flex-shrink:0;" onclick="copyRefUrl('${shareUrl}')">コピー</button>
+          </div>
+        </td>
+        <td style="text-align:center;font-weight:bold;color:#1FA89D;">${c.claim_count}</td>
+        <td style="text-align:center;">${c.max_uses || '<span style="color:#aaa;">無制限</span>'}</td>
+        <td style="font-size:12px;">${c.expires_at ? c.expires_at.slice(0, 10) : '<span style="color:#aaa;">無期限</span>'}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="deleteRefCoupon(${c.id})">削除</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  function copyRefUrl(url) {
+    navigator.clipboard.writeText(url);
+    showToast('共有URLをコピーしました');
+  }
+
+  function openRefCouponModal() {
+    document.getElementById('rc-title').value = '';
+    document.getElementById('rc-desc').value = '';
+    document.getElementById('rc-max-uses').value = '';
+    document.getElementById('rc-expires-at').value = '';
+    document.getElementById('modal-ref-coupon').style.display = 'flex';
+  }
+
+  function closeRefCouponModal() {
+    document.getElementById('modal-ref-coupon').style.display = 'none';
+  }
+
+  async function saveRefCoupon() {
+    const title = document.getElementById('rc-title').value.trim();
+    if (!title) { showToast('タイトルを入力してください'); return; }
+    const body = {
+      title,
+      description: document.getElementById('rc-desc').value.trim() || null,
+      max_uses: document.getElementById('rc-max-uses').value ? parseInt(document.getElementById('rc-max-uses').value) : null,
+      expires_at: document.getElementById('rc-expires-at').value || null,
+    };
+    await fetch('/api/store-auth/referral-coupons', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    closeRefCouponModal();
+    showToast('紹介クーポンを作成しました');
+    loadRefCoupons();
+  }
+
+  async function deleteRefCoupon(id) {
+    if (!confirm('この紹介クーポンを削除しますか？受け取り済みのクーポンには影響しません。')) return;
+    await fetch(`/api/store-auth/referral-coupons/${id}`, { method: 'DELETE' });
+    showToast('削除しました');
+    loadRefCoupons();
   }
 
   // ===== キャンペーンクーポン =====
