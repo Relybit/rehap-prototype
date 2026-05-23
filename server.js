@@ -925,6 +925,37 @@ app.post('/api/product-click/:storeId/:productId', async (req, res) => {
   res.json({ ok: true });
 });
 
+// ===== 店舗自己登録 =====
+
+app.post('/api/store/register', authLimiter, async (req, res) => {
+  const { name, description, booking_url, password, referral_code } = req.body;
+  if (!name || !name.trim()) return res.status(400).json({ error: '店舗名は必須です' });
+  if (!password || password.length < 6) return res.status(400).json({ error: 'パスワードは6文字以上で入力してください' });
+
+  const db = await getDb();
+
+  if (referral_code) {
+    const referring = query(db, 'SELECT id FROM stores WHERE referral_code = ?', [referral_code.toUpperCase()]);
+    if (!referring.length) return res.status(400).json({ error: '招待コードが無効です。空欄のまま登録することもできます。' });
+  }
+
+  const storeId = 'store_' + Math.random().toString(36).substring(2, 10);
+  const hashed = await bcrypt.hash(password, 10);
+  const newReferralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+  const now = new Date().toISOString();
+
+  try {
+    db.run(
+      'INSERT INTO stores (id, name, description, booking_url, password, referred_by, referral_code, registered_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [storeId, name.trim(), description?.trim() || null, booking_url?.trim() || null, hashed, referral_code?.toUpperCase() || null, newReferralCode, now]
+    );
+    save();
+    res.json({ success: true, store_id: storeId });
+  } catch (e) {
+    res.status(500).json({ error: '登録に失敗しました。もう一度お試しください。' });
+  }
+});
+
 // ===== 店舗紹介（招待コード）=====
 
 app.get('/api/store-auth/referral', storeAuth, async (req, res) => {

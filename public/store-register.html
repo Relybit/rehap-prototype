@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/img/favicon.png" type="image/png">
+  <title>リライテン 店舗登録</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Hiragino Sans', 'Meiryo', sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    .main-wrap { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 40px 16px; }
+    .card { background: white; border-radius: 16px; padding: 40px; width: 420px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .logo { text-align: center; margin-bottom: 28px; }
+    .logo img { height: 64px; width: auto; max-width: 100%; }
+    .logo p { font-size: 13px; color: #888; margin-top: 8px; }
+    .section-title { font-size: 15px; font-weight: bold; color: #1a1a2e; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; color: #666; margin-bottom: 6px; }
+    label .required { color: #e53935; margin-left: 4px; font-size: 11px; }
+    label .optional { color: #aaa; margin-left: 4px; font-size: 11px; }
+    input[type="text"], input[type="password"], input[type="url"], textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; transition: border 0.2s; font-family: inherit; }
+    input:focus, textarea:focus { border-color: #1a1a2e; }
+    textarea { resize: vertical; min-height: 72px; }
+    .hint { font-size: 11px; color: #aaa; margin-top: 4px; }
+    .divider { border: none; border-top: 1px solid #f0f0f0; margin: 20px 0; }
+    .agree-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
+    .agree-row input[type="checkbox"] { margin-top: 2px; width: 18px; height: 18px; flex-shrink: 0; cursor: pointer; accent-color: #1FA89D; }
+    .agree-row label { font-size: 13px; color: #444; cursor: pointer; }
+    .agree-row a { color: #1FA89D; text-decoration: none; }
+    .agree-row a:hover { text-decoration: underline; }
+    .btn { width: 100%; padding: 14px; background: #1a1a2e; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+    .btn:hover { background: #2d2d4e; }
+    .btn:disabled { background: #ccc; cursor: not-allowed; }
+    .error { background: #fff0f0; color: #d32f2f; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+    .success-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 24px; text-align: center; display: none; }
+    .success-box h3 { color: #15803d; font-size: 16px; margin-bottom: 12px; }
+    .success-box p { font-size: 13px; color: #555; margin-bottom: 8px; }
+    .success-box .store-id-box { background: #e8f6f4; border-radius: 8px; padding: 12px; margin: 16px 0; font-family: monospace; font-size: 16px; font-weight: bold; color: #1FA89D; letter-spacing: 1px; }
+    .login-link { text-align: center; margin-top: 20px; font-size: 13px; color: #888; }
+    .login-link a { color: #1FA89D; text-decoration: none; }
+    .login-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+<div class="main-wrap">
+<div class="card">
+  <div class="logo">
+    <img src="/img/logo-reraiten.png" alt="リライテン">
+    <p>店舗登録</p>
+  </div>
+
+  <div class="error" id="error"></div>
+
+  <div id="form-area">
+    <div class="section-title">店舗情報</div>
+
+    <div class="form-group">
+      <label>店舗名<span class="required">必須</span></label>
+      <input type="text" id="store-name" placeholder="例: リラックス整体院">
+    </div>
+    <div class="form-group">
+      <label>店舗紹介文<span class="optional">任意</span></label>
+      <textarea id="store-desc" placeholder="店舗の特徴や施術内容など"></textarea>
+    </div>
+    <div class="form-group">
+      <label>予約ページURL<span class="optional">任意</span></label>
+      <input type="url" id="store-booking" placeholder="https://...">
+      <div class="hint">ホットペッパーや自社予約ページのURLを入力してください</div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">ログイン設定</div>
+
+    <div class="form-group">
+      <label>パスワード<span class="required">必須</span></label>
+      <input type="password" id="password" placeholder="6文字以上">
+    </div>
+    <div class="form-group">
+      <label>パスワード（確認）<span class="required">必須</span></label>
+      <input type="password" id="password-confirm" placeholder="同じパスワードを再入力">
+    </div>
+
+    <hr class="divider">
+    <div class="section-title">招待コード</div>
+
+    <div class="form-group">
+      <label>招待コード<span class="optional">任意</span></label>
+      <input type="text" id="referral-code" placeholder="例: O57SHZ" style="text-transform:uppercase;" maxlength="6">
+      <div class="hint">紹介してくれた店舗から受け取ったコードを入力してください。後から追加もできます。</div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="agree-row">
+      <input type="checkbox" id="agree-terms">
+      <label for="agree-terms">
+        <a href="/terms.html" target="_blank" rel="noopener">利用規約</a>および
+        <a href="/privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意します
+      </label>
+    </div>
+
+    <button class="btn" id="register-btn" onclick="register()">登録する</button>
+    <div class="login-link">すでにアカウントをお持ちの方は<a href="/store-login.html">こちら</a></div>
+  </div>
+
+  <div class="success-box" id="success-box">
+    <h3>登録が完了しました</h3>
+    <p>以下の店舗IDをメモしておいてください。<br>ログイン時に必要です。</p>
+    <div class="store-id-box" id="success-store-id"></div>
+    <p style="font-size:12px; color:#888;">※ このIDは後から変更できません</p>
+    <a href="/store-login.html" style="display:inline-block; margin-top:16px; padding:12px 32px; background:#1a1a2e; color:white; border-radius:8px; text-decoration:none; font-size:15px;">ログイン画面へ</a>
+  </div>
+</div>
+</div>
+
+<script>
+  document.getElementById('referral-code').addEventListener('input', function() {
+    this.value = this.value.toUpperCase();
+  });
+
+  async function register() {
+    const name = document.getElementById('store-name').value.trim();
+    const description = document.getElementById('store-desc').value.trim();
+    const bookingUrl = document.getElementById('store-booking').value.trim();
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('password-confirm').value;
+    const referralCode = document.getElementById('referral-code').value.trim().toUpperCase();
+    const agreed = document.getElementById('agree-terms').checked;
+    const errEl = document.getElementById('error');
+
+    errEl.style.display = 'none';
+
+    if (!name) return showError('店舗名を入力してください');
+    if (!password) return showError('パスワードを入力してください');
+    if (password.length < 6) return showError('パスワードは6文字以上で入力してください');
+    if (password !== passwordConfirm) return showError('パスワードが一致しません');
+    if (!agreed) return showError('利用規約およびプライバシーポリシーへの同意が必要です');
+
+    const btn = document.getElementById('register-btn');
+    btn.disabled = true;
+    btn.textContent = '登録中...';
+
+    const res = await fetch('/api/store/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, description: description || undefined, booking_url: bookingUrl || undefined, password, referral_code: referralCode || undefined })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      document.getElementById('form-area').style.display = 'none';
+      document.getElementById('success-store-id').textContent = data.store_id;
+      document.getElementById('success-box').style.display = 'block';
+    } else {
+      showError(data.error || '登録に失敗しました');
+      btn.disabled = false;
+      btn.textContent = '登録する';
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error');
+    el.textContent = msg;
+    el.style.display = 'block';
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+</script>
+
+<footer style="text-align:center;padding:24px 16px 32px;margin-top:8px;border-top:1px solid #E8EDF4;font-size:12px;color:#8896AB;">
+  <a href="/privacy.html" style="color:#8896AB;text-decoration:none;margin:0 10px;">プライバシーポリシー</a>
+  <span style="color:#D0D8E8;">|</span>
+  <a href="/terms.html" style="color:#8896AB;text-decoration:none;margin:0 10px;">利用規約</a>
+  <p style="margin-top:8px;font-size:11px;">運営：<a href="https://relybit.co.jp" target="_blank" rel="noopener" style="color:#8896AB;text-decoration:none;">株式会社リリビット</a></p>
+</footer>
+</body>
+</html>

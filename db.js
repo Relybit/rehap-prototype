@@ -98,6 +98,7 @@ async function getDb() {
   try { db.run(`ALTER TABLE products ADD COLUMN click_count INTEGER DEFAULT 0`); } catch(e) {}
   try { db.run(`CREATE TABLE IF NOT EXISTS referral_coupons (id INTEGER PRIMARY KEY AUTOINCREMENT, store_id TEXT NOT NULL, title TEXT NOT NULL, description TEXT, code TEXT NOT NULL UNIQUE, max_uses INTEGER, expires_at TEXT, created_at TEXT NOT NULL)`); } catch(e) {}
   try { db.run(`CREATE TABLE IF NOT EXISTS referral_coupon_claims (id INTEGER PRIMARY KEY AUTOINCREMENT, coupon_id INTEGER NOT NULL, store_id TEXT NOT NULL, user_id TEXT NOT NULL, claimed_at TEXT NOT NULL, UNIQUE(coupon_id, user_id))`); } catch(e) {}
+  try { db.run(`ALTER TABLE stores ADD COLUMN registered_at TEXT`); } catch(e) {}
 
   // referral_code 未設定の店舗に自動生成
   const storesWithoutCode = db.exec("SELECT id FROM stores WHERE referral_code IS NULL OR referral_code = ''");

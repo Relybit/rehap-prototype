@@ -578,7 +578,11 @@ async function loadStores() {
     tbody.innerHTML = allStores.map(s => `
       <tr>
         <td><span class="badge badge-blue">${s.id}</span></td>
-        <td>${s.name}</td>
+        <td>
+          ${s.name}
+          ${s.registered_at ? `<br><span style="font-size:10px; background:#e0f2fe; color:#0369a1; padding:1px 6px; border-radius:4px; white-space:nowrap;">自己登録 ${s.registered_at.slice(0,10)}</span>` : ''}
+          ${s.referred_by ? `<br><span style="font-size:10px; background:#f3e8ff; color:#7c3aed; padding:1px 6px; border-radius:4px; white-space:nowrap;">紹介: ${s.referred_by}</span>` : ''}
+        </td>
         <td>${statusMap[s.subscription_status] || statusMap.pending}</td>
         <td>
           <span class="qr-link">${location.origin}/store/${s.id}</span>
