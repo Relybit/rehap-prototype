@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const express = require('express');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
@@ -205,7 +205,7 @@ app.use(session({
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  store: new FileStore({ path: sessionsDir, ttl: 86400, retries: 0, logFn: () => {} }),
+  store: new FileStore({ path: sessionsDir, ttl: 86400, retries: 0, logFn: () => {}, fileExtension: '.json', reapInterval: 3600 }),
   cookie: { secure: true, sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 },
 }));
 app.use(express.static(__dirname + '/public'));
@@ -1574,7 +1574,7 @@ async function start() {
     }
   }, { timezone: 'UTC' }); // UTC 18:00 = JST 03:00
 
-  app.listen(PORT, () => {
+  app.listen(PORT, '127.0.0.1', () => {
     console.log(`\nREHAP サーバー起動中 → http://localhost:${PORT}/store/store001\n`);
   });
 }
