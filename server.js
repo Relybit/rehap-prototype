@@ -51,6 +51,20 @@ function jstToday() {
   return new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
 }
 
+async function sendLineMessage(userId, messages) {
+  const token = process.env.LINE_MESSAGING_CHANNEL_ACCESS_TOKEN;
+  if (!token || !userId) return;
+  try {
+    await fetch('https://api.line.me/v2/bot/message/push', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify({ to: userId, messages }),
+    });
+  } catch (e) {
+    console.error('LINE push error:', e.message);
+  }
+}
+
 // sql.js 用パラメータ付き SELECT ヘルパー
 function query(db, sql, params = []) {
   const stmt = db.prepare(sql);
@@ -221,6 +235,7 @@ app.get('/auth/line/login', authLimiter, (req, res) => {
     redirect_uri: LINE_REDIRECT_URI,
     state,
     scope: 'profile',
+    bot_prompt: 'aggressive',
   });
   res.redirect(`https://access.line.me/oauth2/v2.1/authorize?${params}`);
 });
@@ -689,6 +704,15 @@ app.post('/api/store-auth/grant-coupon', storeAuth, async (req, res) => {
     [req.session.storeId, user_id, title, description || null, today, expires_at || null]
   );
   save();
+
+  const storeName = req.session.storeName || '店舗';
+  const expireText = expires_at ? `\n有効期限：${expires_at}` : '';
+  const descText = description ? `\n${description}` : '';
+  sendLineMessage(user_id, [{
+    type: 'text',
+    text: `🎁 ${storeName}からクーポンが届きました！\n\n【${title}】${descText}${expireText}\n\n次回来店時にスタッフへお伝えください。`,
+  }]);
+
   res.json({ success: true });
 });
 
@@ -900,6 +924,16 @@ app.post('/api/store/:storeId/claim-referral', async (req, res) => {
     [req.params.storeId, userId, coupon.title, coupon.description || null, now, coupon.expires_at || null]
   );
   save();
+
+  const storeRows = query(db, 'SELECT name FROM stores WHERE id = ?', [req.params.storeId]);
+  const storeName = storeRows[0]?.name || '店舗';
+  const expireText = coupon.expires_at ? `\n有効期限：${coupon.expires_at.slice(0, 10)}` : '';
+  const descText = coupon.description ? `\n${coupon.description}` : '';
+  sendLineMessage(userId, [{
+    type: 'text',
+    text: `🎟️ ${storeName}の紹介クーポンを受け取りました！\n\n【${coupon.title}】${descText}${expireText}\n\n次回来店時にスタッフへお伝えください。`,
+  }]);
+
   res.json({ success: true, coupon });
 });
 
